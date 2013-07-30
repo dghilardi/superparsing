@@ -4,7 +4,7 @@ using namespace std;
 
 int main()
 {
-    cout << "cane\n";
+    cout << "gatto\n";
     return 0;
 }
 
