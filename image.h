@@ -2,8 +2,9 @@
 #define IMAGE_H
 
 #include <string>
-
 #include <opencv2/highgui/highgui.hpp>
+
+#include "OpenCVGraphSegmentation/Segmentation.h"
 
 #define IMG_PATH "../SiftFlowDataset/Images/spatial_envelope_256x256_static_8outdoorcategories/"
 #define IMG_EXT ".jpg"
@@ -17,6 +18,7 @@ class Image
 protected:
 public:
     Image(string filename);
+    cv::Mat *getImage();
     void show();
 
 };
