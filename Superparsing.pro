@@ -9,7 +9,13 @@ CONFIG -= qt
 
 LIBS += \
     -L/usr/local/lib -ldai \
-    -lgmpxx -lgmp
+    -lgmpxx -lgmp \
+    -lmatio \
+    -lhdf5 -lz
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    geolabel.cpp
+
+HEADERS += \
+    geolabel.h
 
