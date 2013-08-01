@@ -102,5 +102,4 @@ void GeoLabel::viewLabeledImg(){
     for(int i=1; i<=labels.size(); ++i) cout << getLabel(i) << endl;
     cvNamedWindow(imgName.c_str(),2);
     imshow(imgName.c_str(),toVisualize);
-    cv::waitKey();
 }
