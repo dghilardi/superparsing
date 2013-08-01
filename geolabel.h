@@ -1,16 +1,11 @@
 #ifndef GEOLABEL_H
 #define GEOLABEL_H
 
-#include "zlib.h"
-
 #include <string>
 #include <vector>
 #include <matio.h>
-#include <matio_pubconf.h>
 #include <iostream>
 
-#include "opencv2/core/core.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
 
 #define ERROR_LOADING_MAT 1
