@@ -14,8 +14,12 @@ LIBS += \
     -lhdf5 -lz
 
 SOURCES += main.cpp \
-    geolabel.cpp
+    geolabel.cpp \
+    image.cpp \
+    retrimage.cpp
 
 HEADERS += \
-    geolabel.h
+    geolabel.h \
+    image.h \
+    retrimage.h
 

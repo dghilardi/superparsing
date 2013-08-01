@@ -3,9 +3,9 @@
 #include <stdio.h>
 
 GeoLabel::GeoLabel(string filename){
-    imgName = filename;
-    mat_t *geoLabelf = Mat_Open(filename.c_str(), MAT_ACC_RDONLY);
-    if(geoLabelf==NULL) cerr << "Error loading file: " << filename << endl;
+    imgName = string(MAT_PATH)+filename+string(MAT_EXT);
+    mat_t *geoLabelf = Mat_Open(imgName.c_str(), MAT_ACC_RDONLY);
+    if(geoLabelf==NULL) cerr << MSG_ERROR_LOADING_MAT << imgName << endl;
     matvar_t *matVar;
 
     /*
@@ -68,6 +68,12 @@ GeoLabel::GeoLabel(string filename){
     Mat_Close(geoLabelf);
 }
 
+GeoLabel::~GeoLabel(){
+    for(int i=0; i<labels.size(); ++i){
+        delete labels[i];
+    }
+}
+
 /**
  * @brief GeoLabel::getLabeledImg Get an opencv Mat that assign to each pixel a label (or no one)
  * @return pointer to the Mat
@@ -95,11 +101,11 @@ void GeoLabel::viewLabeledImg(){
 
     for(int x=0; x<imageLabeled.cols; ++x){
         for(int y=0; y<imageLabeled.rows; ++y){
-            toVisualize.at<uchar>(y,x) = 255*(imageLabeled.at<short>(y,x)+1)/maxValue;
+            toVisualize.at<uchar>(y,x) = 255*(imageLabeled.at<short>(y,x)+1)/(maxValue+1);
         }
     }
 
-    for(int i=1; i<=labels.size(); ++i) cout << getLabel(i) << endl;
+    for(int i=1; i<=labels.size(); ++i) cout <<255*(i+1)/(maxValue+1) <<". "<< getLabel(i) << endl;
     cvNamedWindow(imgName.c_str(),2);
     imshow(imgName.c_str(),toVisualize);
 }
