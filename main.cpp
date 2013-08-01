@@ -1,12 +1,13 @@
-#include "geolabel.h"
-#include "opencv2/core/core.hpp"
-#define GEOLABEL_FILE "../SiftFlowDataset/SemanticLabels/spatial_envelope_256x256_static_8outdoorcategories/insidecity_art727.mat"
+#include "retrimage.h"
+#include "opencv2/highgui/highgui.hpp"
+
+#define IMG_NAME "insidecity_art920"
 
 using namespace std;
 
 int main(){
-    GeoLabel data(GEOLABEL_FILE);
-    data.viewLabeledImg();
+    RetrImage retrievalSetImage(IMG_NAME);
+    retrievalSetImage.show();
 
     cv::waitKey();
     return 0;
