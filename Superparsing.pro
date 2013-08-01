@@ -16,10 +16,14 @@ LIBS += \
 SOURCES += main.cpp \
     geolabel.cpp \
     image.cpp \
-    retrimage.cpp
+    retrimage.cpp \
+    queryimage.cpp \
+    OpenCVGraphSegmentation/Segmentation.cpp \
+    OpenCVGraphSegmentation/disjoint-set.cpp
 
 HEADERS += \
     geolabel.h \
     image.h \
-    retrimage.h
+    retrimage.h \
+    queryimage.h
 
