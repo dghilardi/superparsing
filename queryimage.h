@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "image.h"
+#include "superpixel.h"
 #include "OpenCVGraphSegmentation/Segmentation.h"
 
 using namespace std;
@@ -11,9 +12,10 @@ using namespace std;
 class QueryImage
 {
     Image image;
-    vector<vector<Pixel> > superPixels;
+    vector<SuperPixel *> superPixelList;
 public:
     QueryImage(string filename);
+    ~QueryImage();
 };
 
 #endif // QUERYIMAGE_H

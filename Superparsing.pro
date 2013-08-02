@@ -19,11 +19,13 @@ SOURCES += main.cpp \
     retrimage.cpp \
     queryimage.cpp \
     OpenCVGraphSegmentation/Segmentation.cpp \
-    OpenCVGraphSegmentation/disjoint-set.cpp
+    OpenCVGraphSegmentation/disjoint-set.cpp \
+    superpixel.cpp
 
 HEADERS += \
     geolabel.h \
     image.h \
     retrimage.h \
-    queryimage.h
+    queryimage.h \
+    superpixel.h
 
