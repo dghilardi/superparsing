@@ -13,6 +13,8 @@ class SuperPixel
     uint64 maskFeature;
     double relHeightFeature;
     void computeMaskFeature(vector<Pixel> &pixelList, int minX, int minY, int maxX, int maxY);
+    int* computeSiftFeature(vector<Pixel> &list, cv::Mat &srcImg, int minX, int minY, int maxX, int maxY);
+    cv::Mat* computeColorFeature(vector<Pixel> &list, cv::Mat &srcImg, int minX, int minY, int maxX, int maxY);
 public:
     SuperPixel(vector<Pixel> &list, cv::Mat &srcImg);
     ~SuperPixel();
