@@ -11,5 +11,5 @@ LIBS += \
     -L/usr/local/lib -ldai \
     -lgmpxx -lgmp
 
-SOURCES += main.cpp
+SOURCES +=
 
