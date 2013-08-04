@@ -21,32 +21,22 @@ SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg): maskFeature(0){
     //Ritaglio il superpixel dall'immagine originale
     int dimX = maxX-minX+1;
     int dimY = maxY-minY+1;
-    cv::Mat superPixelImg(dimY, dimX, CV_8UC3, cv::Scalar(0));
+    cv::Mat superPixelImg(dimY, dimX, CV_8UC3, cv::Scalar::all(0));
     for(uint i=0; i<list.size(); ++i){
         int x = list[i].x;
         int y = list[i].y;
-        cout<<"y: "<<y-minY<<"["<<dimY <<"] x:"<< x-minX<<"["<<dimX<<"]"<<endl;
         cv::Point3_<uchar>* src = srcImg.ptr<cv::Point3_<uchar> >(y,x);
         cv::Point3_<uchar>* dst = superPixelImg.ptr<cv::Point3_<uchar> >(y-minY,x-minX);
-        for(int j=0; j<3; ++j){
-            if(y-minY<0 || x-minX<0) throw;
-            if(y-minY>=superPixelImg.rows || x-minX>=superPixelImg.cols) throw;
-            superPixelImg.at<uchar>(y-minY,3*(x-minX)+j) = (uchar)10;//(uchar)srcImg.at<uchar>(y,3*x+j);
-            //superPixelImg.at<cv::Vec3b>(y-minY,x-minX)[0] = (uchar)250;
-        }
-        //superPixelImg.at<cv::Vec3b>(y-minY,x-minX)[0] = (uchar)srcImg.at<cv::Vec3b>(y,x)[0];
-        //superPixelImg.at<cv::Vec3b>(y-minY,x-minX)[1] = (uchar)srcImg.at<cv::Vec3b>(y,x)[1];
-        //superPixelImg.at<cv::Vec3b>(y-minY,x-minX)[2] = (uchar)srcImg.at<cv::Vec3b>(y,x)[2];
-        //dst->x=(uchar)src->x;
-        //dst->y=(uchar)src->y;
-        //dst->z=(uchar)src->z;
+        dst->x=(uchar)src->x; //blue
+        dst->y=(uchar)src->y; //green
+        dst->z=(uchar)src->z; //red
     }
 
-
-    cvNamedWindow("imgName.c_str()",2);
-    imshow("imgName.c_str()",superPixelImg);
+    /*
+    cvNamedWindow("SUPERPIXEL",2);
+    imshow("SUPERPIXEL",superPixelImg);
     cv::waitKey();
-
+    */
 
     computeMaskFeature(list, minX, minY, maxX, maxY);
     relHeightFeature = (srcImg.rows-minY)/(double)srcImg.rows;
@@ -56,9 +46,9 @@ SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg): maskFeature(0){
 }
 
 SuperPixel::~SuperPixel(){
-    delete HistSIFT[0];
-    delete HistSIFT[1];
-    delete HistSIFT[2];
+    delete colorHist[0];
+    delete colorHist[1];
+    delete colorHist[2];
 }
 
 /**
@@ -122,15 +112,10 @@ int SuperPixel::getMaskDistance(uint64 otherMask){
     return distance;
 }
 
+
 /**
  * @brief SuperPixel::computeSiftFeature Calcola la SIFT feature del superpixel.
- * @param list: lista di punti del superpixel
- * @param srcImg: immagine sorgente
- * @param minX: estremo del superpixel
- * @param minY: estremo del superpixel
- * @param maxX: estremo del superpixel
- * @param maxY: estremo del superpixel
- * @return puntatore all'array rappresentante l'istogramma degli orientamenti dei keypoints
+ * @param superPixelImg Matrice contenente il superpixel
  */
 void SuperPixel::computeSiftFeature(cv::Mat &superPixelImg){
     //Individuo i Keypoints del superPixel usando SIFT
@@ -143,15 +128,15 @@ void SuperPixel::computeSiftFeature(cv::Mat &superPixelImg){
      *rappresenta un intervallo di 36 gradi e contiene il numero di keypoints
      *aventi orientamento appartenente a tale intervallo
      */
-    int* colorHist;
-    colorHist = (int*) calloc(100, sizeof(int));
+    //int* colorHist;
+    //colorHist = (int*) calloc(128, sizeof(int));
 
     for(int i=0; i<100; i++){
-        colorHist[i]=0;
+        siftHist[i]=0;
     }
     for(int i=0; i<keypoints.size(); i++){
-        int bucket = std::floor(keypoints[i].angle/(0.2*CV_PI));
-        colorHist[bucket]++;
+        int bucket = std::floor(keypoints[i].angle/(36));
+        siftHist[bucket]++;
     }
 }
 
@@ -178,7 +163,7 @@ void SuperPixel::computeColorFeature(cv::Mat &superPixelImg){
     //Creo un array di array contenente i tre istogrammi e lo ritorno
     //cv::Mat* hists;
     //hists = (cv::Mat*) calloc(3, sizeof(cv::Mat));
-    HistSIFT[0] = r_hist;
-    HistSIFT[1] = g_hist;
-    HistSIFT[2] = b_hist;
+    colorHist[0] = r_hist;
+    colorHist[1] = g_hist;
+    colorHist[2] = b_hist;
 }
