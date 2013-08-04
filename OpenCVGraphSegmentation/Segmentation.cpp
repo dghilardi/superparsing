@@ -27,9 +27,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #include "pnmfile.h"
 
 // minimum number of pixels for an individual blob in segmentation
-#define MIN_SEGMENTATION_BLOB_SIZE 450  
+//#define MIN_SEGMENTATION_BLOB_SIZE 450
+#define MIN_SEGMENTATION_BLOB_SIZE 200
 // sigma smoothing value when running graph image segmentation
-#define SIGMA 1.2f
+//#define SIGMA 1.2f
+#define SIGMA 0.8f
 
 image<rgb>* convertIplToNativeImage(IplImage * input){
     int w = input->width;
