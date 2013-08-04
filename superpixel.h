@@ -6,12 +6,13 @@
 
 #include "OpenCVGraphSegmentation/Segmentation.h"
 
+using namespace std;
 class SuperPixel
 {
     uint64 maskFeature;
     double relHeightFeature;
-    cv::Mat *HistSIFT[3];
-    //int colorHist[100];
+    cv::Mat *colorHist[3];
+    int siftHist[100];
     void computeMaskFeature(vector<Pixel> &pixelList, int minX, int minY, int maxX, int maxY);
     void computeSiftFeature(cv::Mat &superPixelImg);
     void computeColorFeature(cv::Mat &superPixelImg);

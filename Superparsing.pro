@@ -11,7 +11,13 @@ LIBS += \
     -L/usr/local/lib -ldai \
     -lgmpxx -lgmp \
     -lmatio \
-    -lhdf5 -lz
+    -lhdf5 -lz \
+#    -lopencv_core\
+#    -lopencv_highgui\
+#    -lopencv_imgproc\
+#    -lopencv_video\
+#    -lopencv_nonfree\
+#    -lopencv_features2d
 
 SOURCES += main.cpp \
     geolabel.cpp \
