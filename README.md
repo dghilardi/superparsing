@@ -1,10 +1,13 @@
 superparsing
 ============
-The project is developed using QtCreator
+Scalable Nonparametric Image Parsing with superpixels based on a semplification of the algorithm proposed in the paper 'Superparsing: Scalable Nonparametric Image Parsing with Superpixels' by Joseph Tighe and Svetlana Lazebnick.
+
+The project is developed in C++ using QtCreator
 
 Requirements
 ------------
 The libraries required by this project are:
+- opencv
 - matio
 - libDAI
 
