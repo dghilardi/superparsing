@@ -2,9 +2,6 @@
 #include <opencv2/nonfree/nonfree.hpp>
 #include <opencv2/nonfree/features2d.hpp>
 #include <opencv/cv.hpp>
-#include "opencv2/core/core.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
-#include "opencv2/highgui/highgui.hpp"
 #include <math.h>
 
 SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg): maskFeature(0){
@@ -88,11 +85,9 @@ void SuperPixel::computeMaskFeature(vector<Pixel> &pixelList, int minX, int minY
             //bitset<64> bits(maskFeature);
             //cout << bits << endl;
     }}
-
-    //cout << "Mask: " << maskFeature << endl;
-
 }
 
+/*
 uint64 SuperPixel::getMaskFeature(){
     return maskFeature;
 }
@@ -101,7 +96,7 @@ uint64 SuperPixel::getMaskFeature(){
  * @brief SuperPixel::getMaskDistance Compute the distance between two 64-bit masks
  * @param otherMask the mask to confront with
  * @return The number of different cells in the mask
- */
+ *./
 int SuperPixel::getMaskDistance(uint64 otherMask){
     int distance = 0;
     uint64 axorb = otherMask^maskFeature;
@@ -111,7 +106,26 @@ int SuperPixel::getMaskDistance(uint64 otherMask){
     }
     return distance;
 }
+*/
 
+/**
+ * @brief SuperPixel::getMaskDistance Compute the shape-distance between two SuperPixels
+ * @param otherSP The SuperPixel to confront with
+ * @return  The number of different cells in the mask
+ */
+int SuperPixel::getMaskDistance(SuperPixel &otherSP){
+    int distance = 0;
+    uint64 axorb = otherSP.maskFeature^maskFeature;
+    while(axorb){
+      distance++;
+      axorb &= axorb-1;
+    }
+    return distance;
+}
+
+float SuperPixel::getRelHeightDistance(SuperPixel &otherSP){
+    return abs(otherSP.relHeightFeature-relHeightFeature);
+}
 
 /**
  * @brief SuperPixel::computeSiftFeature Calcola la SIFT feature del superpixel.

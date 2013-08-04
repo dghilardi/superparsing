@@ -19,8 +19,10 @@ class SuperPixel
 public:
     SuperPixel(vector<Pixel> &list, cv::Mat &srcImg);
     ~SuperPixel();
-    uint64 getMaskFeature();
-    int getMaskDistance(uint64 otherMask);
+    //uint64 getMaskFeature();
+    //int getMaskDistance(uint64 otherMask);
+    int getMaskDistance(SuperPixel &otherSP);
+    float getRelHeightDistance(SuperPixel &otherSP);
 };
 
 #endif // SUPERPIXEL_H
