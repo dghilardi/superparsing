@@ -15,7 +15,7 @@ QueryImage::QueryImage(string filename): image(filename) {
             segmented.at<uchar>(superPixels[i][j].y, superPixels[i][j].x) = 255*i/nSp;
         }
     }
-    //cout << "Distance: "<<superPixelList[3]->getMaskDistance(superPixelList[0]->getMaskFeature()) << endl;
+    cout << "Distance: mask: "<<superPixelList[3]->getMaskDistance(*superPixelList[0]) << "relHeight: " <<superPixelList[3]->getRelHeightDistance(*superPixelList[0])<< endl;
 
     cvNamedWindow("superPixels",2);
     imshow("superPixels",segmented);
