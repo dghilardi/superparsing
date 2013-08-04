@@ -2,6 +2,9 @@
 #include <opencv2/nonfree/nonfree.hpp>
 #include <opencv2/nonfree/features2d.hpp>
 #include <opencv/cv.hpp>
+#include "opencv2/core/core.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/highgui/highgui.hpp"
 #include <math.h>
 
 SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg): maskFeature(0){
@@ -15,29 +18,47 @@ SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg): maskFeature(0){
         if(list[i].y<minY) minY = list[i].y;
     }
 
-    //cout << maxX-minX+1 << "x" << maxY-minY+1 << endl;
-    superPixel = new cv::Mat(maxX-minX+1, maxY-minY+1, CV_8UC3, cv::Scalar(0));
-    mask = new cv::Mat(maxX-minX+1, maxY-minY+1, CV_8UC1, cv::Scalar(0));
-
+    //Ritaglio il superpixel dall'immagine originale
+    int dimX = maxX-minX+1;
+    int dimY = maxY-minY+1;
+    cv::Mat superPixelImg(dimY, dimX, CV_8UC3, cv::Scalar(0));
     for(uint i=0; i<list.size(); ++i){
         int x = list[i].x;
         int y = list[i].y;
-        //cout << y-minY << ", " << x-minX << "["<<maxY-minY+1<<"-"<<maxX-minX+1 <<"]"<<endl;
-        cv::Point3_<uchar> *src = srcImg.ptr<cv::Point3_<uchar> >(y,x);
-        cv::Point3_<uchar> *dst = superPixel->ptr<cv::Point3_<uchar> >(y-minY,x-minX);
-        //dst->x = src->x; //Linee necessarie ma danno problemi nell'esecuzione (pare scrivano in zone di memoria non destinate a loro)
-        //dst->y = src->y;
-        //dst->z = src->z;
-        //mask->at<uchar>(y-minY, x-minX) = 255;
+        cout<<"y: "<<y-minY<<"["<<dimY <<"] x:"<< x-minX<<"["<<dimX<<"]"<<endl;
+        cv::Point3_<uchar>* src = srcImg.ptr<cv::Point3_<uchar> >(y,x);
+        cv::Point3_<uchar>* dst = superPixelImg.ptr<cv::Point3_<uchar> >(y-minY,x-minX);
+        for(int j=0; j<3; ++j){
+            if(y-minY<0 || x-minX<0) throw;
+            if(y-minY>=superPixelImg.rows || x-minX>=superPixelImg.cols) throw;
+            superPixelImg.at<uchar>(y-minY,3*(x-minX)+j) = (uchar)10;//(uchar)srcImg.at<uchar>(y,3*x+j);
+            //superPixelImg.at<cv::Vec3b>(y-minY,x-minX)[0] = (uchar)250;
+        }
+        //superPixelImg.at<cv::Vec3b>(y-minY,x-minX)[0] = (uchar)srcImg.at<cv::Vec3b>(y,x)[0];
+        //superPixelImg.at<cv::Vec3b>(y-minY,x-minX)[1] = (uchar)srcImg.at<cv::Vec3b>(y,x)[1];
+        //superPixelImg.at<cv::Vec3b>(y-minY,x-minX)[2] = (uchar)srcImg.at<cv::Vec3b>(y,x)[2];
+        //dst->x=(uchar)src->x;
+        //dst->y=(uchar)src->y;
+        //dst->z=(uchar)src->z;
     }
+
+
+    cvNamedWindow("imgName.c_str()",2);
+    imshow("imgName.c_str()",superPixelImg);
+    cv::waitKey();
+
 
     computeMaskFeature(list, minX, minY, maxX, maxY);
     relHeightFeature = (srcImg.rows-minY)/(double)srcImg.rows;
+
+    computeSiftFeature(superPixelImg);
+    computeColorFeature(superPixelImg);
 }
 
 SuperPixel::~SuperPixel(){
-    delete superPixel;
-    delete mask;
+    delete HistSIFT[0];
+    delete HistSIFT[1];
+    delete HistSIFT[2];
 }
 
 /**
@@ -111,61 +132,33 @@ int SuperPixel::getMaskDistance(uint64 otherMask){
  * @param maxY: estremo del superpixel
  * @return puntatore all'array rappresentante l'istogramma degli orientamenti dei keypoints
  */
-int* SuperPixel::computeSiftFeature(vector<Pixel> &list, cv::Mat &srcImg, int minX, int minY, int maxX, int maxY){
-    //Ritaglio il superpixel dall'immagine originale
-    superPixel = new cv::Mat(maxX-minX+1, maxY-minY+1, CV_8UC3, cv::Scalar(0));
-    for(uint i=0; i<list.size(); ++i){
-        int x = list[i].x;
-        int y = list[i].y;
-        //cout << y-minY << ", " << x-minX << "["<<maxY-minY+1<<"-"<<maxX-minX+1 <<"]"<<endl;
-        cv::Point3_<uchar> *src = srcImg.ptr<cv::Point3_<uchar> >(y,x);
-        cv::Point3_<uchar> *dst = superPixel->ptr<cv::Point3_<uchar> >(y-minY,x-minX);
-        dst->x = src->x; //Linee necessarie ma danno problemi nell'esecuzione (pare scrivano in zone di memoria non destinate a loro)
-        dst->y = src->y;
-        dst->z = src->z;
-    }
-
+void SuperPixel::computeSiftFeature(cv::Mat &superPixelImg){
     //Individuo i Keypoints del superPixel usando SIFT
     cv::SiftFeatureDetector detector;
     std::vector<cv::KeyPoint> keypoints;
-    detector.detect(*superPixel,keypoints);
+    detector.detect(superPixelImg,keypoints);
 
     /*Calcolo istogramma quantizzato degli orientamenti dei gradienti.
      *Considero come istogramma un vettore di 100 posizioni, ognuna delle quali
      *rappresenta un intervallo di 36 gradi e contiene il numero di keypoints
      *aventi orientamento appartenente a tale intervallo
      */
-    int* hist;
-    hist = (int*) calloc(100, sizeof(int));
+    int* colorHist;
+    colorHist = (int*) calloc(100, sizeof(int));
 
     for(int i=0; i<100; i++){
-        hist[i]=0;
+        colorHist[i]=0;
     }
     for(int i=0; i<keypoints.size(); i++){
         int bucket = std::floor(keypoints[i].angle/(0.2*CV_PI));
-        hist[bucket]++;
+        colorHist[bucket]++;
     }
-
-    return hist;
 }
 
-cv::Mat* SuperPixel::computeColorFeature(vector<Pixel> &list, cv::Mat &srcImg, int minX, int minY, int maxX, int maxY){
-    //Ritaglio il superpixel dall'immagine originale
-    superPixel = new cv::Mat(maxX-minX+1, maxY-minY+1, CV_8UC3, cv::Scalar(0));
-    for(uint i=0; i<list.size(); ++i){
-        int x = list[i].x;
-        int y = list[i].y;
-        //cout << y-minY << ", " << x-minX << "["<<maxY-minY+1<<"-"<<maxX-minX+1 <<"]"<<endl;
-        cv::Point3_<uchar> *src = srcImg.ptr<cv::Point3_<uchar> >(y,x);
-        cv::Point3_<uchar> *dst = superPixel->ptr<cv::Point3_<uchar> >(y-minY,x-minX);
-        dst->x = src->x; //Linee necessarie ma danno problemi nell'esecuzione (pare scrivano in zone di memoria non destinate a loro)
-        dst->y = src->y;
-        dst->z = src->z;
-    }
-
+void SuperPixel::computeColorFeature(cv::Mat &superPixelImg){
     //Separo il superpixel in 3 canali RGB
     vector<cv::Mat> rgb_planes;
-    cv::split(*superPixel, rgb_planes);
+    cv::split(superPixelImg, rgb_planes);
     //Stabilisco il numero di bins e il range di valori
     int histSize = 11;
     float range[] = {0,256};
@@ -174,17 +167,18 @@ cv::Mat* SuperPixel::computeColorFeature(vector<Pixel> &list, cv::Mat &srcImg, i
     bool uniform = true;
     bool accumulate = false;
     //Istanzio i 3 istogrammi (1 per canale)
-    cv::Mat r_hist, g_hist, b_hist;
+    cv::Mat *r_hist, *g_hist, *b_hist;
+    r_hist = new cv::Mat;
+    g_hist = new cv::Mat;
+    b_hist = new cv::Mat;
     //Calcolo i 3 istogrammi
-    calcHist( &rgb_planes[0], 1, 0, cv::Mat(), b_hist, 1, &histSize, &histRange, uniform, accumulate );
-    calcHist( &rgb_planes[1], 1, 0, cv::Mat(), g_hist, 1, &histSize, &histRange, uniform, accumulate );
-    calcHist( &rgb_planes[2], 1, 0, cv::Mat(), r_hist, 1, &histSize, &histRange, uniform, accumulate );
+    calcHist( &rgb_planes[0], 1, 0, cv::Mat(), *b_hist, 1, &histSize, &histRange, uniform, accumulate );
+    calcHist( &rgb_planes[1], 1, 0, cv::Mat(), *g_hist, 1, &histSize, &histRange, uniform, accumulate );
+    calcHist( &rgb_planes[2], 1, 0, cv::Mat(), *r_hist, 1, &histSize, &histRange, uniform, accumulate );
     //Creo un array di array contenente i tre istogrammi e lo ritorno
-    cv::Mat* hists;
-    hists = (cv::Mat*) calloc(3, sizeof(cv::Mat));
-    hists[0] = r_hist;
-    hists[1] = g_hist;
-    hists[2] = b_hist;
-
-    return hists;
+    //cv::Mat* hists;
+    //hists = (cv::Mat*) calloc(3, sizeof(cv::Mat));
+    HistSIFT[0] = r_hist;
+    HistSIFT[1] = g_hist;
+    HistSIFT[2] = b_hist;
 }
