@@ -1,6 +1,7 @@
 #include "superpixel.h"
 #include <opencv2/nonfree/nonfree.hpp>
 #include <opencv2/nonfree/features2d.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 #include <opencv/cv.hpp>
 #include <math.h>
 
@@ -157,13 +158,33 @@ void SuperPixel::computeSiftFeature(cv::Mat &superPixelImg){
     //colorHist = (int*) calloc(128, sizeof(int));
 
     for(int i=0; i<100; i++){
-        siftHist[i]=0;
+        //siftHist[i,0]=0;
+        siftHist.at<int>(i)=0;
     }
     for(int i=0; i<keypoints.size(); i++){
         int bucket = std::floor(keypoints[i].angle/(36));
-        siftHist[bucket]++;
+        siftHist.at<int>(bucket)++;
     }
 }
+
+float SuperPixel::getSiftDistance(cv::Mat &datasetSuperPixel){
+    //Calcolo la SIFT feature del superpixel preso dal dataset
+    cv::SiftFeatureDetector detector;
+    std::vector<cv::KeyPoint> keypoints;
+    detector.detect(datasetSuperPixel,keypoints);
+    cv::MatND datasetSiftHist;
+    for(int i=0; i<100; i++){
+        datasetSiftHist.at<int>(i)=0;
+    }
+    for(int i=0; i<keypoints.size(); i++){
+        int bucket = std::floor(keypoints[i].angle/(36));
+        datasetSiftHist.at<int>(bucket)++;
+    }
+    //Calcolo la distanza in base alla correlazione dei due istogrammi
+    double distance = cv::compareHist(siftHist,datasetSiftHist,CV_COMP_CORREL);
+    return distance;
+}
+
 
 void SuperPixel::computeColorFeature(cv::Mat &superPixelImg){
     //Separo il superpixel in 3 canali RGB
