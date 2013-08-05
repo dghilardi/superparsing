@@ -29,11 +29,11 @@ SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg): maskFeature(0){
         dst->z=(uchar)src->z; //red
     }
 
-    /*
+
     cvNamedWindow("SUPERPIXEL",2);
     imshow("SUPERPIXEL",superPixelImg);
     cv::waitKey();
-    */
+
 
     computeMaskFeature(list, minX, minY, maxX, maxY);
     relHeightFeature = (srcImg.rows-minY)/(double)srcImg.rows;
@@ -46,6 +46,14 @@ SuperPixel::~SuperPixel(){
     delete colorHist[0];
     delete colorHist[1];
     delete colorHist[2];
+}
+
+int SuperPixel::getLabel(){
+    return label;
+}
+
+void SuperPixel::setLabel(int newLabel){
+    label = newLabel;
 }
 
 /**
@@ -62,6 +70,7 @@ void SuperPixel::computeMaskFeature(vector<Pixel> &pixelList, int minX, int minY
     for(uint i=0; i<pixelList.size(); ++i){
         int x = pixelList[i].x;
         int y = pixelList[i].y;
+        if(divisorX>0 && divisorY>0)
         bucket[(int)((x-minX)/divisorX)][(int)((y-minY)/divisorY)]++;
     }
 
@@ -84,7 +93,9 @@ void SuperPixel::computeMaskFeature(vector<Pixel> &pixelList, int minX, int minY
             }
             //bitset<64> bits(maskFeature);
             //cout << bits << endl;
+            //cout <<(i+j==0?"\n--":"")<<(j==0?"\n":"")<< ((bucket[i][j]>bucketSize/2)?(char)'\u2660':' ');
     }}
+
 }
 
 /*

@@ -2,7 +2,7 @@
 #include "queryimage.h"
 #include "opencv2/highgui/highgui.hpp"
 
-#define IMG_NAME "insidecity_art104"
+#define IMG_NAME "insidecity_art1161"
 
 using namespace std;
 
