@@ -7,22 +7,18 @@
 #include "queryimage.h"
 #include "superpixel.h"
 #include "classlikelihood.h"
-
-struct results {
-    ClassLikelihood mask;
-    ClassLikelihood relH;
-    ClassLikelihood quantSIFT;
-    ClassLikelihood colorHist;
-    results() : mask("mask"), relH("relH"), quantSIFT("quantSIFT"), colorHist("colorHist") {}
-};
+#include "globlikelihood.h"
+#include "retrimage.h"
 
 using namespace std;
 class RetrievalSet
 {
     vector<string> imgNames;
+    vector<GlobLikelihood *> matchResults;
+    void checkSuperPixel(SuperPixel *toLabel, SuperPixel *inSet, GlobLikelihood &spixelResults);
 public:
     RetrievalSet(vector<string> &names);
-    void LabelImg(QueryImage &toLabel);
+    void LabelImg(QueryImage &imgToLabel);
 };
 
 #endif // RETRIEVALSET_H

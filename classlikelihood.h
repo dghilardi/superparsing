@@ -4,6 +4,7 @@
 #include <map>
 #include <cmath>
 #include <string>
+#include <vector>
 
 using namespace std;
 class ClassLikelihood
@@ -13,8 +14,10 @@ class ClassLikelihood
     string featureName;
 public:
     ClassLikelihood(string feature);
-    static void incTotClass(int classID, string feature);
+    void incTotClass(int classID);
     void foundMatch(int classID);
     double getLogLikelihood(int classID);
+    int getLabelsNumber();
+    void getKeys(vector<int> &keys);
 };
 #endif // CLASSLIKELIHOOD_H
