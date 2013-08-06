@@ -8,8 +8,8 @@ ClassLikelihood::ClassLikelihood(string feature){
 
 map<string, map<int,int> > ClassLikelihood::totNum;
 
-void ClassLikelihood::incTotClass(int classID, string feature){
-    ++totNum[feature][classID];
+void ClassLikelihood::incTotClass(int classID){
+    ++totNum[featureName][classID];
 }
 
 void ClassLikelihood::foundMatch(int classID){
@@ -26,4 +26,12 @@ double ClassLikelihood::getLogLikelihood(int classID){
     double frac1 = (totNum[featureName][classID]+EPSILON)/(double)(totNotC+EPSILON);
     double frac2 = matchNotC/(double)numMatches[classID];
     return log(frac1*frac2);
+}
+
+int ClassLikelihood::getLabelsNumber(){
+    return totNum[featureName].size();
+}
+
+void ClassLikelihood::getKeys(vector<int> &keys){
+    for(map<int,int>::iterator it = totNum[featureName].begin(); it!=totNum[featureName].end(); ++it) keys.push_back(it->first);
 }

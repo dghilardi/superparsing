@@ -28,7 +28,8 @@ SOURCES += main.cpp \
     OpenCVGraphSegmentation/disjoint-set.cpp \
     superpixel.cpp \
     retrievalset.cpp \
-    classlikelihood.cpp
+    classlikelihood.cpp \
+    globlikelihood.cpp
 
 HEADERS += \
     geolabel.h \
@@ -37,5 +38,6 @@ HEADERS += \
     queryimage.h \
     superpixel.h \
     retrievalset.h \
-    classlikelihood.h
+    classlikelihood.h \
+    globlikelihood.h
 
