@@ -5,7 +5,7 @@
 #include <opencv/cv.hpp>
 #include <math.h>
 
-SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg): maskFeature(0), siftHist(1,100,CV_32SC1,cv::Scalar(0)){
+SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg): maskFeature(0), siftHist(1,100,CV_32F,cv::Scalar(0)){
     //Compute the bounding box of the superpixel
     int minX = list[0].x, minY = list[0].y;
     int maxX = minX, maxY = minY;
@@ -30,11 +30,11 @@ SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg): maskFeature(0), si
         dst->z=(uchar)src->z; //red
     }
 
-
+    /*
     cvNamedWindow("SUPERPIXEL",2);
     imshow("SUPERPIXEL",superPixelImg);
     cv::waitKey();
-
+    */
 
     computeMaskFeature(list, minX, minY, maxX, maxY);
     relHeightFeature = (srcImg.rows-minY)/(double)srcImg.rows;
@@ -163,7 +163,7 @@ void SuperPixel::computeSiftFeature(cv::Mat &superPixelImg){
     }*/
     for(int i=0; i<keypoints.size(); i++){
         int bucket = std::floor(keypoints[i].angle/(36));
-        siftHist.at<int>(0,bucket)++;
+        siftHist.at<float>(0,bucket)++;
     }
 }
 
