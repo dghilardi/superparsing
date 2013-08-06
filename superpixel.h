@@ -26,8 +26,8 @@ public:
     //int getMaskDistance(uint64 otherMask);
     int getMaskDistance(SuperPixel &otherSP);
     float getRelHeightDistance(SuperPixel &otherSP);
-    double getSiftDistance(cv::Mat &datasetSuperPixel);
-    double getColorDistance(cv::Mat &datasetSuperPixel);
+    double getSiftDistance(SuperPixel &otherSP);
+    double getColorDistance(SuperPixel &otherSP);
 };
 
 #endif // SUPERPIXEL_H
