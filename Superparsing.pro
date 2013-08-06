@@ -26,12 +26,16 @@ SOURCES += main.cpp \
     queryimage.cpp \
     OpenCVGraphSegmentation/Segmentation.cpp \
     OpenCVGraphSegmentation/disjoint-set.cpp \
-    superpixel.cpp
+    superpixel.cpp \
+    retrievalset.cpp \
+    classlikelihood.cpp
 
 HEADERS += \
     geolabel.h \
     image.h \
     retrimage.h \
     queryimage.h \
-    superpixel.h
+    superpixel.h \
+    retrievalset.h \
+    classlikelihood.h
 

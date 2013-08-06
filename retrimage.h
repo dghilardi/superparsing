@@ -17,6 +17,7 @@ class RetrImage
 public:
     RetrImage(string imgName);
     void show();
+    vector<SuperPixel *> *getSuperPixels();
 };
 
 #endif // RETRIMAGE_H
