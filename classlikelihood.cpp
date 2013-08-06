@@ -6,14 +6,14 @@ ClassLikelihood::ClassLikelihood(string feature){
     featureName = feature;
 }
 
-map<string, map<int,int> > ClassLikelihood::totNum; //Static declaration
+map<int,int> ClassLikelihood::totNum; //Static declaration
 
 /**
  * @brief ClassLikelihood::incTotClass increment the value of the times we found the label in the database
  * @param classID id of the label
  */
-void ClassLikelihood::incTotClass(int classID){ //Questa può forse essere cambiata per non tener conto della feature in considerazione...
-    ++totNum[featureName][classID];
+void ClassLikelihood::incTotClass(int classID){
+    ++totNum[classID];
 }
 
 /**
@@ -33,11 +33,11 @@ void ClassLikelihood::foundMatch(int classID){
 double ClassLikelihood::getLogLikelihood(int classID){
     int totNotC = 0;
     int matchNotC = 0;
-    for(map<int,int>::iterator it = totNum[featureName].begin(); it!=totNum[featureName].end(); ++it) totNotC+=it->second;
+    for(map<int,int>::iterator it = totNum.begin(); it!=totNum.end(); ++it) totNotC+=it->second;
     for(map<int,int>::iterator it = numMatches.begin(); it != numMatches.end(); ++it) matchNotC+=it->second;
-    totNotC -= totNum[featureName][classID];
+    totNotC -= totNum[classID];
     matchNotC -= numMatches[classID];
-    double frac1 = (totNum[featureName][classID]+EPSILON)/(double)(totNotC+EPSILON);
+    double frac1 = (totNum[classID]+EPSILON)/(double)(totNotC+EPSILON);
     double frac2 = matchNotC/(double)numMatches[classID];
     return log(frac1*frac2);
 }
@@ -47,7 +47,7 @@ double ClassLikelihood::getLogLikelihood(int classID){
  * @return Total number of labels present
  */
 int ClassLikelihood::getLabelsNumber(){
-    return totNum[featureName].size();
+    return totNum.size();
 }
 
 /**
@@ -55,5 +55,5 @@ int ClassLikelihood::getLabelsNumber(){
  * @param keys vector that will be filled
  */
 void ClassLikelihood::getKeys(vector<int> &keys){
-    for(map<int,int>::iterator it = totNum[featureName].begin(); it!=totNum[featureName].end(); ++it) keys.push_back(it->first);
+    for(map<int,int>::iterator it = totNum.begin(); it!=totNum.end(); ++it) keys.push_back(it->first);
 }

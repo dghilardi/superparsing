@@ -20,6 +20,7 @@ void RetrievalSet::LabelImg(QueryImage &imgToLabel){
         vector<SuperPixel *> *setImgSuperPixels = setImage.getSuperPixels();
         for(uint j=0; j<setImgSuperPixels->size(); ++j){
             SuperPixel *setSuperPixel = (*setImgSuperPixels)[j];
+            ClassLikelihood::incTotClass(setSuperPixel->getLabel());
             for(uint k=0; k<setSuperPixelsToLabel->size(); ++k){
                 //Per ogni superpixel dell'immagine calcolo i valori riguardanti il numero di match per ogni classe
                 SuperPixel *superPixelToLabel = (*setSuperPixelsToLabel)[k];
@@ -54,22 +55,18 @@ void RetrievalSet::checkSuperPixel(SuperPixel *toLabel, SuperPixel *inSet, GlobL
     int actualLabel = inSet->getLabel(); //Indice del label del superpixel preso dal dataset
 
     double maskDistance = toLabel->getMaskDistance(*inSet);
-    spixelResults.mask.incTotClass(actualLabel);
     if(maskDistance<tk_mask) spixelResults.mask.foundMatch(actualLabel);
     if(maskDistance<tk_mask) cout << "Found mask" << endl;
 
     double relHDistance = toLabel->getRelHeightDistance(*inSet);
-    spixelResults.relH.incTotClass(actualLabel);
     if(relHDistance<tk_relH) spixelResults.relH.foundMatch(actualLabel);
     if(relHDistance<tk_relH) cout << "found relh" << endl;
 
     double siftDistance = toLabel->getSiftDistance(*inSet);
-    spixelResults.quantSIFT.incTotClass(actualLabel);
     if(siftDistance<tk_sift) spixelResults.quantSIFT.foundMatch(actualLabel);
     if(abs(siftDistance)<tk_sift) cout << "found sift: "<<siftDistance << endl;
 
     double colDistance = toLabel->getColorDistance(*inSet);
-    spixelResults.colorHist.incTotClass(actualLabel);
     if(colDistance<tk_color) spixelResults.colorHist.foundMatch(actualLabel);
     if(abs(colDistance)<tk_color) cout << "found color: " <<colDistance<< endl;
 }

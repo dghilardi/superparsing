@@ -93,7 +93,7 @@ string GeoLabel::getLabel(int index){
     //Index out of vector size
     cerr << MSG_ERROR_LABEL_INDEX << index << endl;
     //throw ERROR_LABEL_INDEX;
-    return "";
+    return NO_LABEL;
 }
 
 void GeoLabel::viewLabeledImg(){
