@@ -1,5 +1,9 @@
 #include "globlikelihood.h"
 
+/**
+ * @brief GlobLikelihood::getBestLabel
+ * @return La migliore feature
+ */
 int GlobLikelihood::getBestLabel(){
     vector<int> keys;
     mask.getKeys(keys);
