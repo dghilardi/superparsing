@@ -12,7 +12,7 @@ class SuperPixel
     uint64 maskFeature;
     double relHeightFeature;
     cv::Mat *colorHist[3];
-    cv::MatND siftHist;
+    cv::Mat siftHist;
     int label;
     void computeMaskFeature(vector<Pixel> &pixelList, int minX, int minY, int maxX, int maxY);
     void computeSiftFeature(cv::Mat &superPixelImg);
