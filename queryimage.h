@@ -16,6 +16,8 @@ class QueryImage
 public:
     QueryImage(string filename);
     ~QueryImage();
+
+    vector<SuperPixel *> *getSuperPixels();
 };
 
 #endif // QUERYIMAGE_H

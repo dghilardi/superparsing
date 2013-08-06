@@ -26,3 +26,7 @@ QueryImage::~QueryImage(){
         delete superPixelList[i];
     }
 }
+
+vector<SuperPixel *> *QueryImage::getSuperPixels(){
+    return &superPixelList;
+}

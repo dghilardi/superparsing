@@ -53,3 +53,7 @@ void RetrImage::buildSuperPixels()
     }
 }
 
+
+vector<SuperPixel *> *RetrImage::getSuperPixels(){
+    return &superPixelList;
+}
