@@ -2,6 +2,10 @@
 
 #include <iostream>
 
+/**
+ * @brief QueryImage::QueryImage Costruttore della classe che si occupa di generare le feature per la query image
+ * @param filename Nome della query image
+ */
 QueryImage::QueryImage(string filename): image(filename) {
     IplImage iplimg = *(image.getImage());
     vector<vector<Pixel> > superPixels;
@@ -29,6 +33,9 @@ QueryImage::~QueryImage(){
     }
 }
 
+/**
+ * @brief QueryImage::getSuperPixels Metodo per ottenere il vettore di superpixel della queryimage
+ */
 vector<SuperPixel *> *QueryImage::getSuperPixels(){
     return &superPixelList;
 }

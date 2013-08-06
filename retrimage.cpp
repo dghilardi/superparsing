@@ -1,12 +1,24 @@
 #include "retrimage.h"
+
+/**
+ * @brief RetrImage::RetrImage Costruttore della classe che si occupa di elaborare un'immagine del retrieval set
+ * @param imgName Il nome dell'immagine del retrieval set
+ */
 RetrImage::RetrImage(string imgName): image(imgName), labeledImg(imgName) {
     buildSuperPixels();
 }
+
+/**
+ * @brief RetrImage::show
+ */
 void RetrImage::show(){
     labeledImg.viewLabeledImg();
     image.show();
 }
 
+/**
+ * @brief RetrImage::buildSuperPixels Metodo che estrapola i superpixel
+ */
 void RetrImage::buildSuperPixels()
 {
     list<pair<int,int> > toCheck;
@@ -53,7 +65,9 @@ void RetrImage::buildSuperPixels()
     }
 }
 
-
+/**
+ * @brief RetrImage::getSuperPixels Metodo per ottenere il vettore di superpixel
+ */
 vector<SuperPixel *> *RetrImage::getSuperPixels(){
     return &superPixelList;
 }
