@@ -18,6 +18,7 @@ public:
     RetrImage(string imgName);
     void show();
     vector<SuperPixel *> *getSuperPixels();
+    string matchLabel(int id);
 };
 
 #endif // RETRIMAGE_H

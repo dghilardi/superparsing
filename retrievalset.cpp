@@ -27,6 +27,8 @@ void RetrievalSet::LabelImg(QueryImage &imgToLabel){
     for(uint k=0; k<setSuperPixelsToLabel->size(); ++k){
         SuperPixel *superPixelToLabel = (*setSuperPixelsToLabel)[k];
         superPixelToLabel->setLabel(matchResults[k]->getBestLabel());
+        RetrImage tmp(imgNames[0]);
+        cout << "Assign: " << tmp.matchLabel(matchResults[k]->getBestLabel()) << endl;
     }
 
     for(int i=0; i<matchResults.size(); ++i) delete matchResults[i];
@@ -39,23 +41,27 @@ void RetrievalSet::LabelImg(QueryImage &imgToLabel){
  * @param spixelResults
  */
 void RetrievalSet::checkSuperPixel(SuperPixel *toLabel, SuperPixel *inSet, GlobLikelihood &spixelResults){
-    double tk_mask=10, tk_relH=0.2, tk_sift=1, tk_color=1;
+    double tk_mask=10, tk_relH=0.1, tk_sift=0.2, tk_color=0.2;
 
     int actualLabel = inSet->getLabel();
 
     double maskDistance = toLabel->getMaskDistance(*inSet);
     spixelResults.mask.incTotClass(actualLabel);
     if(maskDistance<tk_mask) spixelResults.mask.foundMatch(actualLabel);
+    if(maskDistance<tk_mask) cout << "Found mask" << endl;
 
     double relHDistance = toLabel->getRelHeightDistance(*inSet);
     spixelResults.relH.incTotClass(actualLabel);
     if(relHDistance<tk_relH) spixelResults.relH.foundMatch(actualLabel);
+    if(relHDistance<tk_relH) cout << "found relh" << endl;
 
     double siftDistance = toLabel->getSiftDistance(*inSet);
     spixelResults.quantSIFT.incTotClass(actualLabel);
     if(siftDistance<tk_sift) spixelResults.quantSIFT.foundMatch(actualLabel);
+    if(abs(siftDistance)<tk_sift) cout << "found sift: "<<siftDistance << endl;
 
     double colDistance = toLabel->getColorDistance(*inSet);
     spixelResults.colorHist.incTotClass(actualLabel);
     if(colDistance<tk_color) spixelResults.colorHist.foundMatch(actualLabel);
+    if(abs(colDistance)<tk_color) cout << "found color: " <<colDistance<< endl;
 }
