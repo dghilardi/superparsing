@@ -4,6 +4,10 @@ RetrievalSet::RetrievalSet(vector<string> &names) : imgNames(names), matchResult
 {
 }
 
+/**
+ * @brief RetrievalSet::LabelImg Insert label for the given image
+ * @param imgToLabel segmented image in which it will insert labels
+ */
 void RetrievalSet::LabelImg(QueryImage &imgToLabel){
     //Recupero il vettore di superpixel della query image
     vector<SuperPixel *> *setSuperPixelsToLabel = imgToLabel.getSuperPixels();
@@ -17,33 +21,37 @@ void RetrievalSet::LabelImg(QueryImage &imgToLabel){
         for(uint j=0; j<setImgSuperPixels->size(); ++j){
             SuperPixel *setSuperPixel = (*setImgSuperPixels)[j];
             for(uint k=0; k<setSuperPixelsToLabel->size(); ++k){
-                //Ad ogni superpixel della query image assegno un'etichetta
+                //Per ogni superpixel dell'immagine calcolo i valori riguardanti il numero di match per ogni classe
                 SuperPixel *superPixelToLabel = (*setSuperPixelsToLabel)[k];
                 checkSuperPixel(superPixelToLabel, setSuperPixel, *(matchResults[k]));
             }
         }
     }
 
+    //Ad ogni superpixel assegno la label col valore migliore
     for(uint k=0; k<setSuperPixelsToLabel->size(); ++k){
         SuperPixel *superPixelToLabel = (*setSuperPixelsToLabel)[k];
         superPixelToLabel->setLabel(matchResults[k]->getBestLabel());
+        //Necessarie solo per stampare
         RetrImage tmp(imgNames[0]);
         cout << "Assign: " << tmp.matchLabel(matchResults[k]->getBestLabel()) << endl;
     }
 
+    //Libero la memoria
     for(int i=0; i<matchResults.size(); ++i) delete matchResults[i];
 }
 
 /**
- * @brief RetrievalSet::checkSuperPixel
+ * @brief RetrievalSet::checkSuperPixel Compute the distance of two superpixels given within all the features and saves results
  * @param toLabel Superpixel da etichettare
  * @param inSet Superpixel preso da un'immagine del rertieval set
- * @param spixelResults
+ * @param spixelResults Instance of the class (relative for the superpixel to label) which takes count
+ *                      of the number of match for each feature, each class and total number of superpixels per class
  */
 void RetrievalSet::checkSuperPixel(SuperPixel *toLabel, SuperPixel *inSet, GlobLikelihood &spixelResults){
-    double tk_mask=10, tk_relH=0.1, tk_sift=0.2, tk_color=0.2;
+    double tk_mask=10, tk_relH=0.1, tk_sift=0.2, tk_color=0.2; //Valori casuali solo per provare
 
-    int actualLabel = inSet->getLabel();
+    int actualLabel = inSet->getLabel(); //Indice del label del superpixel preso dal dataset
 
     double maskDistance = toLabel->getMaskDistance(*inSet);
     spixelResults.mask.incTotClass(actualLabel);

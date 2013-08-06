@@ -1,7 +1,7 @@
 #include "globlikelihood.h"
 
 /**
- * @brief GlobLikelihood::getBestLabel
+ * @brief GlobLikelihood::getBestLabel For each label compute the sum of the log of the probability that the superpixel is in that class and return the greatest value
  * @return La migliore feature
  */
 int GlobLikelihood::getBestLabel(){
