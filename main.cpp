@@ -12,6 +12,9 @@ int main(){
     retrievalSet.push_back("street_par36");
     retrievalSet.push_back("street_par42");
     retrievalSet.push_back("street_par49");
+    retrievalSet.push_back("street_par52");
+    retrievalSet.push_back("street_par54");
+    retrievalSet.push_back("street_par59");
     QueryImage queryImg(IMG_NAME);
     RetrievalSet db(retrievalSet);
     db.LabelImg(queryImg);

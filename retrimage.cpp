@@ -71,3 +71,7 @@ void RetrImage::buildSuperPixels()
 vector<SuperPixel *> *RetrImage::getSuperPixels(){
     return &superPixelList;
 }
+
+string RetrImage::matchLabel(int id){
+    return labeledImg.getLabel(id);
+}
