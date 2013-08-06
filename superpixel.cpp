@@ -36,7 +36,7 @@ SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg): maskFeature(0), si
     cv::waitKey();
     */
 
-    computeMaskFeature(list, minX, minY, maxX, maxY);
+   // computeMaskFeature(list, minX, minY, maxX, maxY);
     relHeightFeature = (srcImg.rows-minY)/(double)srcImg.rows;
 
     computeSiftFeature(superPixelImg);
