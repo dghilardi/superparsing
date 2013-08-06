@@ -169,28 +169,19 @@ void SuperPixel::computeSiftFeature(cv::Mat &superPixelImg){
 
 /**
  * @brief SuperPixel::getSiftDistance Calcola la distanza della SIFT feature
- * @param datasetSuperPixel Il superpixel preso dal dataset
+ * @param otherSP Il superpixel rispetto al quale calcolare la distanza
  * @return La misura della distanza
  */
-double SuperPixel::getSiftDistance(cv::Mat &datasetSuperPixel){
-    //Calcolo la SIFT feature del superpixel preso dal dataset
-    cv::SiftFeatureDetector detector;
-    std::vector<cv::KeyPoint> keypoints;
-    detector.detect(datasetSuperPixel,keypoints);
-    cv::MatND datasetSiftHist;
-    for(int i=0; i<100; i++){
-        datasetSiftHist.at<int>(i)=0;
-    }
-    for(int i=0; i<keypoints.size(); i++){
-        int bucket = std::floor(keypoints[i].angle/(36));
-        datasetSiftHist.at<int>(bucket)++;
-    }
+double SuperPixel::getSiftDistance(SuperPixel &otherSP){
     //Calcolo la distanza in base alla correlazione dei due istogrammi
-    double distance = cv::compareHist(siftHist,datasetSiftHist,CV_COMP_CORREL);
+    double distance = cv::compareHist(siftHist,otherSP.siftHist,CV_COMP_CORREL);
     return distance;
 }
 
-
+/**
+ * @brief SuperPixel::computeColorFeature Calcola la Color feature
+ * @param superPixelImg Matrice contenente il superpixel
+ */
 void SuperPixel::computeColorFeature(cv::Mat &superPixelImg){
     //Separo il superpixel in 3 canali RGB
     vector<cv::Mat> rgb_planes;
@@ -219,27 +210,16 @@ void SuperPixel::computeColorFeature(cv::Mat &superPixelImg){
     colorHist[2] = b_hist;
 }
 
-double SuperPixel::getColorDistance(cv::Mat &datasetSuperPixel){
-    //Calcolo i 3 istogrammi relativi al superpixel del dataset
-    vector<cv::Mat> rgb_planes;
-    cv::split(datasetSuperPixel, rgb_planes);
-    int histSize = 11;
-    float range[] = {0,256};
-    const float* histRange = {range};
-    bool uniform = true;
-    bool accumulate = false;
-    cv::Mat *r_hist, *g_hist, *b_hist;
-    r_hist = new cv::Mat;
-    g_hist = new cv::Mat;
-    b_hist = new cv::Mat;
-    calcHist( &rgb_planes[0], 1, 0, cv::Mat(), *b_hist, 1, &histSize, &histRange, uniform, accumulate );
-    calcHist( &rgb_planes[1], 1, 0, cv::Mat(), *g_hist, 1, &histSize, &histRange, uniform, accumulate );
-    calcHist( &rgb_planes[2], 1, 0, cv::Mat(), *r_hist, 1, &histSize, &histRange, uniform, accumulate );
-
+/**
+ * @brief SuperPixel::getColorDistance Calcola la distanza della Color feature
+ * @param otherSP Il superpixel rispetto al quale calcolare la distanza
+ * @return La misura della distanza
+ */
+double SuperPixel::getColorDistance(SuperPixel &otherSP){
     //Calcolo la distanza in base alla correlazione dei due istogrammi
-    double dist_r = cv::compareHist(*colorHist[0],*r_hist,CV_COMP_CORREL);
-    double dist_g = cv::compareHist(*colorHist[1],*g_hist,CV_COMP_CORREL);
-    double dist_b = cv::compareHist(*colorHist[2],*b_hist,CV_COMP_CORREL);
+    double dist_r = cv::compareHist(*colorHist[0],*otherSP.colorHist[0],CV_COMP_CORREL);
+    double dist_g = cv::compareHist(*colorHist[1],*otherSP.colorHist[1],CV_COMP_CORREL);
+    double dist_b = cv::compareHist(*colorHist[2],*otherSP.colorHist[2],CV_COMP_CORREL);
     double avg = (dist_r+dist_g+dist_b)/3.0;
     return avg;
 }
