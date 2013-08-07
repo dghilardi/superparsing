@@ -13,6 +13,7 @@ class SuperPixel
     double relHeightFeature;
     cv::Mat *colorHist[3];
     cv::Mat siftHist;
+    cv::Mat superPixelImg;
     int label;
     void computeMaskFeature(vector<Pixel> &pixelList, int minX, int minY, int maxX, int maxY);
     void computeSiftFeature(cv::Mat &superPixelImg);
@@ -28,6 +29,7 @@ public:
     float getRelHeightDistance(SuperPixel &otherSP);
     double getSiftDistance(SuperPixel &otherSP);
     double getColorDistance(SuperPixel &otherSP);
+    void show();
 };
 
 #endif // SUPERPIXEL_H

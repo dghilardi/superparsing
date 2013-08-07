@@ -19,7 +19,9 @@ SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg): maskFeature(0), si
     //Ritaglio il superpixel dall'immagine originale
     int dimX = maxX-minX+1;
     int dimY = maxY-minY+1;
-    cv::Mat superPixelImg(dimY, dimX, CV_8UC3, cv::Scalar::all(0));
+    //cv::Mat superPixelImg(dimY, dimX, CV_8UC3, cv::Scalar::all(0));
+    superPixelImg.create(dimY, dimX, CV_8UC3);
+    superPixelImg.setTo(cv::Scalar::all(0));
     for(uint i=0; i<list.size(); ++i){
         int x = list[i].x;
         int y = list[i].y;
@@ -222,5 +224,11 @@ double SuperPixel::getColorDistance(SuperPixel &otherSP){
     double dist_b = cv::compareHist(*colorHist[2],*otherSP.colorHist[2],CV_COMP_CORREL);
     double avg = (dist_r+dist_g+dist_b)/3.0;
     return avg;
+}
+
+void SuperPixel::show(){
+    cvNamedWindow("SUPERPIXEL",2);
+    imshow("SUPERPIXEL",superPixelImg);
+    cv::waitKey();
 }
 
