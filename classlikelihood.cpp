@@ -37,8 +37,8 @@ double ClassLikelihood::getLogLikelihood(int classID){
     for(map<int,int>::iterator it = numMatches.begin(); it != numMatches.end(); ++it) matchNotC+=it->second;
     totNotC -= totNum[classID];
     matchNotC -= numMatches[classID];
-    double frac1 = (totNum[classID]+EPSILON)/(double)(totNotC+EPSILON);
-    double frac2 = matchNotC/(double)numMatches[classID];
+    double frac1 = totNotC/totNum[classID];
+    double frac2 = (numMatches[classID]+EPSILON)/(double)(matchNotC+EPSILON);
     return log(frac1*frac2);
 }
 
