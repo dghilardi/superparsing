@@ -27,15 +27,20 @@ void RetrievalSet::LabelImg(QueryImage &imgToLabel){
                 checkSuperPixel(superPixelToLabel, setSuperPixel, *(matchResults[k]));
             }
         }
+        cout.flush();
+        cout << (i*100/imgNames.size()) <<"%"<< "\r";
     }
+    //Necessario solo per stampare
+    RetrImage tmp(imgNames[0]);
 
     //Ad ogni superpixel assegno la label col valore migliore
     for(uint k=0; k<setSuperPixelsToLabel->size(); ++k){
         SuperPixel *superPixelToLabel = (*setSuperPixelsToLabel)[k];
         superPixelToLabel->setLabel(matchResults[k]->getBestLabel());
+
         //Necessarie solo per stampare
-        RetrImage tmp(imgNames[0]);
         cout << "Assign: " << tmp.matchLabel(matchResults[k]->getBestLabel()) << endl;
+        superPixelToLabel->show();
     }
 
     //Libero la memoria
@@ -56,17 +61,17 @@ void RetrievalSet::checkSuperPixel(SuperPixel *toLabel, SuperPixel *inSet, GlobL
 
     double maskDistance = toLabel->getMaskDistance(*inSet);
     if(maskDistance<tk_mask) spixelResults.mask.foundMatch(actualLabel);
-    if(maskDistance<tk_mask) cout << "Found mask" << endl;
+    //if(maskDistance<tk_mask) cout << "Found mask" << endl;
 
     double relHDistance = toLabel->getRelHeightDistance(*inSet);
     if(relHDistance<tk_relH) spixelResults.relH.foundMatch(actualLabel);
-    if(relHDistance<tk_relH) cout << "found relh" << endl;
+    //if(relHDistance<tk_relH) cout << "found relh" << endl;
 
     double siftDistance = toLabel->getSiftDistance(*inSet);
     if(siftDistance<tk_sift) spixelResults.quantSIFT.foundMatch(actualLabel);
-    if(abs(siftDistance)<tk_sift) cout << "found sift: "<<siftDistance << endl;
+    //if(abs(siftDistance)<tk_sift) cout << "found sift: "<<siftDistance << endl;
 
     double colDistance = toLabel->getColorDistance(*inSet);
     if(colDistance<tk_color) spixelResults.colorHist.foundMatch(actualLabel);
-    if(abs(colDistance)<tk_color) cout << "found color: " <<colDistance<< endl;
+    //if(abs(colDistance)<tk_color) cout << "found color: " <<colDistance<< endl;
 }
