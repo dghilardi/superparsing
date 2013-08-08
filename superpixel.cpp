@@ -38,11 +38,11 @@ SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg): maskFeature(0), si
     cv::waitKey();
     */
 
-   // computeMaskFeature(list, minX, minY, maxX, maxY);
+    computeMaskFeature(list, minX, minY, maxX, maxY);
     relHeightFeature = (srcImg.rows-minY)/(double)srcImg.rows;
 
     computeSiftFeature(superPixelImg);
-    computeColorFeature(superPixelImg);
+    computeColorFeature(superPixelImg);;
 }
 
 SuperPixel::~SuperPixel(){
@@ -66,15 +66,18 @@ void SuperPixel::computeMaskFeature(vector<Pixel> &pixelList, int minX, int minY
     //Parameters for the computation of the mask-feature
     int dimX = maxX-minX;
     int dimY = maxY-minY;
-    double divisorX = dimX/(double)8, divisorY=dimY/(double)8;
+    double divisorX = (dimX+0.00001)/(double)8, divisorY=(dimY+0.00001)/(double)8;
     int bucket[8][8] = {0};
 
     //Fill buckets to check if a cell of the feature will be considered set or unset
     for(uint i=0; i<pixelList.size(); ++i){
         int x = pixelList[i].x;
         int y = pixelList[i].y;
+        int posx = (int)((x-minX)/divisorX);
+        int posy = (int)((y-minY)/divisorY);
+
         if(divisorX>0 && divisorY>0)
-        bucket[(int)((x-minX)/divisorX)][(int)((y-minY)/divisorY)]++;
+            bucket[posx][posy]++;
     }
 
     for(int i=0; i<8; ++i){ for(int j=0; j<8; ++j){
@@ -130,6 +133,7 @@ int SuperPixel::getMaskDistance(uint64 otherMask){
 int SuperPixel::getMaskDistance(SuperPixel &otherSP){
     int distance = 0;
     uint64 axorb = otherSP.maskFeature^maskFeature;
+    //cout << maskFeature << " XOR " << otherSP.maskFeature << " = " << axorb << endl;
     while(axorb){
       distance++;
       axorb &= axorb-1;
