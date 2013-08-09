@@ -39,3 +39,19 @@ QueryImage::~QueryImage(){
 vector<SuperPixel *> *QueryImage::getSuperPixels(){
     return &superPixelList;
 }
+
+/**
+ * @brief QueryImage::showLabeling Show the labeling made to the current image
+ */
+void QueryImage::showLabeling(){
+    cv::Mat labeledImage(image.getImage()->size(), CV_8UC1, cv::Scalar::all(0));
+    for(uint i=0; i<superPixelList.size(); ++i){
+        superPixelList[i]->printToMat(labeledImage);
+    }
+    cvNamedWindow("LABELED IMAGE",2);
+    imshow("LABELED IMAGE",labeledImage);
+}
+
+void QueryImage::showSrc(){
+    image.show();
+}

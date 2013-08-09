@@ -14,6 +14,7 @@ class SuperPixel
     cv::Mat *colorHist[3];
     cv::Mat siftHist;
     cv::Mat superPixelImg;
+    vector<Pixel> pixelCoordList;
     int label;
     void computeMaskFeature(vector<Pixel> &pixelList, int minX, int minY, int maxX, int maxY);
     void computeSiftFeature(cv::Mat &superPixelImg);
@@ -30,6 +31,7 @@ public:
     double getSiftDistance(SuperPixel &otherSP);
     double getColorDistance(SuperPixel &otherSP);
     void show();
+    void printToMat(cv::Mat &result);
 };
 
 #endif // SUPERPIXEL_H

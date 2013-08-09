@@ -5,7 +5,7 @@
 #include <opencv/cv.hpp>
 #include <math.h>
 
-SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg): maskFeature(0), siftHist(1,100,CV_32F,cv::Scalar(0)){
+SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg): maskFeature(0), siftHist(1,100,CV_32F,cv::Scalar(0)), pixelCoordList(list), label(-1){
     //Compute the bounding box of the superpixel
     int minX = list[0].x, minY = list[0].y;
     int maxX = minX, maxY = minY;
@@ -104,27 +104,6 @@ void SuperPixel::computeMaskFeature(vector<Pixel> &pixelList, int minX, int minY
 
 }
 
-/*
-uint64 SuperPixel::getMaskFeature(){
-    return maskFeature;
-}
-
-/**
- * @brief SuperPixel::getMaskDistance Compute the distance between two 64-bit masks
- * @param otherMask the mask to confront with
- * @return The number of different cells in the mask
- *./
-int SuperPixel::getMaskDistance(uint64 otherMask){
-    int distance = 0;
-    uint64 axorb = otherMask^maskFeature;
-    while(axorb){
-      distance++;
-      axorb &= axorb-1;
-    }
-    return distance;
-}
-*/
-
 /**
  * @brief SuperPixel::getMaskDistance Compute the shape-distance between two SuperPixels
  * @param otherSP The SuperPixel to confront with
@@ -167,7 +146,7 @@ void SuperPixel::computeSiftFeature(cv::Mat &superPixelImg){
         //siftHist[i,0]=0;
         siftHist.at<int>(0,i)=0;
     }*/
-    for(int i=0; i<keypoints.size(); i++){
+    for(uint i=0; i<keypoints.size(); i++){
         int bucket = std::floor(keypoints[i].angle/(36));
         siftHist.at<float>(0,bucket)++;
     }
@@ -234,5 +213,20 @@ void SuperPixel::show(){
     cvNamedWindow("SUPERPIXEL",2);
     imshow("SUPERPIXEL",superPixelImg);
     cv::waitKey();
+}
+
+/**
+ * @brief SuperPixel::printToMat Print to the given cv::Mat the region regarding the superpixel
+ * @param result destination cv::Mat
+ */
+void SuperPixel::printToMat(cv::Mat &result){
+    if(label==-1){
+        cerr << "ERROR! the superPixel hasn't set a label" << endl;
+        throw 1;
+    }else{
+        for(uint i=0; i<pixelCoordList.size(); ++i){
+            result.at<uchar>(pixelCoordList[i].y, pixelCoordList[i].x) = (uchar)255*label/33;
+        }
+    }
 }
 

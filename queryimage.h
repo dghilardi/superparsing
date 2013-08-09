@@ -18,6 +18,8 @@ public:
     ~QueryImage();
 
     vector<SuperPixel *> *getSuperPixels();
+    void showLabeling();
+    void showSrc();
 };
 
 #endif // QUERYIMAGE_H
