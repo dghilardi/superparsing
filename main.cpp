@@ -3,7 +3,7 @@
 #include "retrievalset.h"
 #include "opencv2/highgui/highgui.hpp"
 
-#define IMG_NAME "street_par33"
+#define IMG_NAME "street_a205062"
 
 using namespace std;
 
@@ -57,7 +57,7 @@ int main(){
     retrievalSet.push_back("street_art976");
     retrievalSet.push_back("street_artc14");
     retrievalSet.push_back("street_artc27");
-    retrievalSet.push_back("street_bost104");
+    /*retrievalSet.push_back("street_bost104");
     retrievalSet.push_back("street_bost105");
     retrievalSet.push_back("street_bost111");
     retrievalSet.push_back("street_bost121");
@@ -158,7 +158,7 @@ int main(){
     retrievalSet.push_back("street_hexp29");
     retrievalSet.push_back("street_hexp30");
     retrievalSet.push_back("street_hexp3");
-    retrievalSet.push_back("street_hexp4");
+    retrievalSet.push_back("street_hexp4");*/
     retrievalSet.push_back("street_land767");
     retrievalSet.push_back("street_par100");
     retrievalSet.push_back("street_par101");
@@ -247,7 +247,7 @@ int main(){
     retrievalSet.push_back("street_par95");
     retrievalSet.push_back("street_par97");
     retrievalSet.push_back("street_par99");
-    retrievalSet.push_back("street_par9");
+    retrievalSet.push_back("street_par9");/*
     retrievalSet.push_back("street_street110");
     retrievalSet.push_back("street_street22");
     retrievalSet.push_back("street_street27");
@@ -300,7 +300,7 @@ int main(){
     retrievalSet.push_back("street_urban954");
     retrievalSet.push_back("street_urban976");
     retrievalSet.push_back("street_urban996");
-    retrievalSet.push_back("street_urban997");
+    retrievalSet.push_back("street_urban997");*/
     QueryImage queryImg(IMG_NAME);
     RetrievalSet db(retrievalSet);
     db.LabelImg(queryImg);
