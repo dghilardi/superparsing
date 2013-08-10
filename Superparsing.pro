@@ -39,5 +39,6 @@ HEADERS += \
     superpixel.h \
     retrievalset.h \
     classlikelihood.h \
-    globlikelihood.h
+    globlikelihood.h \
+    debugHeader.h
 

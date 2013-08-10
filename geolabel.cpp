@@ -59,7 +59,7 @@ GeoLabel::GeoLabel(string filename){
             free(cell);
         }
     }
-    for(int i=0; i<labels.size(); ++i) cout << 255*i/33 <<" - "<< *(labels[i]) << endl;
+    for(int i=0; i<labels.size(); ++i) cout <<(i+1)<<" -> " <<255*(i+1)/33 <<" - "<< *(labels[i]) << endl;
     if(matVar==NULL || resultLoadFile!=0){
         cerr << "ERROR! impossible to load"<< (resultLoadFile!=0?" from":"") <<" file" << endl;
         throw ERROR_LOADING_MAT;
