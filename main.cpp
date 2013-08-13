@@ -3,13 +3,13 @@
 #include "retrievalset.h"
 #include "opencv2/highgui/highgui.hpp"
 
-#define IMG_NAME "street_a205062"
+#define IMG_NAME "street_art1162"
 
 using namespace std;
 
 int main(){
     vector<string> retrievalSet;
-    retrievalSet.push_back("street_a205062");
+    /*retrievalSet.push_back("street_a205062");
     retrievalSet.push_back("street_a232022");
     retrievalSet.push_back("street_a281067");
     retrievalSet.push_back("street_a714064");
@@ -19,7 +19,7 @@ int main(){
     retrievalSet.push_back("street_art1041");
     retrievalSet.push_back("street_art1162");
     retrievalSet.push_back("street_art1187");
-    retrievalSet.push_back("street_art1199");
+    retrievalSet.push_back("street_art1199");*/
     retrievalSet.push_back("street_art1206");
     retrievalSet.push_back("street_art1328");
     retrievalSet.push_back("street_art1583");
@@ -49,7 +49,7 @@ int main(){
     retrievalSet.push_back("street_art799");
     retrievalSet.push_back("street_art838");
     retrievalSet.push_back("street_art861");
-    retrievalSet.push_back("street_art862");
+    /*retrievalSet.push_back("street_art862");
     retrievalSet.push_back("street_art869");
     retrievalSet.push_back("street_art880");
     retrievalSet.push_back("street_art923");
@@ -57,7 +57,7 @@ int main(){
     retrievalSet.push_back("street_art976");
     retrievalSet.push_back("street_artc14");
     retrievalSet.push_back("street_artc27");
-    /*retrievalSet.push_back("street_bost104");
+    retrievalSet.push_back("street_bost104");
     retrievalSet.push_back("street_bost105");
     retrievalSet.push_back("street_bost111");
     retrievalSet.push_back("street_bost121");
@@ -158,7 +158,7 @@ int main(){
     retrievalSet.push_back("street_hexp29");
     retrievalSet.push_back("street_hexp30");
     retrievalSet.push_back("street_hexp3");
-    retrievalSet.push_back("street_hexp4");*/
+    retrievalSet.push_back("street_hexp4");
     retrievalSet.push_back("street_land767");
     retrievalSet.push_back("street_par100");
     retrievalSet.push_back("street_par101");
@@ -247,7 +247,7 @@ int main(){
     retrievalSet.push_back("street_par95");
     retrievalSet.push_back("street_par97");
     retrievalSet.push_back("street_par99");
-    retrievalSet.push_back("street_par9");/*
+    retrievalSet.push_back("street_par9");
     retrievalSet.push_back("street_street110");
     retrievalSet.push_back("street_street22");
     retrievalSet.push_back("street_street27");

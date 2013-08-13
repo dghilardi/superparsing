@@ -99,8 +99,9 @@ void SuperPixel::computeMaskFeature(vector<Pixel> &pixelList, int minX, int minY
             }
             //bitset<64> bits(maskFeature);
             //cout << bits << endl;
-            //cout <<(i+j==0?"\n--":"")<<(j==0?"\n":"")<< ((bucket[i][j]>bucketSize/2)?(char)'\u2660':' ');
+            //cout <<(i+j==0?"\n--":"") << (j==0?"\n":"") << ((bucket[j][i]>bucketSize/2)?(char)'#':' ');
     }}
+    //show();
 
 }
 
@@ -116,6 +117,14 @@ int SuperPixel::getMaskDistance(SuperPixel &otherSP){
     while(axorb){
       distance++;
       axorb &= axorb-1;
+    }
+    bitset<64> one(maskFeature), two(otherSP.maskFeature);
+    cout << one << endl << two << endl <<distance<<endl << endl;
+    if(distance<10){
+        show();
+        cv::waitKey();
+        otherSP.show();
+        cv::waitKey();
     }
     return distance;
 }
@@ -224,8 +233,9 @@ void SuperPixel::printToMat(cv::Mat &result){
         cerr << "ERROR! the superPixel hasn't set a label" << endl;
         throw 1;
     }else{
+        cout <<"Label: " <<label << endl;
         for(uint i=0; i<pixelCoordList.size(); ++i){
-            result.at<uchar>(pixelCoordList[i].y, pixelCoordList[i].x) = (uchar)255*label/33;
+            result.at<uchar>(pixelCoordList[i].y, pixelCoordList[i].x) = (uchar)label;
         }
     }
 }

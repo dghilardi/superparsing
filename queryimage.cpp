@@ -66,6 +66,7 @@ void QueryImage::showSrc(){
 
 double QueryImage::checkResults(){
     cv::Mat resultingImg;
+    cv::Mat difference(image.getImage()->size(), CV_8UC1, cv::Scalar::all(0));
     buildObtainedMat(resultingImg);
     GeoLabel correctLabeling(imgName);
     //Check that the two Mat have the same size
@@ -73,6 +74,9 @@ double QueryImage::checkResults(){
     int diff = 0;
     for(int x=0; x<resultingImg.cols; ++x){ for(int y=0; y<resultingImg.rows; ++y){
             if(resultingImg.at<uchar>(y,x)!=(uchar)correctLabeling.getLabeledImg()->at<short>(y,x)) ++diff;
+            else difference.at<uchar>(y,x) = 255;
     }}
+    cvNamedWindow("DIFFERENCE", 2);
+    imshow("DIFFERENCE", difference);
     return diff/(double)(resultingImg.rows*resultingImg.cols);
 }
