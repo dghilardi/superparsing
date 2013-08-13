@@ -1,6 +1,6 @@
 #include "classlikelihood.h"
 
-#define EPSILON 0.1
+#define EPSILON 0.01
 
 ClassLikelihood::ClassLikelihood(string feature){
     featureName = feature;
