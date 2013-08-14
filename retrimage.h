@@ -3,6 +3,8 @@
 
 #include <list>
 
+#include "debugHeader.h"
+
 #include "image.h"
 #include "geolabel.h"
 #include "OpenCVGraphSegmentation/Segmentation.h"

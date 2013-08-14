@@ -3,7 +3,7 @@
 
 #include <opencv2/highgui/highgui.hpp>
 #include <bitset>
-
+#include <set>
 #include "OpenCVGraphSegmentation/Segmentation.h"
 
 using namespace std;
@@ -15,6 +15,7 @@ class SuperPixel
     cv::Mat siftHist;
     cv::Mat superPixelImg;
     vector<Pixel> pixelCoordList;
+    set<SuperPixel *> adiacentsSet;
     int label;
     void computeMaskFeature(vector<Pixel> &pixelList, int minX, int minY, int maxX, int maxY);
     void computeSiftFeature(cv::Mat &superPixelImg);
@@ -32,6 +33,7 @@ public:
     double getColorDistance(SuperPixel &otherSP);
     void show();
     void printToMat(cv::Mat &result);
+    void appendAdiacent(SuperPixel *toAppend);
 };
 
 #endif // SUPERPIXEL_H
