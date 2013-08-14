@@ -28,7 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 
 // minimum number of pixels for an individual blob in segmentation
 //#define MIN_SEGMENTATION_BLOB_SIZE 450
-#define MIN_SEGMENTATION_BLOB_SIZE 200
+#define MIN_SEGMENTATION_BLOB_SIZE 450
 // sigma smoothing value when running graph image segmentation
 //#define SIGMA 1.2f
 #define SIGMA 0.8f
@@ -71,6 +71,6 @@ IplImage* convertNativeToIplImage(image<rgb>* input){
 
 void segmentImage(IplImage* input, vector<vector<Pixel> > & resultBuffer){
     image<rgb> * converted= convertIplToNativeImage(input);
-    segment_image(converted, SIGMA, 500, MIN_SEGMENTATION_BLOB_SIZE, NULL,resultBuffer); 
+    segment_image(converted, SIGMA, 200, MIN_SEGMENTATION_BLOB_SIZE, NULL,resultBuffer);
     delete converted;
 }
