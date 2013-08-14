@@ -34,6 +34,7 @@ public:
     void show();
     void printToMat(cv::Mat &result);
     void appendAdiacent(SuperPixel *toAppend);
+    set<SuperPixel *> *getAdiacents();
 };
 
 #endif // SUPERPIXEL_H

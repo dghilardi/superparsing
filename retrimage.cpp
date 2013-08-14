@@ -97,3 +97,17 @@ vector<SuperPixel *> *RetrImage::getSuperPixels(){
 string RetrImage::matchLabel(int id){
     return labeledImg.getLabel(id);
 }
+
+/**
+ * @brief RetrImage::updateNeighbourStatistics For each superpixels of the retrieval image saves the neighbour statistics
+ * @param statistics
+ */
+void RetrImage::updateNeighbourStatistics(NeighbourStat &statistics){
+    for(uint i=0; i<superPixelList.size(); ++i){
+        int actualClass = superPixelList[i]->getLabel();
+        set<SuperPixel *> *adiacents = superPixelList[i]->getAdiacents();
+        for(set<SuperPixel *>::iterator it=adiacents->begin(); it!=adiacents->end(); ++it){
+            statistics.incNeigNum(actualClass, (*it)->getLabel());
+        }
+    }
+}

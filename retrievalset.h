@@ -9,12 +9,13 @@
 #include "classlikelihood.h"
 #include "globlikelihood.h"
 #include "retrimage.h"
-
+#include "neighbourstat.h"
 using namespace std;
 class RetrievalSet
 {
     vector<string> imgNames;
     vector<GlobLikelihood *> matchResults;
+    NeighbourStat statNeig;
     void checkSuperPixel(SuperPixel *toLabel, SuperPixel *inSet, GlobLikelihood &spixelResults);
 public:
     RetrievalSet(vector<string> &names);

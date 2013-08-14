@@ -248,4 +248,10 @@ void SuperPixel::printToMat(cv::Mat &result){
 void SuperPixel::appendAdiacent(SuperPixel *toAppend){
     adiacentsSet.insert(toAppend);
 }
-
+/**
+ * @brief SuperPixel::getAdiacents return pointer to the set of adiacents
+ * @return
+ */
+set<SuperPixel *> *SuperPixel::getAdiacents(){
+    return &adiacentsSet;
+}

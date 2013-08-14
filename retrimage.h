@@ -2,6 +2,7 @@
 #define RETRIMAGE_H
 
 #include <list>
+#include <set>
 
 #include "debugHeader.h"
 
@@ -9,6 +10,7 @@
 #include "geolabel.h"
 #include "OpenCVGraphSegmentation/Segmentation.h"
 #include "superpixel.h"
+#include "neighbourstat.h"
 
 class RetrImage
 {
@@ -21,6 +23,7 @@ public:
     void show();
     vector<SuperPixel *> *getSuperPixels();
     string matchLabel(int id);
+    void updateNeighbourStatistics(NeighbourStat &statistics);
 };
 
 #endif // RETRIMAGE_H
