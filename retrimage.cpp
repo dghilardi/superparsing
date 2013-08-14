@@ -24,9 +24,11 @@ void RetrImage::buildSuperPixels()
     list<pair<int,int> > toCheck;
     map<pair<int,int>,bool> imagePixels;
     cv::Mat *labelsMat = labeledImg.getLabeledImg();
+    SuperPixel *superPixelsMap[labelsMat->cols][labelsMat->rows]; //Maps each pixel to the superpixel instance
     for(int x=0; x<labelsMat->cols; ++x){
         for(int y=0; y<labelsMat->rows; ++y){
             imagePixels[pair<int,int>(x,y)] = false;
+            superPixelsMap[x][y] = NULL;
         }
     }
     //Search for regions and create SuperPixel
@@ -44,6 +46,7 @@ void RetrImage::buildSuperPixels()
             int nx = toCheck.begin()->first;
             int ny = toCheck.begin()->second;
             toCheck.erase(toCheck.begin());
+            //Check if the neighbours have the same label
             for(int dx=-1; dx<=1; ++dx){
                 for(int dy=-1; dy<=1; ++dy){
                     pair<int,int> p(nx+dx,ny+dy);
@@ -58,9 +61,28 @@ void RetrImage::buildSuperPixels()
             }
         }
         if(currentLabel!=0){
-            superPixelList.push_back(new SuperPixel(currentSP, *image.getImage()));
+            SuperPixel *toAdd = new SuperPixel(currentSP, *image.getImage());
+            superPixelList.push_back(toAdd);
             superPixelList.back()->setLabel(currentLabel);
+            for(uint i=0; i<currentSP.size(); ++i){ //Map each pixel to the pointer of his superPixel
+                assert(superPixelsMap[currentSP[i].x][currentSP[i].y]==NULL);
+                superPixelsMap[currentSP[i].x][currentSP[i].y] = toAdd;
+            }
             //cout << "Superpixel, label: " << currentLabel << "size: " << currentSP.size() <<"\t"<<labeledImg.getLabel(currentLabel)<< endl;
+        }
+    }
+
+    //Set the adiacents to each instance of superPixel
+    for(int x=0; x<labelsMat->cols-1; ++x){
+        for(int y=0; y<labelsMat->rows-1; ++y){
+            if(superPixelsMap[x][y]!=NULL){
+                for(int dx=0; dx<2; ++dx){ for(int dy=0; dy<2; ++dy){
+                    if(dx+dy>0 && superPixelsMap[x+dx][y+dy]!=NULL && superPixelsMap[x+dx][y+dy]!=superPixelsMap[x][y]){
+                        superPixelsMap[x+dx][y+dy]->appendAdiacent(superPixelsMap[x][y]);
+                        superPixelsMap[x][y]->appendAdiacent(superPixelsMap[x+dx][y+dy]);
+                    }
+                }}
+            }
         }
     }
 }

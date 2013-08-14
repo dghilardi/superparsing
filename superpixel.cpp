@@ -118,14 +118,15 @@ int SuperPixel::getMaskDistance(SuperPixel &otherSP){
       distance++;
       axorb &= axorb-1;
     }
+    /*
     bitset<64> one(maskFeature), two(otherSP.maskFeature);
     cout << one << endl << two << endl <<distance<<endl << endl;
     if(distance<10){
         show();
-        cv::waitKey();
+        cv::waitKey(100);
         otherSP.show();
-        cv::waitKey();
-    }
+        cv::waitKey(500);
+    }*/
     return distance;
 }
 
@@ -141,7 +142,7 @@ void SuperPixel::computeSiftFeature(cv::Mat &superPixelImg){
     //Individuo i Keypoints del superPixel usando SIFT
     cv::SiftFeatureDetector detector;
     std::vector<cv::KeyPoint> keypoints;
-    detector.detect(superPixelImg,keypoints);
+    //detector.detect(superPixelImg,keypoints);
 
     /*Calcolo istogramma quantizzato degli orientamenti dei gradienti.
      *Considero come istogramma un vettore di 100 posizioni, ognuna delle quali
@@ -238,5 +239,13 @@ void SuperPixel::printToMat(cv::Mat &result){
             result.at<uchar>(pixelCoordList[i].y, pixelCoordList[i].x) = (uchar)label;
         }
     }
+}
+
+/**
+ * @brief SuperPixel::appendAdiacent Insert a superpixel as a adiacent
+ * @param toAppend SuperPixel to insert as adiacent
+ */
+void SuperPixel::appendAdiacent(SuperPixel *toAppend){
+    adiacentsSet.insert(toAppend);
 }
 
