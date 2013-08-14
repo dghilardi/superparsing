@@ -2,46 +2,58 @@
 #include "queryimage.h"
 #include "retrievalset.h"
 #include "neighbourstat.h"
+#include <getopt.h>
 
 #include "opencv2/highgui/highgui.hpp"
 
-#define IMG_NAME "street_art1162"
+#define IMG_NAME "street_art475"
 
 using namespace std;
 
-void help(){
-
+void help(string progName){
+    cout << "usage: " << progName << " [ options ]" << endl;
+    cout << "  -q <file>    --query <file>      Query image to label" << endl;
+    cout << "  -r           --retrain           Redo the training phase" << endl;
+    cout << "  -h           --help              Gives this help" << endl;
 }
 
 int main(int argc, char **argv){
     vector<string> retrievalSet;
     string queryPath;
-    if(argc>3){
-        for(int i=1; i<argc; ++i){
-            if(argv[i][0]=='-'){
-                switch (argv[i][1]) {
-                case 'q':
-                    if(i+1<argc)
-                        queryPath = argv[++i];
-                    else{
-                        help();
-                        return 0;
-                    }
-                    break;
-                case 'c':
-
-                    break;
-                default:
-                    help();
-                    return 0;
-                    break;
-                }
-            }else{
-                retrievalSet.push_back(argv[i]);
+    static struct option long_options[] = {
+        {"query", 1, 0, 'q'},
+        {"retrain", 1, 0, 'r'},
+        {"help", 0, 0, 'h'},
+        {NULL, 0, NULL, 0}
+    };
+    if(argc!=1){
+        int c, option_index=0;
+        while((c=getopt_long(argc, argv, "q:rh", long_options, &option_index))!=-1){
+            int this_option_optind = optind ? optind : 1;
+            cout << "arg: " << c << endl;
+            switch(c){
+            case 'q':
+                queryPath = optarg;
+                break;
+            case 'r':
+                //TODO
+                break;
+            case 'h':
+                help(argv[0]);
+                return 0;
+                break;
+            case 0:
+                retrievalSet.push_back(optarg);
+                break;
+            default:
+                help(argv[0]);
+                return 1;
+                break;
             }
         }
     }else{
         queryPath = IMG_NAME;
+    }
         /*retrievalSet.push_back("street_a205062");
         retrievalSet.push_back("street_a232022");
         retrievalSet.push_back("street_a281067");
@@ -334,7 +346,6 @@ int main(int argc, char **argv){
         retrievalSet.push_back("street_urban976");
         retrievalSet.push_back("street_urban996");
         retrievalSet.push_back("street_urban997");*/
-    }
     QueryImage queryImg(queryPath);
     RetrievalSet db(retrievalSet);
     db.LabelImg(queryImg);
