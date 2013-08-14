@@ -1,6 +1,6 @@
 #include "retrievalset.h"
 
-RetrievalSet::RetrievalSet(vector<string> &names) : imgNames(names), matchResults()
+RetrievalSet::RetrievalSet(vector<string> &names) : imgNames(names), matchResults(), statNeig("data.json")
 {
 }
 
@@ -13,6 +13,9 @@ void RetrievalSet::LabelImg(QueryImage &imgToLabel){
     vector<SuperPixel *> *setSuperPixelsToLabel = imgToLabel.getSuperPixels();
     //Faccio scorrere i superpixels del retrieval set e della query image, provo i match e salvo le statistiche
     for(uint i=0; i<setSuperPixelsToLabel->size(); ++i) matchResults.push_back(new GlobLikelihood());
+
+    //Resetto statistiche vicini
+    statNeig.reset();
     //Elaboro le immagini del retrieval set
     for(uint i=0; i<imgNames.size(); ++i){
         //Recupero i superpixel della i-esima immagine del retrieval set
@@ -33,6 +36,9 @@ void RetrievalSet::LabelImg(QueryImage &imgToLabel){
         str << (i*100/imgNames.size()) <<"%\r";
         cout << str.str();
         cout.flush();
+
+        //Save statistics about neighnours
+        setImage.updateNeighbourStatistics(statNeig);
     }
     cout << endl;
     //Necessario solo per stampare
@@ -52,6 +58,9 @@ void RetrievalSet::LabelImg(QueryImage &imgToLabel){
     cout << "ERRORE: " << imgToLabel.checkResults()*100 << "%\n";
     //Libero la memoria
     for(int i=0; i<matchResults.size(); ++i) delete matchResults[i];
+
+    //Salvo statistiche su file
+    statNeig.saveToFile();
 }
 
 /**
