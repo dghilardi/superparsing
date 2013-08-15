@@ -24,14 +24,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 
 #include "Segmentation.h"
 #include "segment-image.h"
+#include "segment-vid.h"
 #include "pnmfile.h"
 
 // minimum number of pixels for an individual blob in segmentation
-//#define MIN_SEGMENTATION_BLOB_SIZE 450
-#define MIN_SEGMENTATION_BLOB_SIZE 20
+#define MIN_SEGMENTATION_BLOB_SIZE 450  
 // sigma smoothing value when running graph image segmentation
-//#define SIGMA 1.2f
-#define SIGMA 0.8f
+#define SIGMA 1.2f
 
 image<rgb>* convertIplToNativeImage(IplImage * input){
     int w = input->width;
@@ -71,6 +70,15 @@ IplImage* convertNativeToIplImage(image<rgb>* input){
 
 void segmentImage(IplImage* input, vector<vector<Pixel> > & resultBuffer){
     image<rgb> * converted= convertIplToNativeImage(input);
-    segment_image(converted, SIGMA, 200, MIN_SEGMENTATION_BLOB_SIZE, NULL,resultBuffer);
+    segment_image(converted, SIGMA, 500, MIN_SEGMENTATION_BLOB_SIZE, NULL,resultBuffer); 
     delete converted;
+}
+
+void segmentVideo(vector<IplImage *> &input, vector<vector<Pixel> > &resultBuffer){
+    vector<image<rgb> *> converted;
+    for(int i=0; i<input.size(); ++i){
+        converted.push_back(convertIplToNativeImage(input[i]));
+    }
+    segment_imseq(converted, SIGMA, 500, MIN_SEGMENTATION_BLOB_SIZE, NULL, resultBuffer);
+    for(int i=0; i<converted.size(); ++i) delete converted[i];
 }

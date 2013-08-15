@@ -25,13 +25,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 
 #pragma once
 #include <opencv/cv.h>
+#include <opencv2/highgui/highgui.hpp>
 #include <vector>
+
+
 using namespace std;
 
 typedef struct {
     int x;
     int y;
+    int f;
 }Pixel;
 
 void segmentImage(IplImage* input, vector<vector<Pixel> > & resultBuffer);
+void segmentVideo(vector<IplImage *> &input, vector<vector<Pixel> > &resultBuffer);
 
