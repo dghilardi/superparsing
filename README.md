@@ -10,3 +10,4 @@ The libraries required by this project are:
 - opencv
 - matio
 - libDAI
+- jsoncpp
