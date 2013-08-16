@@ -28,7 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #include "pnmfile.h"
 
 // minimum number of pixels for an individual blob in segmentation
-#define MIN_SEGMENTATION_BLOB_SIZE 450  
+#define MIN_SEGMENTATION_BLOB_SIZE 20
 // sigma smoothing value when running graph image segmentation
 #define SIGMA 1.2f
 
@@ -79,6 +79,6 @@ void segmentVideo(vector<IplImage *> &input, vector<vector<Pixel> > &resultBuffe
     for(int i=0; i<input.size(); ++i){
         converted.push_back(convertIplToNativeImage(input[i]));
     }
-    segment_imseq(converted, SIGMA, 500, MIN_SEGMENTATION_BLOB_SIZE, NULL, resultBuffer);
+    segment_imseq(converted, SIGMA, 200, MIN_SEGMENTATION_BLOB_SIZE, NULL, resultBuffer);
     for(int i=0; i<converted.size(); ++i) delete converted[i];
 }
