@@ -6,7 +6,7 @@
 
 #include "opencv2/highgui/highgui.hpp"
 
-#define IMG_NAME "street_art1187"
+#define IMG_NAME "street_art1030"
 
 using namespace std;
 

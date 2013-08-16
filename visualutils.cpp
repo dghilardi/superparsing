@@ -1,5 +1,11 @@
 #include "visualutils.h"
 
+#define SQUARE_SIZE 10
+#define LEG_PER_COL 14
+#define LEG_COL_WIDTH 100
+#define LEG_PADDING 5
+#define LEG_LIST_PADDING 8
+
 VisualUtils::VisualUtils()
 {
 }
@@ -68,19 +74,21 @@ void VisualUtils::findDistinctColor(int index, int total, cv::Vec3b &result){
 }
 
 void VisualUtils::colorLabels(cv::Mat &labeled, cv::Mat &result, set<int> &labels){
-    result.create(labeled.rows, labeled.cols+100, CV_8UC3);
+    int legendSize = (labels.size()/LEG_PER_COL+1)*LEG_COL_WIDTH;
+    result.create(labeled.rows, labeled.cols+legendSize, CV_8UC3);
     result.setTo(cv::Scalar::all(0));
     int nlabels = labels.size();
     map<int, cv::Vec3b> labelColors;
-    int i=0, wmargin=labeled.cols+5;
+    int i=0, wmargin=labeled.cols+LEG_PADDING;
     for(set<int>::iterator it=labels.begin(); it!=labels.end(); ++it){
         cv::Vec3b tmp;
         findDistinctColor(i, nlabels, tmp);
         labelColors[*it] = tmp;
 
-        int hmargin = 15*i+5;
-        cv::rectangle(result, cv::Point(wmargin, hmargin), cv::Point(wmargin+10, hmargin+10), cv::Scalar(tmp[0], tmp[1], tmp[2]), CV_FILLED);
-        cv::putText(result, GeoLabel::getLabel(*it), cv::Point(wmargin+15,hmargin+10), 0, 0.5, cv::Scalar::all(255), 1, CV_AA);
+        int hmargin = (SQUARE_SIZE+LEG_LIST_PADDING)*(i%LEG_PER_COL)+LEG_PADDING;
+        int hpadding = (i/LEG_PER_COL)*LEG_COL_WIDTH;
+        cv::rectangle(result, cv::Point(wmargin+hpadding, hmargin), cv::Point(wmargin+SQUARE_SIZE+hpadding, hmargin+SQUARE_SIZE), cv::Scalar(tmp[0], tmp[1], tmp[2]), CV_FILLED);
+        cv::putText(result, GeoLabel::getLabel(*it), cv::Point(wmargin+15+hpadding,hmargin+10), 0, 0.5, cv::Scalar::all(255), 1, CV_AA);
         i++;
     }
     for(int x=0; x<labeled.cols; ++x){ for(int y=0; y<labeled.rows; ++y){
