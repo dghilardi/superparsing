@@ -142,7 +142,7 @@ void SuperPixel::computeSiftFeature(cv::Mat &superPixelImg){
     //Individuo i Keypoints del superPixel usando SIFT
     cv::SiftFeatureDetector detector;
     std::vector<cv::KeyPoint> keypoints;
-    //detector.detect(superPixelImg,keypoints);
+    detector.detect(superPixelImg,keypoints);
 
     /*Calcolo istogramma quantizzato degli orientamenti dei gradienti.
      *Considero come istogramma un vettore di 100 posizioni, ognuna delle quali

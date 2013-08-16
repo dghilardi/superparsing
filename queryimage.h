@@ -8,6 +8,7 @@
 #include "image.h"
 #include "superpixel.h"
 #include "geolabel.h"
+#include "visualutils.h"
 #include "OpenCVGraphSegmentation/Segmentation.h"
 
 using namespace std;
@@ -17,7 +18,7 @@ class QueryImage
     Image image;
     string imgName;
     vector<SuperPixel *> superPixelList;
-    void buildObtainedMat(cv::Mat &result);
+    void buildObtainedMat(cv::Mat &result, set<int> *usedLabels=NULL);
 public:
     QueryImage(string filename);
     ~QueryImage();

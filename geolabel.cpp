@@ -2,6 +2,8 @@
 #include "math.h"
 #include <stdio.h>
 
+vector<string *> GeoLabel::labels;
+
 GeoLabel::GeoLabel(string filename){
     imgName = string(MAT_PATH)+filename+string(MAT_EXT);
     mat_t *geoLabelf = Mat_Open(imgName.c_str(), MAT_ACC_RDONLY);
@@ -52,10 +54,15 @@ GeoLabel::GeoLabel(string filename){
 
             Mat_VarReadDataAll(geoLabelf, cell);
             string *newLabel = new string((char*)cell->data);
-            labels.push_back(newLabel);
-
             //Clean string from strange chars at end
             while(newLabel->at(newLabel->length()-1)<'0') newLabel->erase(--newLabel->end());
+            if(labels.size()==i){
+                labels.push_back(newLabel);
+            }else{
+                assert(*newLabel == *labels[i]);
+                delete newLabel;
+            }
+
             free(cell);
         }
     }
@@ -71,7 +78,7 @@ GeoLabel::GeoLabel(string filename){
 
 GeoLabel::~GeoLabel(){
     for(int i=0; i<labels.size(); ++i){
-        delete labels[i];
+        //delete labels[i];
     }
 }
 
@@ -91,6 +98,10 @@ cv::Mat *GeoLabel::getLabeledImg(){
 string GeoLabel::getLabel(int index){
     if(index>0 && index<=(int)labels.size()) return *labels[index-1];
     if(index==-1) return NO_LABEL;
+    if(labels.size()==0){
+        cerr << MSG_ERROR_NEXISTS << endl;
+        throw NEXISTS;
+    }
     //Index out of vector size
     cerr << MSG_ERROR_LABEL_INDEX << index << endl;
     //throw ERROR_LABEL_INDEX;

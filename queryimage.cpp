@@ -15,14 +15,17 @@ QueryImage::QueryImage(string filename): image(filename), imgName(filename) {
     int nSp = superPixels.size();
     for(int i=0; i<nSp; ++i){
         superPixelList.push_back(new SuperPixel(superPixels[i], *image.getImage()));
-        for(int j=0; j<superPixels[i].size(); ++j){
-            segmented.at<uchar>(superPixels[i][j].y, superPixels[i][j].x) = 255*i/nSp;
+        for(uint j=0; j<superPixels[i].size(); ++j){
+            assert(superPixels[i][j].y<segmented.rows);
+            assert(superPixels[i][j].x<segmented.cols);
+            segmented.at<uchar>(superPixels[i][j].y, superPixels[i][j].x) = (uchar)255*i/nSp;
         }
     }
+    /*
     cout << "Distance: mask: "<<superPixelList[3]->getMaskDistance(*superPixelList[0]) << "relHeight: " <<superPixelList[3]->getRelHeightDistance(*superPixelList[0])<< endl;
     cout << "SIFT Distance: " << superPixelList[3]->getSiftDistance(*superPixelList[0]) << endl;
     cout << "Color Distance: " << superPixelList[3]->getColorDistance(*superPixelList[0]) << endl;
-
+    */
     cvNamedWindow("superPixels",2);
     imshow("superPixels",segmented);
 }
@@ -44,20 +47,26 @@ vector<SuperPixel *> *QueryImage::getSuperPixels(){
  * @brief QueryImage::buildObtainedMat Build the mat representing the obtained labeling
  * @param result Mat in which the function will print the result
  */
-void QueryImage::buildObtainedMat(cv::Mat &result){
+void QueryImage::buildObtainedMat(cv::Mat &result, set<int> *usedLabels){
     result.create(image.getImage()->size(), CV_8UC1);
     result.setTo(cv::Scalar::all(0));
-    for(uint i=0; i<superPixelList.size(); ++i) superPixelList[i]->printToMat(result);
+    if(usedLabels!=NULL) usedLabels->clear();
+    for(uint i=0; i<superPixelList.size(); ++i){
+        if(usedLabels!=NULL) usedLabels->insert(superPixelList[i]->getLabel());
+        superPixelList[i]->printToMat(result);
+    }
 }
 
 /**
  * @brief QueryImage::showLabeling Show the labeling made to the current image
  */
 void QueryImage::showLabeling(){
-    cv::Mat labeledImage;
-    buildObtainedMat(labeledImage);
+    cv::Mat labeledImage, toVisualize;
+    set<int> usedLabels;
+    buildObtainedMat(labeledImage, &usedLabels);
+    VisualUtils::colorLabels(labeledImage, toVisualize, usedLabels);
     cvNamedWindow("LABELED IMAGE",2);
-    imshow("LABELED IMAGE",labeledImage);
+    imshow("LABELED IMAGE",toVisualize);
 }
 
 void QueryImage::showSrc(){

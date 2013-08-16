@@ -1,7 +1,7 @@
 unix {
    CONFIG += link_pkgconfig
    PKGCONFIG += opencv \
-    jsoncpp
+#    jsoncpp
 }
 TEMPLATE = app
 CONFIG += console
@@ -13,6 +13,7 @@ LIBS += \
     -lgmpxx -lgmp \
     -lmatio \
     -lhdf5 -lz \
+    -ljsoncpp
 #    -lopencv_core\
 #    -lopencv_highgui\
 #    -lopencv_imgproc\
@@ -31,7 +32,8 @@ SOURCES += main.cpp \
     retrievalset.cpp \
     classlikelihood.cpp \
     globlikelihood.cpp \
-    neighbourstat.cpp
+    neighbourstat.cpp \
+    visualutils.cpp
 
 HEADERS += \
     geolabel.h \
@@ -43,5 +45,6 @@ HEADERS += \
     classlikelihood.h \
     globlikelihood.h \
     debugHeader.h \
-    neighbourstat.h
+    neighbourstat.h \
+    visualutils.h
 
