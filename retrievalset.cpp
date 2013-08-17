@@ -1,7 +1,34 @@
 #include "retrievalset.h"
 
-RetrievalSet::RetrievalSet(vector<string> &names) : imgNames(names), matchResults(), statNeig("data.json")
+RetrievalSet::RetrievalSet() : matchResults(), statNeig("data.json")
 {
+}
+
+void RetrievalSet::computeInstance(string instancePath){
+    ifstream ifs(instancePath.c_str());
+    string content((istreambuf_iterator<char>(ifs)), istreambuf_iterator<char>());
+    Json::Value root;
+    Json::Reader reader;
+    bool parsedSuccess = reader.parse(content, root, false);
+
+    Json::Value dataSet = root["dataset"];
+    for(int i=0; i<dataSet.size(); ++i){
+        imgNames.push_back(dataSet[i].asString());
+    }
+
+    string queryPath = root["query"].asString();
+
+    parsedSuccess = parsedSuccess && imgNames.size()>0 && !queryPath.empty();
+    //Reading failure
+    if(!parsedSuccess){
+        cerr << MSG_ERROR_PARSE_JSON << instancePath << endl;
+        throw ERROR_PARSE_JSON;
+    }
+
+    QueryImage query(queryPath);
+    //query.showSrc();
+    //cv::waitKey();
+    LabelImg(query);
 }
 
 /**
