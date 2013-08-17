@@ -5,8 +5,9 @@
 #include <opencv/cv.hpp>
 #include <math.h>
 
-SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg): maskFeature(0), siftHist(1,100,CV_32F,cv::Scalar(0)), pixelCoordList(list), label(-1){
+SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg): maskFeature(0), siftHist(1,100,CV_32F,cv::Scalar(0)), pixelCoordList(list){
     //Compute the bounding box of the superpixel
+    label=-1;
     int minX = list[0].x, minY = list[0].y;
     int maxX = minX, maxY = minY;
     for(uint i=1; i<list.size(); ++i){

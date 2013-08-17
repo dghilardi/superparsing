@@ -10,6 +10,10 @@
 #include "globlikelihood.h"
 #include "retrimage.h"
 #include "neighbourstat.h"
+
+#define ERROR_PARSE_JSON 1
+#define MSG_ERROR_PARSE_JSON "ERROR! The file doesn't exists or is malformed "
+
 using namespace std;
 class RetrievalSet
 {
@@ -18,7 +22,8 @@ class RetrievalSet
     NeighbourStat statNeig;
     void checkSuperPixel(SuperPixel *toLabel, SuperPixel *inSet, GlobLikelihood &spixelResults);
 public:
-    RetrievalSet(vector<string> &names);
+    RetrievalSet();
+    void computeInstance(string instancePath);
     void LabelImg(QueryImage &imgToLabel);
 };
 
