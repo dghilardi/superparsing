@@ -70,7 +70,25 @@ void VisualUtils::hslToRgb(cv::Vec3f hsl, cv::Vec3b &rgb){
 }
 
 void VisualUtils::findDistinctColor(int index, int total, cv::Vec3b &result){
-    VisualUtils::hslToRgb(cv::Vec3f(index/(float)total, 0.5, 0.5), result);
+    int subtotal, subindex;
+    double lightness, saturation;
+    if(index<total/5){
+        subtotal = total/5;
+        subindex = index;
+        lightness = 0.3;
+        saturation = 0.6;
+    }else if(index<total/2){
+        subtotal = total/2-total/5;
+        subindex = index - total/5;
+        lightness = 0.6;
+        saturation = 0.3;
+    }else{
+        subtotal = total/2;
+        subindex = index-total/2;
+        lightness = 0.4;
+        saturation = 0.5;
+    }
+    VisualUtils::hslToRgb(cv::Vec3f(subindex/(float)subtotal, saturation, lightness), result);
 }
 
 void VisualUtils::colorLabels(cv::Mat &labeled, cv::Mat &result, set<int> &labels){
