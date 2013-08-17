@@ -25,6 +25,7 @@ public:
     RetrievalSet();
     void computeInstance(string instancePath);
     void LabelImg(QueryImage &imgToLabel);
+    static void computeNeighbourStatistics(NeighbourStat &result, string imgListPath);
 };
 
 #endif // RETRIEVALSET_H

@@ -34,6 +34,7 @@ GeoLabel::GeoLabel(string filename){
         throw ERROR_LOADING_MAT;
     }
 
+
     //Create opencv matrix containing labeled image
     imageLabeled.create(matVar->dims[0], matVar->dims[1], CV_16SC1);
     for(int x=0; x<imageLabeled.cols; ++x){
@@ -121,4 +122,8 @@ void GeoLabel::viewLabeledImg(){
     //for(int i=1; i<=labels.size(); ++i) cout <<255*(i+1)/(maxValue+1) <<". "<< getLabel(i) << endl;
     cvNamedWindow(imgName.c_str(),2);
     imshow(imgName.c_str(),toVisualize);
+}
+
+int GeoLabel::getLabelsNumber(){
+    return labels.size();
 }

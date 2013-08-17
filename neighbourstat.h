@@ -21,6 +21,7 @@ public:
     void incNeigNum(int idA, int idB);
     void reset();
     double conditionalNeigProb(int idA, int idB);
+    bool isEmpty();
 };
 
 #endif // NEIGHBOURSTAT_H
