@@ -65,7 +65,7 @@ void QueryImage::showLabeling(){
     set<int> usedLabels;
     buildObtainedMat(labeledImage, &usedLabels);
     VisualUtils::colorLabels(labeledImage, toVisualize, usedLabels);
-    cvNamedWindow("LABELED IMAGE",2);
+    cvNamedWindow("LABELED IMAGE",CV_WINDOW_AUTOSIZE);
     imshow("LABELED IMAGE",toVisualize);
 }
 

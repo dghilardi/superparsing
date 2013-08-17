@@ -59,12 +59,12 @@ int main(int argc, char **argv){
         retrievalSet.push_back("street_a281067");
         retrievalSet.push_back("street_a714064");
         retrievalSet.push_back("street_a79094");
-        retrievalSet.push_back("street_a805038");
+        retrievalSet.push_back("street_a805038");*/
         retrievalSet.push_back("street_art1030");
-        retrievalSet.push_back("street_art1041");
+        /*retrievalSet.push_back("street_art1041");
         retrievalSet.push_back("street_art1162");
         retrievalSet.push_back("street_art1187");
-        retrievalSet.push_back("street_art1199");*/
+        retrievalSet.push_back("street_art1199");
         retrievalSet.push_back("street_art1206");
         retrievalSet.push_back("street_art1328");
         retrievalSet.push_back("street_art1583");
@@ -94,7 +94,7 @@ int main(int argc, char **argv){
         retrievalSet.push_back("street_art799");
         retrievalSet.push_back("street_art838");
         retrievalSet.push_back("street_art861");
-        /*retrievalSet.push_back("street_art862");
+        retrievalSet.push_back("street_art862");
         retrievalSet.push_back("street_art869");
         retrievalSet.push_back("street_art880");
         retrievalSet.push_back("street_art923");
@@ -196,7 +196,7 @@ int main(int argc, char **argv){
         retrievalSet.push_back("street_gre95");
         retrievalSet.push_back("street_hexp12");
         retrievalSet.push_back("street_hexp17");
-        retrievalSet.push_back("street_hexp21");
+        /*retrievalSet.push_back("street_hexp21");
         retrievalSet.push_back("street_hexp22");
         retrievalSet.push_back("street_hexp23");
         retrievalSet.push_back("street_hexp28");
