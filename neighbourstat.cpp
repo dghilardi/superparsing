@@ -78,3 +78,11 @@ double NeighbourStat::conditionalNeigProb(int idA, int idB){
     assert(prob<=1);
     return prob;
 }
+
+bool NeighbourStat::isEmpty(){
+    for(int i=0; i<statArray.size(); ++i){ for(int j=0; j<statArray[i].size();++j){
+            if(statArray[i][j].asInt()>0) return false;
+        }
+    }
+    return true;
+}

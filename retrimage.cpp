@@ -105,7 +105,7 @@ string RetrImage::matchLabel(int id){
 void RetrImage::updateNeighbourStatistics(NeighbourStat &statistics){
     for(uint i=0; i<superPixelList.size(); ++i){
         int actualClass = superPixelList[i]->getLabel();
-        set<SuperPixel *> *adiacents = superPixelList[i]->getAdiacents();
+        const set<SuperPixel *> *adiacents = superPixelList[i]->getAdiacents();
         for(set<SuperPixel *>::iterator it=adiacents->begin(); it!=adiacents->end(); ++it){
             statistics.incNeigNum(actualClass, (*it)->getLabel());
         }

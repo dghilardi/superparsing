@@ -35,6 +35,7 @@ public:
     cv::Mat *getLabeledImg();
     static string getLabel(int index);
     void viewLabeledImg();
+    static int getLabelsNumber();
 };
 
 #endif // READDATA_H

@@ -1,7 +1,6 @@
 #include "visualutils.h"
 
 #define SQUARE_SIZE 10
-#define LEG_PER_COL 14
 #define LEG_COL_WIDTH 100
 #define LEG_PADDING 5
 #define LEG_LIST_PADDING 8
@@ -75,24 +74,25 @@ void VisualUtils::findDistinctColor(int index, int total, cv::Vec3b &result){
     if(index<total/5){
         subtotal = total/5;
         subindex = index;
-        lightness = 0.3;
+        lightness = 0.4;
         saturation = 0.6;
     }else if(index<total/2){
         subtotal = total/2-total/5;
         subindex = index - total/5;
         lightness = 0.6;
-        saturation = 0.3;
+        saturation = 0.4;
     }else{
         subtotal = total/2;
         subindex = index-total/2;
-        lightness = 0.4;
-        saturation = 0.5;
+        lightness = 0.6;
+        saturation = 0.6;
     }
     VisualUtils::hslToRgb(cv::Vec3f(subindex/(float)subtotal, saturation, lightness), result);
 }
 
 void VisualUtils::colorLabels(cv::Mat &labeled, cv::Mat &result, set<int> &labels){
-    int legendSize = (labels.size()/LEG_PER_COL+1)*LEG_COL_WIDTH;
+    int legPerCol = (labeled.rows-LEG_PADDING) / (SQUARE_SIZE+LEG_LIST_PADDING);
+    int legendSize = (labels.size()/legPerCol+1)*LEG_COL_WIDTH;
     result.create(labeled.rows, labeled.cols+legendSize, CV_8UC3);
     result.setTo(cv::Scalar::all(0));
     int nlabels = labels.size();
@@ -103,8 +103,8 @@ void VisualUtils::colorLabels(cv::Mat &labeled, cv::Mat &result, set<int> &label
         findDistinctColor(i, nlabels, tmp);
         labelColors[*it] = tmp;
 
-        int hmargin = (SQUARE_SIZE+LEG_LIST_PADDING)*(i%LEG_PER_COL)+LEG_PADDING;
-        int hpadding = (i/LEG_PER_COL)*LEG_COL_WIDTH;
+        int hmargin = (SQUARE_SIZE+LEG_LIST_PADDING)*(i%legPerCol)+LEG_PADDING;
+        int hpadding = (i/legPerCol)*LEG_COL_WIDTH;
         cv::rectangle(result, cv::Point(wmargin+hpadding, hmargin), cv::Point(wmargin+SQUARE_SIZE+hpadding, hmargin+SQUARE_SIZE), cv::Scalar(tmp[0], tmp[1], tmp[2]), CV_FILLED);
         cv::putText(result, GeoLabel::getLabel(*it), cv::Point(wmargin+15+hpadding,hmargin+10), 0, 0.5, cv::Scalar::all(255), 1, CV_AA);
         i++;

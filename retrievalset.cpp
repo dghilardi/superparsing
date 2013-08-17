@@ -4,6 +4,33 @@ RetrievalSet::RetrievalSet() : matchResults(), statNeig("data.json")
 {
 }
 
+void RetrievalSet::computeNeighbourStatistics(NeighbourStat &result, string imgListPath){
+    ifstream ifs(imgListPath.c_str());
+    string content((istreambuf_iterator<char>(ifs)), istreambuf_iterator<char>());
+    Json::Value root;
+    Json::Reader reader;
+    bool parsedSuccess = reader.parse(content, root, false);
+
+    Json::Value dataSet = root["dataset"];
+
+    if(!parsedSuccess){
+        cerr << MSG_ERROR_PARSE_JSON << imgListPath << endl;
+        throw ERROR_PARSE_JSON;
+    }
+    cout<<"Computing Neighborhood statistics:"<<endl;
+    for(int i=0; i<dataSet.size(); ++i){
+        RetrImage setImage(dataSet[i].asString());
+        setImage.updateNeighbourStatistics(result);
+
+        stringstream str;
+        str << (i*100/dataSet.size()) <<"%\r";
+        cout << str.str();
+        cout.flush();
+        result.saveToFile();
+    }
+    result.saveToFile();
+}
+
 void RetrievalSet::computeInstance(string instancePath){
     ifstream ifs(instancePath.c_str());
     string content((istreambuf_iterator<char>(ifs)), istreambuf_iterator<char>());

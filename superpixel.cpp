@@ -253,6 +253,6 @@ void SuperPixel::appendAdiacent(SuperPixel *toAppend){
  * @brief SuperPixel::getAdiacents return pointer to the set of adiacents
  * @return
  */
-set<SuperPixel *> *SuperPixel::getAdiacents(){
+const set<SuperPixel *> *SuperPixel::getAdiacents(){
     return &adiacentsSet;
 }
