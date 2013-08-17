@@ -33,7 +33,8 @@ SOURCES += main.cpp \
     classlikelihood.cpp \
     globlikelihood.cpp \
     neighbourstat.cpp \
-    visualutils.cpp
+    visualutils.cpp \
+    mrf.cpp
 
 HEADERS += \
     geolabel.h \
@@ -46,5 +47,6 @@ HEADERS += \
     globlikelihood.h \
     debugHeader.h \
     neighbourstat.h \
-    visualutils.h
+    visualutils.h \
+    mrf.h
 
