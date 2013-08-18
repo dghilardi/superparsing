@@ -15,6 +15,7 @@ public:
     ClassLikelihood quantSIFT;
     ClassLikelihood colorHist;
     int getBestLabel();
+    double getLogSum(int i);
 };
 
 #endif // GLOBLIKELIHOOD_H

@@ -10,11 +10,15 @@ int GlobLikelihood::getBestLabel(){
     double maxSum=0;
     int bestLabel=0;
     for(int i=0; i<keys.size(); ++i){
-        double logSum = mask.getLogLikelihood(keys[i]) + relH.getLogLikelihood(keys[i]) + quantSIFT.getLogLikelihood(keys[i]) + colorHist.getLogLikelihood(keys[i]);
+        double logSum = getLogSum(keys[i]);
         if(logSum>maxSum){
             maxSum = logSum;
             bestLabel = keys[i];
         }
     }
     return bestLabel;
+}
+
+double GlobLikelihood::getLogSum(int i){
+    return mask.getLogLikelihood(i) + relH.getLogLikelihood(i) + quantSIFT.getLogLikelihood(i) + colorHist.getLogLikelihood(i);
 }
