@@ -10,15 +10,6 @@ GeoLabel::GeoLabel(string filename){
     if(geoLabelf==NULL) cerr << MSG_ERROR_LOADING_MAT << imgName << endl;
     matvar_t *matVar;
 
-    /*
-    // Print variables names
-    while((matVar=Mat_VarReadNextInfo(geoLabelf))!=NULL){
-        cout << "DataName: " << matVar->name << endl;
-        Mat_VarFree(matVar);
-        matVar = NULL;
-    }
-    */
-
     //Load labeled image from file
     int start[2]={0,0}, stride[2]={0,0}, edge[2];
     ushort ptr[257][256];
@@ -50,21 +41,22 @@ GeoLabel::GeoLabel(string filename){
     matVar = Mat_VarReadInfo(geoLabelf, "names");
 
     if(matVar!=NULL){
-        for(uint i=0; i<matVar->dims[1]; ++i){
+        for(int i=0; i<matVar->dims[1]; ++i){
             matvar_t *cell = Mat_VarGetCell(matVar, i);
 
             Mat_VarReadDataAll(geoLabelf, cell);
             string *newLabel = new string((char*)cell->data);
+            Mat_VarFree(cell);
             //Clean string from strange chars at end
             while(newLabel->at(newLabel->length()-1)<'0') newLabel->erase(--newLabel->end());
-            if(labels.size()==i){
+            if(labels.size()==(uint)i){
                 labels.push_back(newLabel);
             }else{
                 assert(*newLabel == *labels[i]);
                 delete newLabel;
             }
-
-            free(cell);
+            //delete cell;
+            //free(cell);
         }
     }
     //for(int i=0; i<labels.size(); ++i) cout <<(i+1)<<" -> " <<255*(i+1)/33 <<" - "<< *(labels[i]) << endl;
@@ -72,15 +64,17 @@ GeoLabel::GeoLabel(string filename){
         cerr << "ERROR! impossible to load"<< (resultLoadFile!=0?" from":"") <<" file" << endl;
         throw ERROR_LOADING_MAT;
     }
+    //free(matVar);
     //Mat_VarFree(matVar);
 
     Mat_Close(geoLabelf);
 }
 
 GeoLabel::~GeoLabel(){
-    for(int i=0; i<labels.size(); ++i){
+    for(uint i=0; i<labels.size(); ++i){
         //delete labels[i];
     }
+    assert(*(imageLabeled.refcount)==1);
 }
 
 /**

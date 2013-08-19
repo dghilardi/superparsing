@@ -20,6 +20,7 @@ class RetrImage
     void buildSuperPixels();
 public:
     RetrImage(string imgName);
+    ~RetrImage();
     void show();
     vector<SuperPixel *> *getSuperPixels();
     string matchLabel(int id);

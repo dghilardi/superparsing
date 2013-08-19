@@ -7,7 +7,7 @@
 #include "opencv2/highgui/highgui.hpp"
 
 #define INST_NAME "../instance.json"
-#define STAT_NAME "statistics.dat"
+#define STAT_FILE_NAME "statistics.dat"
 
 using namespace std;
 
@@ -30,7 +30,7 @@ int main(int argc, char **argv){
     if(argc!=1){
         int c, option_index=0;
         while((c=getopt_long(argc, argv, "q:r:h", long_options, &option_index))!=-1){
-            int this_option_optind = optind ? optind : 1;
+            //int this_option_optind = optind ? optind : 1;
             cout << "arg: " << c << endl;
             switch(c){
             case 'i':
@@ -54,7 +54,7 @@ int main(int argc, char **argv){
     }else{
         instancePath = INST_NAME;
     }
-    NeighbourStat neighbourStatistics(STAT_NAME);
+    NeighbourStat neighbourStatistics(STAT_FILE_NAME);
     if(!trainingSetPath.empty()){
         neighbourStatistics.reset();
         RetrievalSet::computeNeighbourStatistics(neighbourStatistics, trainingSetPath);
