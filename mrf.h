@@ -1,23 +1,29 @@
 #ifndef MRF_H
 #define MRF_H
 
-#include "debugHeader.h"
+#include <dai/alldai.h>
+#include <dai/jtree.h>
+#include <dai/bp.h>
+#include <dai/decmap.h>
 
-#include <dai/var.h>
-#include <dai/factor.h>
-#include <dai/factorgraph.h>
 #include <vector>
+#include <map>
 #include <cmath>
+
+#include <iostream>
 
 #include "superpixel.h"
 #include "geolabel.h"
 #include "globlikelihood.h"
 #include "neighbourstat.h"
 
+#include "debugHeader.h"
+
 using namespace std;
 class MRF
 {
     static double sigmoid(double x);
+    static void computeMAP(dai::FactorGraph &graph);
 public:
     MRF();
     static void computeMRF(vector<SuperPixel *> &superPixelList, GlobLikelihood &likelihood, NeighbourStat condprob);
