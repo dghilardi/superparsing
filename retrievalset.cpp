@@ -18,12 +18,14 @@ void RetrievalSet::computeNeighbourStatistics(NeighbourStat &result, string imgL
         throw ERROR_PARSE_JSON;
     }
     cout<<"Computing Neighborhood statistics:"<<endl;
-    for(int i=0; i<dataSet.size(); ++i){
-        RetrImage setImage(dataSet[i].asString());
+    string ani("-/|\\");
+    for(uint i=0; i<dataSet.size(); ++i){
+        string path = dataSet[i].asString();
+        RetrImage setImage(path);
         setImage.updateNeighbourStatistics(result);
 
         stringstream str;
-        str << (i*100/dataSet.size()) <<"%\r";
+        str << (i*100/dataSet.size()) <<"%\t"<<ani.at(i%ani.size())<<"\t"<<i<<"\r";
         cout << str.str();
         cout.flush();
         result.saveToFile();
@@ -39,7 +41,7 @@ void RetrievalSet::computeInstance(string instancePath){
     bool parsedSuccess = reader.parse(content, root, false);
 
     Json::Value dataSet = root["dataset"];
-    for(int i=0; i<dataSet.size(); ++i){
+    for(uint i=0; i<dataSet.size(); ++i){
         imgNames.push_back(dataSet[i].asString());
     }
 

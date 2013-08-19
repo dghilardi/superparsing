@@ -8,6 +8,10 @@ RetrImage::RetrImage(string imgName): image(imgName), labeledImg(imgName) {
     buildSuperPixels();
 }
 
+RetrImage::~RetrImage(){
+    for(uint i=0; i<superPixelList.size(); ++i) delete superPixelList[i];
+}
+
 /**
  * @brief RetrImage::show
  */
@@ -71,7 +75,6 @@ void RetrImage::buildSuperPixels()
             //cout << "Superpixel, label: " << currentLabel << "size: " << currentSP.size() <<"\t"<<labeledImg.getLabel(currentLabel)<< endl;
         }
     }
-
     //Set the adiacents to each instance of superPixel
     for(int x=0; x<labelsMat->cols-1; ++x){
         for(int y=0; y<labelsMat->rows-1; ++y){

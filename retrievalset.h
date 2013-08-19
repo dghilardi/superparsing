@@ -1,6 +1,8 @@
 #ifndef RETRIEVALSET_H
 #define RETRIEVALSET_H
 
+#include "debugHeader.h"
+
 #include <string>
 #include <vector>
 
