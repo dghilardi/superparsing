@@ -1,6 +1,8 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
+#include "debugHeader.h"
+
 #include <string>
 #include <opencv2/highgui/highgui.hpp>
 
@@ -18,6 +20,7 @@ class Image
 protected:
 public:
     Image(string filename);
+    ~Image();
     cv::Mat *getImage();
     void show();
 

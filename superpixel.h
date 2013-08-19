@@ -1,6 +1,8 @@
 #ifndef SUPERPIXEL_H
 #define SUPERPIXEL_H
 
+#include "debugHeader.h"
+
 #include <opencv2/highgui/highgui.hpp>
 #include <bitset>
 #include <set>
@@ -11,6 +13,7 @@ class SuperPixel
 {
     uint64 maskFeature;
     double relHeightFeature;
+    double weight;
     cv::Mat *colorHist[3];
     cv::Mat siftHist;
     cv::Mat superPixelImg;
@@ -24,6 +27,7 @@ public:
     SuperPixel(vector<Pixel> &list, cv::Mat &srcImg);
     ~SuperPixel();
     int getLabel();
+    double getWeight();
     void setLabel(int newLabel);
     //uint64 getMaskFeature();
     //int getMaskDistance(uint64 otherMask);
@@ -35,6 +39,8 @@ public:
     void printToMat(cv::Mat &result);
     void appendAdiacent(SuperPixel *toAppend);
     const set<SuperPixel *> *getAdiacents();
+    static void computeAdiacents(vector<SuperPixel *> &spList, int height, int width);
+    static void computeWeight(vector<SuperPixel *> &spList);
 };
 
 #endif // SUPERPIXEL_H

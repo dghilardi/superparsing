@@ -1,11 +1,10 @@
 #ifndef RETRIEVALSET_H
 #define RETRIEVALSET_H
 
-#include "debugHeader.h"
-
 #include <string>
 #include <vector>
 
+#include "mrf.h"
 #include "queryimage.h"
 #include "superpixel.h"
 #include "classlikelihood.h"
@@ -13,20 +12,22 @@
 #include "retrimage.h"
 #include "neighbourstat.h"
 
+#include "debugHeader.h"
+
 #define ERROR_PARSE_JSON 1
 #define MSG_ERROR_PARSE_JSON "ERROR! The file doesn't exists or is malformed "
 
 using namespace std;
 class RetrievalSet
 {
-    vector<string> imgNames;
     vector<GlobLikelihood *> matchResults;
-    NeighbourStat statNeig;
     void checkSuperPixel(SuperPixel *toLabel, SuperPixel *inSet, GlobLikelihood &spixelResults);
+    void applyMRF(QueryImage &imgToLabel, NeighbourStat &stat);
 public:
     RetrievalSet();
-    void computeInstance(string instancePath);
-    void LabelImg(QueryImage &imgToLabel);
+    ~RetrievalSet();
+    void computeInstance(string instancePath, NeighbourStat &stat, bool useMRF);
+    void LabelImg(QueryImage &imgToLabel, vector<string> &imgNames);
     static void computeNeighbourStatistics(NeighbourStat &result, string imgListPath);
 };
 

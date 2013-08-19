@@ -1,3 +1,4 @@
+#include "mrf.h"
 #include "retrimage.h"
 #include "queryimage.h"
 #include "retrievalset.h"
@@ -14,22 +15,25 @@ using namespace std;
 void help(string progName){
     cout << "usage: " << progName << " [ options ]" << endl;
     cout << "  -i <file>    --instance <file>   files containing names of image of the retrieval set and query image" << endl;
-    cout << "  -r           --retrain           Redo the training phase" << endl;
+    cout << "  -r <file>    --retrain  <file>   Redo the training phase on the specified set" << endl;
+    cout << "  -m           --mrf               Use markov random fields (needs to be trained)" << endl;
     cout << "  -h           --help              Gives this help" << endl;
 }
 
 int main(int argc, char **argv){
     string instancePath;
     string trainingSetPath;
+    bool useMRF = false;
     static struct option long_options[] = {
         {"instance", 1, 0, 'i'},
         {"retrain", 1, 0, 'r'},
         {"help", 0, 0, 'h'},
+        {"mrf", 0, 0,'m'},
         {NULL, 0, NULL, 0}
     };
     if(argc!=1){
         int c, option_index=0;
-        while((c=getopt_long(argc, argv, "q:r:h", long_options, &option_index))!=-1){
+        while((c=getopt_long(argc, argv, "i:r:hm", long_options, &option_index))!=-1){
             //int this_option_optind = optind ? optind : 1;
             cout << "arg: " << c << endl;
             switch(c){
@@ -38,6 +42,9 @@ int main(int argc, char **argv){
                 break;
             case 'r':
                 trainingSetPath = optarg;
+                break;
+            case 'm':
+                useMRF = true;
                 break;
             case 'h':
                 help(argv[0]);
@@ -59,13 +66,13 @@ int main(int argc, char **argv){
         neighbourStatistics.reset();
         RetrievalSet::computeNeighbourStatistics(neighbourStatistics, trainingSetPath);
     }
-    if(neighbourStatistics.isEmpty()){
+    if(neighbourStatistics.isEmpty() && useMRF){
         cerr << "ERROR! no statistics about neighbour founded." << endl;
         return 1;
     }
     if(!instancePath.empty()){
-        RetrievalSet db;
-        db.computeInstance(instancePath);
+        RetrievalSet imSet;
+        imSet.computeInstance(instancePath, neighbourStatistics, useMRF);
         cv::waitKey();
     }
     return 0;

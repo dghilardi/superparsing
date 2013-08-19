@@ -5,7 +5,7 @@
 #include <opencv/cv.hpp>
 #include <math.h>
 
-SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg): maskFeature(0), siftHist(1,100,CV_32F,cv::Scalar(0)), pixelCoordList(list){
+SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg): maskFeature(0), siftHist(1,100,CV_32F,cv::Scalar(0)), pixelCoordList(list), weight(0){
     //Compute the bounding box of the superpixel
     label=-1;
     int minX = list[0].x, minY = list[0].y;
@@ -47,6 +47,10 @@ SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg): maskFeature(0), si
 }
 
 SuperPixel::~SuperPixel(){
+    assert(*(colorHist[0]->refcount)==1);
+    assert(*(colorHist[1]->refcount)==1);
+    assert(*(colorHist[2]->refcount)==1);
+    assert(*(siftHist.refcount)==1);
     delete colorHist[0];
     delete colorHist[1];
     delete colorHist[2];
@@ -255,4 +259,45 @@ void SuperPixel::appendAdiacent(SuperPixel *toAppend){
  */
 const set<SuperPixel *> *SuperPixel::getAdiacents(){
     return &adiacentsSet;
+}
+
+void SuperPixel::computeAdiacents(vector<SuperPixel *> &spList, int height, int width){
+    SuperPixel *superPixelsMap[width][height];
+    for(int i=0; i<width; ++i) for(int j=0; j<height; ++j) superPixelsMap[i][j] = NULL;
+    for(uint i=0; i<spList.size(); ++i){
+        vector<Pixel> pixCoord = spList[i]->pixelCoordList;
+        for(uint j=0; j<pixCoord.size(); ++j){
+            int x = pixCoord[j].x;
+            int y = pixCoord[j].y;
+            assert(x<width && y<height);
+            superPixelsMap[x][y] = spList[i];
+        }
+    }
+
+    for(int x=0; x<width-1; ++x){
+        for(int y=0; y<height-1; ++y){
+            if(superPixelsMap[x][y]!=NULL){
+                for(int dx=0; dx<2; ++dx){ for(int dy=0; dy<2; ++dy){
+                    if(dx+dy>0 && superPixelsMap[x+dx][y+dy]!=NULL && superPixelsMap[x+dx][y+dy]!=superPixelsMap[x][y]){
+                        superPixelsMap[x+dx][y+dy]->appendAdiacent(superPixelsMap[x][y]);
+                        superPixelsMap[x][y]->appendAdiacent(superPixelsMap[x+dx][y+dy]);
+                    }
+                }}
+            }
+        }
+    }
+}
+
+double SuperPixel::getWeight(){
+    return weight;
+}
+
+void SuperPixel::computeWeight(vector<SuperPixel *> &spList){
+    double dimMean=0;
+    int nSP = spList.size();
+    for(int i=0; i<nSP; ++i){
+        int dim = spList[i]->pixelCoordList.size();
+        dimMean += dim/(double)nSP;
+    }
+    for(int i=0; i<nSP; ++i) spList[i]->weight = spList[i]->pixelCoordList.size()/dimMean;
 }

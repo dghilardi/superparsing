@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 
+#include "debugHeader.h"
+
 using namespace std;
 class ClassLikelihood
 {

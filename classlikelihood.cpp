@@ -33,12 +33,20 @@ void ClassLikelihood::foundMatch(int classID){
 double ClassLikelihood::getLogLikelihood(int classID){
     int totNotC = 0;
     int matchNotC = 0;
-    for(map<int,int>::iterator it = totNum.begin(); it!=totNum.end(); ++it) totNotC+=it->second;
-    for(map<int,int>::iterator it = numMatches.begin(); it != numMatches.end(); ++it) matchNotC+=it->second;
-    totNotC -= totNum[classID];
-    matchNotC -= numMatches[classID];
-    double frac1 = totNotC/totNum[classID];
-    double frac2 = (numMatches[classID]+EPSILON)/(double)(matchNotC+EPSILON);
+    bool existstotnum = false, existsnummatch = false;
+    if(totNum.size()>0) for(map<int,int>::iterator it = totNum.begin(); it!=totNum.end(); ++it){
+        if(it->first != classID) totNotC+=it->second;
+        else existstotnum = true;
+    }
+    if(numMatches.size()>0) for(map<int,int>::iterator it = numMatches.begin(); it != numMatches.end(); ++it){
+        if(it->first != classID) matchNotC+=it->second;
+        else existsnummatch = true;
+    }
+    double frac1, frac2;
+    if(!existstotnum) frac1 = totNotC*1.1; //Approssimazione
+    else frac1 = totNotC/totNum[classID];
+    if(!existsnummatch) frac2 = (EPSILON)/(double)(matchNotC+EPSILON);
+    else frac2 = (numMatches[classID]+EPSILON)/(double)(matchNotC+EPSILON);
     return log(frac1*frac2);
 }
 

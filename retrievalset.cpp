@@ -1,7 +1,11 @@
 #include "retrievalset.h"
 
-RetrievalSet::RetrievalSet() : matchResults(), statNeig("data.json")
+RetrievalSet::RetrievalSet()
 {
+}
+
+RetrievalSet::~RetrievalSet(){
+    for(int i=0; i<matchResults.size(); ++i) delete matchResults[i];
 }
 
 void RetrievalSet::computeNeighbourStatistics(NeighbourStat &result, string imgListPath){
@@ -33,7 +37,8 @@ void RetrievalSet::computeNeighbourStatistics(NeighbourStat &result, string imgL
     result.saveToFile();
 }
 
-void RetrievalSet::computeInstance(string instancePath){
+void RetrievalSet::computeInstance(string instancePath, NeighbourStat &stat, bool useMRF){
+    vector<string> imgNames;
     ifstream ifs(instancePath.c_str());
     string content((istreambuf_iterator<char>(ifs)), istreambuf_iterator<char>());
     Json::Value root;
@@ -57,21 +62,21 @@ void RetrievalSet::computeInstance(string instancePath){
     QueryImage query(queryPath);
     //query.showSrc();
     //cv::waitKey();
-    LabelImg(query);
+    LabelImg(query, imgNames);
+    if(useMRF) applyMRF(query, stat);
 }
 
 /**
  * @brief RetrievalSet::LabelImg Insert label for the given image
  * @param imgToLabel segmented image in which it will insert labels
  */
-void RetrievalSet::LabelImg(QueryImage &imgToLabel){
+void RetrievalSet::LabelImg(QueryImage &imgToLabel, vector<string> &imgNames){
+
     //Recupero il vettore di superpixel della query image
     vector<SuperPixel *> *setSuperPixelsToLabel = imgToLabel.getSuperPixels();
     //Faccio scorrere i superpixels del retrieval set e della query image, provo i match e salvo le statistiche
     for(uint i=0; i<setSuperPixelsToLabel->size(); ++i) matchResults.push_back(new GlobLikelihood());
 
-    //Resetto statistiche vicini
-    statNeig.reset();
     //Elaboro le immagini del retrieval set
     for(uint i=0; i<imgNames.size(); ++i){
         //Recupero i superpixel della i-esima immagine del retrieval set
@@ -93,8 +98,6 @@ void RetrievalSet::LabelImg(QueryImage &imgToLabel){
         cout << str.str();
         cout.flush();
 
-        //Save statistics about neighnours
-        setImage.updateNeighbourStatistics(statNeig);
     }
     cout << endl;
     //Necessario solo per stampare
@@ -112,11 +115,6 @@ void RetrievalSet::LabelImg(QueryImage &imgToLabel){
     imgToLabel.showSrc();
     imgToLabel.showLabeling();
     cout << "ERRORE: " << imgToLabel.checkResults()*100 << "%\n";
-    //Libero la memoria
-    for(int i=0; i<matchResults.size(); ++i) delete matchResults[i];
-
-    //Salvo statistiche su file
-    statNeig.saveToFile();
 }
 
 /**
@@ -152,4 +150,10 @@ void RetrievalSet::checkSuperPixel(SuperPixel *toLabel, SuperPixel *inSet, GlobL
     if(1-colDistance<tk_color) spixelResults.colorHist.foundMatch(actualLabel);
     //if(abs(colDistance)<tk_color) cout << "found color: " << inSet->getLabel() << endl;
     //else cout << "No Color" << endl;
+}
+
+void RetrievalSet::applyMRF(QueryImage &imgToLabel, NeighbourStat &stat){
+    vector<SuperPixel *> *setSuperPixelsToLabel = imgToLabel.getSuperPixels();
+    MRF::computeMRF(*setSuperPixelsToLabel, matchResults, stat);
+    cout << "ERRORE: " << imgToLabel.checkResults()*100 << "%\n";
 }
