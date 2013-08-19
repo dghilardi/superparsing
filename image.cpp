@@ -5,6 +5,11 @@ Image::Image(string filename){
     image = cv::imread(imgName, CV_LOAD_IMAGE_COLOR);
 }
 
+Image::~Image(){
+    //assert(*(image.refcount)==1);
+    image.release();
+}
+
 void Image::show(){
     cvNamedWindow(imgName.c_str(),2);
     imshow(imgName.c_str(),image);

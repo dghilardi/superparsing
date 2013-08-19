@@ -21,11 +21,9 @@ QueryImage::QueryImage(string filename): image(filename), imgName(filename) {
             segmented.at<uchar>(superPixels[i][j].y, superPixels[i][j].x) = (uchar)255*i/nSp;
         }
     }
-    /*
-    cout << "Distance: mask: "<<superPixelList[3]->getMaskDistance(*superPixelList[0]) << "relHeight: " <<superPixelList[3]->getRelHeightDistance(*superPixelList[0])<< endl;
-    cout << "SIFT Distance: " << superPixelList[3]->getSiftDistance(*superPixelList[0]) << endl;
-    cout << "Color Distance: " << superPixelList[3]->getColorDistance(*superPixelList[0]) << endl;
-    */
+    SuperPixel::computeAdiacents(superPixelList, image.getImage()->rows, image.getImage()->cols);
+    SuperPixel::computeWeight(superPixelList);
+
     cvNamedWindow("superPixels",2);
     imshow("superPixels",segmented);
 }
