@@ -68,7 +68,23 @@ void RetrievalSet::computeNeighbourStatistics(NeighbourStat &result, string imgL
     result.saveToFile();
 }
 
-void RetrievalSet::computeInstance(string instancePath, NeighbourStat &stat, bool useMRF){
+void RetrievalSet::assignLabels(QueryImage &query)
+{
+    vector<SuperPixel *> *setSuperPixelsToLabel = query.getSuperPixels();
+    for(uint k=0; k<setSuperPixelsToLabel->size(); ++k){
+        SuperPixel *superPixelToLabel = (*setSuperPixelsToLabel)[k];
+        superPixelToLabel->setLabel(matchResults[k]->getBestLabel());
+
+        //Necessarie solo per stampare
+        //cout << "Assign: " << tmp.matchLabel(matchResults[k]->getBestLabel()) << endl;
+        //superPixelToLabel->show();
+    }
+    query.showSrc();
+    query.showLabeling();
+    cout << "ERRORE: " << query.checkResults()*100 << "%\n";
+}
+
+void RetrievalSet::computeInstance(string instancePath, NeighbourStat &stat, bool useMRF, int nThreads){
     vector<string> imgNames;
     ifstream ifs(instancePath.c_str());
     string content((istreambuf_iterator<char>(ifs)), istreambuf_iterator<char>());
@@ -93,7 +109,20 @@ void RetrievalSet::computeInstance(string instancePath, NeighbourStat &stat, boo
     QueryImage query(queryPath);
     //query.showSrc();
     //cv::waitKey();
-    LabelImg(query, imgNames);
+    ThreadSafeStringSet nameSet(imgNames);
+    vector<SuperPixel *> *setSuperPixelsToLabel = query.getSuperPixels();
+    for(uint i=0; i<setSuperPixelsToLabel->size(); ++i) matchResults.push_back(new GlobLikelihood());
+    //computeLabels(query, &nameSet, &matchResults);
+    boost::thread threadList[nThreads];
+    for(int i=0; i<nThreads; ++i){
+        threadList[i] = boost::thread(&computeLabels, &query, &nameSet, &matchResults);
+    }
+    for(int i=0; i<nThreads; ++i) threadList[i].join();
+
+
+    //Ad ogni superpixel assegno la label col valore migliore
+    assignLabels(query);
+
     if(useMRF) applyMRF(query, stat);
 }
 
@@ -101,17 +130,18 @@ void RetrievalSet::computeInstance(string instancePath, NeighbourStat &stat, boo
  * @brief RetrievalSet::LabelImg Insert label for the given image
  * @param imgToLabel segmented image in which it will insert labels
  */
-void RetrievalSet::LabelImg(QueryImage &imgToLabel, vector<string> &imgNames){
+void RetrievalSet::computeLabels(QueryImage *imgToLabel, ThreadSafeStringSet *imgNames, vector<GlobLikelihood *> *matchResults){
 
     //Recupero il vettore di superpixel della query image
-    vector<SuperPixel *> *setSuperPixelsToLabel = imgToLabel.getSuperPixels();
+    vector<SuperPixel *> *setSuperPixelsToLabel = imgToLabel->getSuperPixels();
     //Faccio scorrere i superpixels del retrieval set e della query image, provo i match e salvo le statistiche
-    for(uint i=0; i<setSuperPixelsToLabel->size(); ++i) matchResults.push_back(new GlobLikelihood());
 
     //Elaboro le immagini del retrieval set
-    for(uint i=0; i<imgNames.size(); ++i){
+    while(true){
+        string setImagePath = imgNames->getNext();
+        if(setImagePath.empty()) break;
         //Recupero i superpixel della i-esima immagine del retrieval set
-        RetrImage setImage(imgNames[i]);
+        RetrImage setImage(setImagePath);
         //setImage.show();
         //cv::waitKey();
         vector<SuperPixel *> *setImgSuperPixels = setImage.getSuperPixels();
@@ -121,31 +151,10 @@ void RetrievalSet::LabelImg(QueryImage &imgToLabel, vector<string> &imgNames){
             for(uint k=0; k<setSuperPixelsToLabel->size(); ++k){
                 //Per ogni superpixel dell'immagine calcolo i valori riguardanti il numero di match per ogni classe
                 SuperPixel *superPixelToLabel = (*setSuperPixelsToLabel)[k];
-                checkSuperPixel(superPixelToLabel, setSuperPixel, *(matchResults[k]));
+                checkSuperPixel(superPixelToLabel, setSuperPixel, *(matchResults->at(k)));
             }
         }
-        stringstream str;
-        str << (i*100/imgNames.size()) <<"%\r";
-        cout << str.str();
-        cout.flush();
-
     }
-    cout << endl;
-    //Necessario solo per stampare
-    //RetrImage tmp(imgNames[0]);
-
-    //Ad ogni superpixel assegno la label col valore migliore
-    for(uint k=0; k<setSuperPixelsToLabel->size(); ++k){
-        SuperPixel *superPixelToLabel = (*setSuperPixelsToLabel)[k];
-        superPixelToLabel->setLabel(matchResults[k]->getBestLabel());
-
-        //Necessarie solo per stampare
-        //cout << "Assign: " << tmp.matchLabel(matchResults[k]->getBestLabel()) << endl;
-        //superPixelToLabel->show();
-    }
-    imgToLabel.showSrc();
-    imgToLabel.showLabeling();
-    cout << "ERRORE: " << imgToLabel.checkResults()*100 << "%\n";
 }
 
 /**

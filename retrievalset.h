@@ -13,6 +13,7 @@
 #include "globlikelihood.h"
 #include "retrimage.h"
 #include "neighbourstat.h"
+#include "Utils/threadsafestringset.h"
 
 #include "debugHeader.h"
 
@@ -26,16 +27,17 @@ class RetrievalSet
     Json::Value trainingSet;
     int trainingPos;
     vector<GlobLikelihood *> matchResults;
-    void checkSuperPixel(SuperPixel *toLabel, SuperPixel *inSet, GlobLikelihood &spixelResults);
+    static void checkSuperPixel(SuperPixel *toLabel, SuperPixel *inSet, GlobLikelihood &spixelResults);
     void applyMRF(QueryImage &imgToLabel, NeighbourStat &stat);
     string getNextTrainingPath();
     static void training(NeighbourStat *result, RetrievalSet *setInstance);
+    static void computeLabels(QueryImage *imgToLabel, ThreadSafeStringSet *imgNames, vector<GlobLikelihood *> *matchResults);
 public:
     RetrievalSet();
     ~RetrievalSet();
-    void computeInstance(string instancePath, NeighbourStat &stat, bool useMRF);
-    void LabelImg(QueryImage &imgToLabel, vector<string> &imgNames);
+    void computeInstance(string instancePath, NeighbourStat &stat, bool useMRF, int nThreads);
     void computeNeighbourStatistics(NeighbourStat &result, string imgListPath, int threadNum);
+    void assignLabels(QueryImage &query);
 };
 
 #endif // RETRIEVALSET_H
