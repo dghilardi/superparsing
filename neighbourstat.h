@@ -4,6 +4,7 @@
 #include "debugHeader.h"
 
 #include <jsoncpp/json/json.h>
+#include <boost/thread.hpp>
 #include <fstream>
 #include <string>
 
@@ -14,6 +15,7 @@ class NeighbourStat
 {
     string filename;
     Json::Value statArray;
+    boost::mutex mtx;
 public:
     NeighbourStat(string path);
     void saveToFile();

@@ -11,3 +11,7 @@ The libraries required by this project are:
 - matio
 - libDAI
 - jsoncpp
+
+Usage
+-----
+The program need the folder containing the Sift Flow Dataset to be located in the parent folder of the project folder.

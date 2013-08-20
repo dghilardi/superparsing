@@ -62,16 +62,16 @@ int main(int argc, char **argv){
         instancePath = INST_NAME;
     }
     NeighbourStat neighbourStatistics(STAT_FILE_NAME);
+    RetrievalSet imSet;
     if(!trainingSetPath.empty()){
         neighbourStatistics.reset();
-        RetrievalSet::computeNeighbourStatistics(neighbourStatistics, trainingSetPath);
+        imSet.computeNeighbourStatistics(neighbourStatistics, trainingSetPath, 4);
     }
     if(neighbourStatistics.isEmpty() && useMRF){
         cerr << "ERROR! no statistics about neighbour founded." << endl;
         return 1;
     }
     if(!instancePath.empty()){
-        RetrievalSet imSet;
         imSet.computeInstance(instancePath, neighbourStatistics, useMRF);
         cv::waitKey();
     }

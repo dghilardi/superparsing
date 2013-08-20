@@ -111,7 +111,7 @@ void VisualUtils::colorLabels(cv::Mat &labeled, cv::Mat &result, set<int> &label
     }
     for(int x=0; x<labeled.cols; ++x){ for(int y=0; y<labeled.rows; ++y){
             cv::Point3_<uchar> *p = result.ptr<cv::Point3_<uchar> >(y,x);
-            cout << "LABEL: " <<(int)labeled.at<uchar>(y,x)<<endl;
+            //cout << "LABEL: " <<(int)labeled.at<uchar>(y,x)<<endl;
             assert(labelColors.find(labeled.at<uchar>(y,x))!=labelColors.end());
             cv::Vec3b color = labelColors[(int)labeled.at<uchar>(y,x)];
             p->x = color[0];

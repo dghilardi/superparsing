@@ -7,33 +7,64 @@ RetrievalSet::RetrievalSet()
 RetrievalSet::~RetrievalSet(){
     for(int i=0; i<matchResults.size(); ++i) delete matchResults[i];
 }
+string RetrievalSet::getNextTrainingPath(){
+    string ani("-/|\\");
+    stringstream str;
+    str << (trainingPos*100/trainingSet.size()) <<"%\t"<<ani.at(trainingPos%ani.size())<<"\t"<<trainingPos<<"\r";
+    neigTraining.lock();
+        cout.flush();
+        cout << str.str();
+        if(trainingPos>=trainingSet.size()){
+            neigTraining.unlock();
+            return "";
+        }
+        string path = trainingSet[trainingPos].asString();
+        trainingPos++;
+    neigTraining.unlock();
+    return path;
+}
 
-void RetrievalSet::computeNeighbourStatistics(NeighbourStat &result, string imgListPath){
+void RetrievalSet::training(NeighbourStat *result,  RetrievalSet *setInstance){
+    while(true){
+        string path = setInstance->getNextTrainingPath();
+        if(path.empty()) break;
+        RetrImage setImage(path);
+        setImage.updateNeighbourStatistics(*result);
+        /*
+        if((trainingPos%200)==0){
+            for(int x=0; x<33; x++){
+                for(int y=0; y<33; ++y){
+                    cout <<((y==0) ? "\n" : "") <<setw(3)<<setfill(' ')<< result.getNeighbourNum(x,y) << " ";
+                }
+            }
+            cout << endl << endl;
+        }*/
+    }
+}
+
+void RetrievalSet::computeNeighbourStatistics(NeighbourStat &result, string imgListPath, int threadNum){
     ifstream ifs(imgListPath.c_str());
     string content((istreambuf_iterator<char>(ifs)), istreambuf_iterator<char>());
     Json::Value root;
     Json::Reader reader;
     bool parsedSuccess = reader.parse(content, root, false);
 
-    Json::Value dataSet = root["dataset"];
+    trainingSet = root["dataset"];
 
     if(!parsedSuccess){
         cerr << MSG_ERROR_PARSE_JSON << imgListPath << endl;
         throw ERROR_PARSE_JSON;
     }
     cout<<"Computing Neighborhood statistics:"<<endl;
-    string ani("-/|\\");
-    for(uint i=0; i<dataSet.size(); ++i){
-        string path = dataSet[i].asString();
-        RetrImage setImage(path);
-        setImage.updateNeighbourStatistics(result);
-
-        stringstream str;
-        str << (i*100/dataSet.size()) <<"%\t"<<ani.at(i%ani.size())<<"\t"<<i<<"\r";
-        cout << str.str();
-        cout.flush();
-        result.saveToFile();
+    trainingPos = 0;
+    boost::thread threads[threadNum];
+    for(int i=0; i<threadNum; ++i){
+        threads[i] = boost::thread(&RetrievalSet::training, &result, this);
     }
+    for(int i=0; i<threadNum; ++i){
+        threads[i].join();
+    }
+    //training(&result, &dataSet);
     result.saveToFile();
 }
 
