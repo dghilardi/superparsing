@@ -43,10 +43,12 @@ double ClassLikelihood::getLogLikelihood(int classID){
         else existsnummatch = true;
     }
     double frac1, frac2;
-    if(!existstotnum) frac1 = totNotC*1.1; //Approssimazione
+    if(!existstotnum) frac1 = 0; //?
     else frac1 = totNotC/totNum[classID];
+
     if(!existsnummatch) frac2 = (EPSILON)/(double)(matchNotC+EPSILON);
     else frac2 = (numMatches[classID]+EPSILON)/(double)(matchNotC+EPSILON);
+
     return log(frac1*frac2);
 }
 

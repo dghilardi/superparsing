@@ -13,7 +13,8 @@ LIBS += \
     -lgmpxx -lgmp \
     -lmatio \
     -lhdf5 -lz \
-    -ljsoncpp
+    -ljsoncpp \
+    -lboost_thread
 #    -lopencv_core\
 #    -lopencv_highgui\
 #    -lopencv_imgproc\

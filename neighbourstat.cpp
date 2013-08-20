@@ -26,7 +26,7 @@ NeighbourStat::NeighbourStat(string path): filename(path)
 int NeighbourStat::getNeighbourNum(int idA, int idB){
     int min = idA<idB ? idA : idB;
     int max = idA>idB ? idA : idB;
-    return statArray[min][max].asInt();
+    return statArray[max][min].asInt();
 }
 
 /**
@@ -37,7 +37,9 @@ int NeighbourStat::getNeighbourNum(int idA, int idB){
 void NeighbourStat::incNeigNum(int idA, int idB){
     int min = idA<idB ? idA : idB;
     int max = idA>idB ? idA : idB;
-    statArray[min][max] = statArray[min][max].asInt()+1;
+    mtx.lock();
+    statArray[max][min] = statArray[max][min].asInt()+1;
+    mtx.unlock();
 }
 
 /**
@@ -71,8 +73,8 @@ void NeighbourStat::reset(){
 double NeighbourStat::conditionalNeigProb(int idA, int idB){
     int foundTimes = getNeighbourNum(idA, idB);
     int totNum = 0;
-    for(int i=0; i<idB; ++i) totNum += statArray[i][idB].asInt();
-    for(int i=idB+1; i<statArray.size(); ++i) totNum += statArray[idB][i].asInt();
+    for(int i=0; i<idB; ++i) totNum += statArray[idB][i].asInt();
+    for(int i=idB+1; i<statArray.size(); ++i) totNum += statArray[i][idB].asInt();
 
     double prob = totNum>0 ? foundTimes/(double)totNum : 0;
     assert(prob<=1);
