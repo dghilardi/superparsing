@@ -72,7 +72,7 @@ int main(int argc, char **argv){
         return 1;
     }
     if(!instancePath.empty()){
-        imSet.computeInstance(instancePath, neighbourStatistics, useMRF);
+        imSet.computeInstance(instancePath, neighbourStatistics, useMRF, 4);
         cv::waitKey();
     }
     return 0;

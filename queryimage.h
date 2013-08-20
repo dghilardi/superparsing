@@ -8,7 +8,7 @@
 #include "image.h"
 #include "superpixel.h"
 #include "geolabel.h"
-#include "visualutils.h"
+#include "Utils/visualutils.h"
 #include "OpenCVGraphSegmentation/Segmentation.h"
 
 using namespace std;

@@ -7,13 +7,16 @@ ClassLikelihood::ClassLikelihood(string feature){
 }
 
 map<int,int> ClassLikelihood::totNum; //Static declaration
+boost::mutex ClassLikelihood::mtxTotNum;
 
 /**
  * @brief ClassLikelihood::incTotClass increment the value of the times we found the label in the database
  * @param classID id of the label
  */
 void ClassLikelihood::incTotClass(int classID){
+    mtxTotNum.lock();
     ++totNum[classID];
+    mtxTotNum.unlock();
 }
 
 /**
@@ -21,7 +24,9 @@ void ClassLikelihood::incTotClass(int classID){
  * @param classID id of the label found
  */
 void ClassLikelihood::foundMatch(int classID){
+    mtxNumMatches.lock();
     ++numMatches[classID];
+    mtxNumMatches.unlock();
 }
 
 /**

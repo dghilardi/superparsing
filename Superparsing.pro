@@ -34,8 +34,9 @@ SOURCES += main.cpp \
     classlikelihood.cpp \
     globlikelihood.cpp \
     neighbourstat.cpp \
-    visualutils.cpp \
-    mrf.cpp
+    Utils/visualutils.cpp \
+    mrf.cpp \
+    Utils/threadsafestringset.cpp
 
 HEADERS += \
     geolabel.h \
@@ -48,6 +49,9 @@ HEADERS += \
     globlikelihood.h \
     debugHeader.h \
     neighbourstat.h \
-    visualutils.h \
-    mrf.h
+    Utils/visualutils.h \
+    mrf.h \
+    Utils/threadsafestringset.h
 
+OTHER_FILES += instances/instance.json \
+    instances/whole-training.json
