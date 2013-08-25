@@ -38,7 +38,7 @@ void MRF::computeMRF(vector<SuperPixel *> &superPixelList, vector<GlobLikelihood
             dai::Factor eSmooth(dai::VarSet(variables[i], variables[position]));
             for(int stateVar=0; stateVar<nlabels; ++stateVar){ for(int stateAdiacent=0; stateAdiacent<nlabels; ++stateAdiacent){
                     if(stateVar!=stateAdiacent){
-                        double prob = condprob.conditionalNeigProb(stateVar+1, stateAdiacent+1)+condprob.conditionalNeigProb(stateAdiacent+1, stateVar+1)/2;
+                        double prob = (condprob.conditionalNeigProb(stateVar+1, stateAdiacent+1)+condprob.conditionalNeigProb(stateAdiacent+1, stateVar+1))/2;
                         //prob=1-prob;
                         prob= (prob==0) ? 1e-6 : prob;
                         assert(prob>0 && prob<=1);
