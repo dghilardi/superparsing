@@ -44,7 +44,7 @@ void MRF::computeMRF(vector<SuperPixel *> &superPixelList, vector<GlobLikelihood
                         assert(prob>0 && prob<=1);
                         eSmooth.set(stateVar*nlabels+stateAdiacent, exp(-log(prob)));
                     }else{
-                        eSmooth.set(stateVar*nlabels+stateAdiacent, 0);
+                        eSmooth.set(stateVar*nlabels+stateAdiacent, 1);
                     }
             }}
             factors.push_back(eSmooth);
@@ -128,7 +128,7 @@ void MRF::computeMAP(dai::FactorGraph &graph, vector<size_t> &decmapstate){
     mp.init();
     mp.run();
 
-    vector<size_t> mpstate = mp.findMaximum();
+    //vector<size_t> mpstate = mp.findMaximum();
 
     dai::DecMAP decmap(graph, opts("reinit",true)("ianame",string("BP"))("iaopts",string("[damping=0.1,inference=MAXPROD,logdomain=0,maxiter=1000,tol=1e-9,updates=SEQRND,verbose=1]")) );
     decmap.init();

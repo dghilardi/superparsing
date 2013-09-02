@@ -1,6 +1,7 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
+#include "globalSettings.h"
 #include "debugHeader.h"
 
 #include <string>
