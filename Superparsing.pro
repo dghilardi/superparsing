@@ -14,7 +14,8 @@ LIBS += \
     -lmatio \
     -lhdf5 -lz \
     -ljsoncpp \
-    -lboost_thread
+    -lboost_thread \
+    -lboost_system
 #    -lopencv_core\
 #    -lopencv_highgui\
 #    -lopencv_imgproc\
@@ -36,7 +37,11 @@ SOURCES += main.cpp \
     neighbourstat.cpp \
     Utils/visualutils.cpp \
     mrf.cpp \
-    Utils/threadsafestringset.cpp
+    Utils/threadsafestringset.cpp \
+    globalSettings.cpp \
+    Video/video.cpp \
+    Video/queryvideo.cpp \
+    Video/supervoxel.cpp
 
 HEADERS += \
     geolabel.h \
@@ -51,7 +56,11 @@ HEADERS += \
     neighbourstat.h \
     Utils/visualutils.h \
     mrf.h \
-    Utils/threadsafestringset.h
+    Utils/threadsafestringset.h \
+    globalSettings.h \
+    Video/video.h \
+    Video/queryvideo.h \
+    Video/supervoxel.h
 
 OTHER_FILES += instances/instance.json \
     instances/whole-training.json

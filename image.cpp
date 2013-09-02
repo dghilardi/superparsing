@@ -1,7 +1,8 @@
 #include "image.h"
 
 Image::Image(string filename){
-    imgName = string(IMG_PATH)+filename+string(IMG_EXT);
+    //imgName = string(IMG_PATH)+filename+string(IMG_EXT);
+    imgName = GlobalSettings::imgPath+filename+string(IMG_EXT);
     image = cv::imread(imgName, CV_LOAD_IMAGE_COLOR);
 }
 

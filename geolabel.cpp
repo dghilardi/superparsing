@@ -5,7 +5,8 @@
 vector<string *> GeoLabel::labels;
 
 GeoLabel::GeoLabel(string filename){
-    imgName = string(MAT_PATH)+filename+string(MAT_EXT);
+    //imgName = string(MAT_PATH)+filename+string(MAT_EXT);
+    imgName = GlobalSettings::labelsPath+filename+string(MAT_EXT);
     mat_t *geoLabelf = Mat_Open(imgName.c_str(), MAT_ACC_RDONLY);
     if(geoLabelf==NULL) cerr << MSG_ERROR_LOADING_MAT << imgName << endl;
     matvar_t *matVar;

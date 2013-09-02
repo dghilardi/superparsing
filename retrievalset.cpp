@@ -49,6 +49,8 @@ void RetrievalSet::computeNeighbourStatistics(NeighbourStat &result, string imgL
     Json::Reader reader;
     bool parsedSuccess = reader.parse(content, root, false);
 
+    GlobalSettings::imgPath = root["imgPath"].asString();
+    GlobalSettings::labelsPath = root["labelsPath"].asString();
     trainingSet = root["dataset"];
 
     if(!parsedSuccess){
@@ -91,6 +93,9 @@ void RetrievalSet::computeInstance(string instancePath, NeighbourStat &stat, boo
     Json::Value root;
     Json::Reader reader;
     bool parsedSuccess = reader.parse(content, root, false);
+
+    GlobalSettings::imgPath = root["imgPath"].asString();
+    GlobalSettings::labelsPath = root["labelsPath"].asString();
 
     Json::Value dataSet = root["dataset"];
     for(uint i=0; i<dataSet.size(); ++i){

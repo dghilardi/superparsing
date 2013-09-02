@@ -15,6 +15,7 @@
 #include "neighbourstat.h"
 #include "Utils/threadsafestringset.h"
 
+#include "globalSettings.h"
 #include "debugHeader.h"
 
 #define ERROR_PARSE_JSON 1
