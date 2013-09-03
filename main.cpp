@@ -39,7 +39,7 @@ int main(int argc, char **argv){
         int c, option_index=0;
         while((c=getopt_long(argc, argv, "i:v:r:hm", long_options, &option_index))!=-1){
             //int this_option_optind = optind ? optind : 1;
-            cout << "arg: " << c << endl;
+            cout << "arg: " << (char)c << endl;
             switch(c){
             case 'i':
                 imgInstancePath = optarg;
