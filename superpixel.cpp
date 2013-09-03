@@ -47,10 +47,12 @@ SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg): maskFeature(0), si
 }
 
 SuperPixel::~SuperPixel(){
+    /*
     assert(*(colorHist[0]->refcount)==1);
     assert(*(colorHist[1]->refcount)==1);
     assert(*(colorHist[2]->refcount)==1);
     assert(*(siftHist.refcount)==1);
+    */
     delete colorHist[0];
     delete colorHist[1];
     delete colorHist[2];

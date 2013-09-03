@@ -9,10 +9,13 @@
 using namespace std;
 class SuperVoxel
 {
-    map<int, SuperPixel> superPixelsList;
+    map<int, SuperPixel *> superPixelsList;
 public:
-    SuperVoxel(vector<Pixel> &pixelList, vector<IplImage *> &frames);
-    const map<int, SuperPixel> *getSuperPixels();
+    SuperVoxel(vector<Pixel> &pixelList, vector<cv::Mat> &frames);
+    ~SuperVoxel();
+
+    const map<int, SuperPixel *> *getSuperPixels();
+    void show();
 };
 
 #endif // SUPERVOXEL_H
