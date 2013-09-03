@@ -86,7 +86,44 @@ void RetrievalSet::assignLabels(QueryImage &query)
     cout << "ERRORE: " << query.checkResults()*100 << "%\n";
 }
 
-void RetrievalSet::computeInstance(string instancePath, NeighbourStat &stat, bool useMRF, int nThreads){
+void RetrievalSet::computeImage(int nThreads, bool useMRF, ThreadSafeStringSet &nameSet, NeighbourStat &stat, string queryPath)
+{
+    QueryImage query(queryPath);
+    //query.showSrc();
+    //cv::waitKey();
+    vector<SuperPixel *> *setSuperPixelsToLabel = query.getSuperPixels();
+    for(uint i=0; i<setSuperPixelsToLabel->size(); ++i) matchResults.push_back(new GlobLikelihood());
+    //computeLabels(query, &nameSet, &matchResults);
+    boost::thread threadList[nThreads];
+    for(int i=0; i<nThreads; ++i){
+        threadList[i] = boost::thread(&computeLabels, &query, &nameSet, &matchResults);
+    }
+    for(int i=0; i<nThreads; ++i) threadList[i].join();
+
+
+    //Ad ogni superpixel assegno la label col valore migliore
+    assignLabels(query);
+
+    if(useMRF) applyMRF(query, stat);
+}
+
+void RetrievalSet::computeVideo(int nThreads, bool useMRF, ThreadSafeStringSet &nameSet, NeighbourStat &stat, string queryPath){
+    QueryVideo query(queryPath);
+    vector<SuperVoxel *> *setSuperVoxelToLabel = query.getSuperVoxelsList();
+    vector<map<int, SuperPixel *> *> setSuperPixelsToLabel;
+    vector<SuperVoxelLikelihood *> statLikelihood;
+    for(uint i=0; i<setSuperVoxelToLabel->size(); ++i){
+        setSuperPixelsToLabel.push_back((*setSuperVoxelToLabel)[i]->getSuperPixels());
+        statLikelihood.push_back(new SuperVoxelLikelihood());
+    }
+    boost::thread threadList[nThreads];
+    for(int i=0; i<nThreads; ++i){
+        threadList[i] = boost::thread(&computeLabelsMulti, &setSuperPixelsToLabel, &nameSet, &statLikelihood);
+    }
+    for(int i=0; i<nThreads; ++i) threadList[i].join();
+}
+
+void RetrievalSet::computeInstance(string instancePath, NeighbourStat &stat, bool useMRF, int nThreads, bool isQueryImage){
     vector<string> imgNames;
     ifstream ifs(instancePath.c_str());
     string content((istreambuf_iterator<char>(ifs)), istreambuf_iterator<char>());
@@ -111,24 +148,30 @@ void RetrievalSet::computeInstance(string instancePath, NeighbourStat &stat, boo
         throw ERROR_PARSE_JSON;
     }
 
-    QueryImage query(queryPath);
-    //query.showSrc();
-    //cv::waitKey();
     ThreadSafeStringSet nameSet(imgNames);
-    vector<SuperPixel *> *setSuperPixelsToLabel = query.getSuperPixels();
-    for(uint i=0; i<setSuperPixelsToLabel->size(); ++i) matchResults.push_back(new GlobLikelihood());
-    //computeLabels(query, &nameSet, &matchResults);
-    boost::thread threadList[nThreads];
-    for(int i=0; i<nThreads; ++i){
-        threadList[i] = boost::thread(&computeLabels, &query, &nameSet, &matchResults);
+
+    if(isQueryImage)computeImage(nThreads, useMRF, nameSet, stat, queryPath);
+    else computeVideo(nThreads, useMRF, nameSet, stat, queryPath);
+}
+
+void RetrievalSet::computeLabelsMulti(vector<map<int, SuperPixel *> *> *setSuperPixelsToLabel, ThreadSafeStringSet *imgNames, vector<SuperVoxelLikelihood *> *matchResults){
+    while(true){
+        string setImagePath = imgNames->getNext();
+        if(setImagePath.empty()) break;
+        RetrImage setImage(setImagePath);
+
+        vector<SuperPixel *> *setImgSuperPixels = setImage.getSuperPixels();
+        for(int j=0; j<setImgSuperPixels->size(); ++j){
+            SuperPixel *setSuperPixel = (*setImgSuperPixels)[j];
+            ClassLikelihood::incTotClass(setSuperPixel->getLabel());
+            for(int i=0; i<setSuperPixelsToLabel->size(); ++i){
+                for(map<int, SuperPixel *>::iterator it=(*setSuperPixelsToLabel)[i]->begin(); it!=(*setSuperPixelsToLabel)[i]->end(); ++it){
+                    SuperPixel *spToLabel = it->second;
+                    checkSuperPixel(spToLabel, setSuperPixel, *((*matchResults)[i]->getGlobLikelihood(it->first)));
+                }
+            }
+        }
     }
-    for(int i=0; i<nThreads; ++i) threadList[i].join();
-
-
-    //Ad ogni superpixel assegno la label col valore migliore
-    assignLabels(query);
-
-    if(useMRF) applyMRF(query, stat);
 }
 
 /**

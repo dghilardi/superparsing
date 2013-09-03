@@ -1,6 +1,6 @@
 #include "supervoxel.h"
 
-SuperVoxel::SuperVoxel(vector<Pixel> &pixelList, vector<cv::Mat> &frames)
+SuperVoxel::SuperVoxel(vector<Pixel> &pixelList, vector<cv::Mat> &frames) : label(-1)
 {
     map<int, vector<Pixel> > dividedPerFrame;
     for(uint i=0; i<pixelList.size(); ++i){
@@ -18,8 +18,16 @@ SuperVoxel::~SuperVoxel(){
     }
 }
 
-const map<int, SuperPixel *> *SuperVoxel::getSuperPixels(){
+map<int, SuperPixel *> *SuperVoxel::getSuperPixels(){
     return &superPixelsList;
+}
+
+int SuperVoxel::getLabel(){
+    return label;
+}
+
+void SuperVoxel::setLabel(int newLabel){
+    label=newLabel;
 }
 
 void SuperVoxel::show(){

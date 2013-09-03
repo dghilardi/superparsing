@@ -79,11 +79,12 @@ int main(int argc, char **argv){
         return 1;
     }
     if(!imgInstancePath.empty()){
-        imSet.computeInstance(imgInstancePath, neighbourStatistics, useMRF, 4);
+        imSet.computeInstance(imgInstancePath, neighbourStatistics, useMRF, 4, true);
         cv::waitKey();
     }
     if(!vidInstancePath.empty()){
-        QueryVideo prova(vidInstancePath);
+        imSet.computeInstance(vidInstancePath, neighbourStatistics, useMRF, 4, false);
+        cv::waitKey();
     }
     return 0;
 }

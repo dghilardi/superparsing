@@ -15,6 +15,8 @@ class QueryVideo
 public:
     QueryVideo(string path);
     ~QueryVideo();
+
+    vector<SuperVoxel *> *getSuperVoxelsList();
 };
 
 #endif // QUERYVIDEO_H

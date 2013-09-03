@@ -41,7 +41,8 @@ SOURCES += main.cpp \
     globalSettings.cpp \
     Video/video.cpp \
     Video/queryvideo.cpp \
-    Video/supervoxel.cpp
+    Video/supervoxel.cpp \
+    Video/supervoxellikelihood.cpp
 
 HEADERS += \
     geolabel.h \
@@ -60,7 +61,8 @@ HEADERS += \
     globalSettings.h \
     Video/video.h \
     Video/queryvideo.h \
-    Video/supervoxel.h
+    Video/supervoxel.h \
+    Video/supervoxellikelihood.h
 
 OTHER_FILES += instances/instance.json \
     instances/whole-training.json

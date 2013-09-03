@@ -8,6 +8,8 @@
 
 #include "mrf.h"
 #include "queryimage.h"
+#include "Video/queryvideo.h"
+#include "Video/supervoxellikelihood.h"
 #include "superpixel.h"
 #include "classlikelihood.h"
 #include "globlikelihood.h"
@@ -33,10 +35,13 @@ class RetrievalSet
     string getNextTrainingPath();
     static void training(NeighbourStat *result, RetrievalSet *setInstance);
     static void computeLabels(QueryImage *imgToLabel, ThreadSafeStringSet *imgNames, vector<GlobLikelihood *> *matchResults);
+    static void computeLabelsMulti(vector<map<int, SuperPixel *> *> *setSuperPixelsToLabel, ThreadSafeStringSet *imgNames, vector<SuperVoxelLikelihood *> *matchResults);
+    void computeImage(int nThreads, bool useMRF, ThreadSafeStringSet &nameSet, NeighbourStat &stat, string queryPath);
+    void computeVideo(int nThreads, bool useMRF, ThreadSafeStringSet &nameSet, NeighbourStat &stat, string queryPath);
 public:
     RetrievalSet();
     ~RetrievalSet();
-    void computeInstance(string instancePath, NeighbourStat &stat, bool useMRF, int nThreads);
+    void computeInstance(string instancePath, NeighbourStat &stat, bool useMRF, int nThreads, bool isQueryImage);
     void computeNeighbourStatistics(NeighbourStat &result, string imgListPath, int threadNum);
     void assignLabels(QueryImage &query);
 };
