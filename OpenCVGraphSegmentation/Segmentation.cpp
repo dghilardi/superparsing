@@ -74,10 +74,12 @@ void segmentImage(IplImage* input, vector<vector<Pixel> > & resultBuffer){
     delete converted;
 }
 
-void segmentVideo(vector<IplImage *> &input, vector<vector<Pixel> > &resultBuffer){
+void segmentVideo(vector<cv::Mat> &input, vector<vector<Pixel> > &resultBuffer){
     vector<image<rgb> *> converted;
     for(int i=0; i<input.size(); ++i){
-        converted.push_back(convertIplToNativeImage(input[i]));
+        IplImage *tmp = new IplImage(input[i]);
+        converted.push_back(convertIplToNativeImage(tmp));
+        delete tmp;
     }
     segment_imseq(converted, SIGMA, 200, MIN_SEGMENTATION_BLOB_SIZE, NULL, resultBuffer);
     for(int i=0; i<converted.size(); ++i) delete converted[i];

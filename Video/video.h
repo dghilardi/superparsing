@@ -12,7 +12,7 @@ class Video
     cv::VideoCapture vid;
 public:
     Video(string path);
-    void getImages(vector<IplImage *> &result, int maxNumber);
+    void getImages(vector<cv::Mat> &result, int maxNumber);
 };
 
 #endif // VIDEO_H

@@ -4,6 +4,7 @@
 #include "retrievalset.h"
 #include "neighbourstat.h"
 #include <getopt.h>
+#include "Video/queryvideo.h"
 
 #include "opencv2/highgui/highgui.hpp"
 
@@ -82,7 +83,7 @@ int main(int argc, char **argv){
         cv::waitKey();
     }
     if(!vidInstancePath.empty()){
-
+        QueryVideo prova(vidInstancePath);
     }
     return 0;
 }

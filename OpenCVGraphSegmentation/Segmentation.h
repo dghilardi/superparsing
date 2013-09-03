@@ -38,5 +38,5 @@ typedef struct {
 }Pixel;
 
 void segmentImage(IplImage* input, vector<vector<Pixel> > & resultBuffer);
-void segmentVideo(vector<IplImage *> &input, vector<vector<Pixel> > &resultBuffer);
+void segmentVideo(vector<cv::Mat> &input, vector<vector<Pixel> > &resultBuffer);
 
