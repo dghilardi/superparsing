@@ -167,7 +167,7 @@ void RetrievalSet::computeLabelsMulti(vector<map<int, SuperPixel *> *> *setSuper
             for(int i=0; i<setSuperPixelsToLabel->size(); ++i){
                 for(map<int, SuperPixel *>::iterator it=(*setSuperPixelsToLabel)[i]->begin(); it!=(*setSuperPixelsToLabel)[i]->end(); ++it){
                     SuperPixel *spToLabel = it->second;
-                    checkSuperPixel(spToLabel, setSuperPixel, *((*matchResults)[i]->getGlobLikelihood(it->first)));
+                    checkSuperPixel(spToLabel, setSuperPixel, *((*matchResults)[i]->getGlobLikelihood(it->first, spToLabel->getWeight())));
                 }
             }
         }
