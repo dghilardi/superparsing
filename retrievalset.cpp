@@ -92,7 +92,11 @@ void RetrievalSet::computeImage(int nThreads, bool useMRF, ThreadSafeStringSet &
     //query.showSrc();
     //cv::waitKey();
     vector<SuperPixel *> *setSuperPixelsToLabel = query.getSuperPixels();
-    for(uint i=0; i<setSuperPixelsToLabel->size(); ++i) matchResults.push_back(new GlobLikelihood());
+    for(uint i=0; i<setSuperPixelsToLabel->size(); ++i){
+        GlobLikelihood *tmp = new GlobLikelihood();
+        tmp->setWeight((*setSuperPixelsToLabel)[i]->getWeight());
+        matchResults.push_back(tmp);
+    }
     //computeLabels(query, &nameSet, &matchResults);
     boost::thread threadList[nThreads];
     for(int i=0; i<nThreads; ++i){
