@@ -10,6 +10,7 @@ using namespace std;
 class SuperVoxel
 {
     map<int, SuperPixel *> superPixelsList;
+    set<SuperVoxel *> adiacentsSet;
     int label;
 public:
     SuperVoxel(vector<Pixel> &pixelList, vector<cv::Mat> &frames);
@@ -20,7 +21,10 @@ public:
     void setLabel(int newLabel);
     void show();
 
-    static void computePerFrameNeighbour(vector<SuperVoxel *> superVoxelList, int height, int width);
+    void appendAdiacent(SuperVoxel *toAppend);
+    const set<SuperVoxel *> *getAdiacents();
+
+    static void computePerFrameNeighbour(vector<SuperVoxel *> superVoxelList, int height, int width, int nframes);
 };
 
 #endif // SUPERVOXEL_H

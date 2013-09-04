@@ -121,6 +121,10 @@ void RetrievalSet::computeVideo(int nThreads, bool useMRF, ThreadSafeStringSet &
         threadList[i] = boost::thread(&computeLabelsMulti, &setSuperPixelsToLabel, &nameSet, &statLikelihood);
     }
     for(int i=0; i<nThreads; ++i) threadList[i].join();
+    if(useMRF){
+        vector<SuperVoxel *> *setSuperVoxels = query.getSuperVoxelsList();
+        MRF::computeMRF<SuperVoxel, SuperVoxelLikelihood>(*setSuperVoxels, statLikelihood, stat);
+    }
 }
 
 void RetrievalSet::computeInstance(string instancePath, NeighbourStat &stat, bool useMRF, int nThreads, bool isQueryImage){
@@ -242,6 +246,6 @@ void RetrievalSet::checkSuperPixel(SuperPixel *toLabel, SuperPixel *inSet, GlobL
 
 void RetrievalSet::applyMRF(QueryImage &imgToLabel, NeighbourStat &stat){
     vector<SuperPixel *> *setSuperPixelsToLabel = imgToLabel.getSuperPixels();
-    MRF::computeMRF(*setSuperPixelsToLabel, matchResults, stat);
+    MRF::computeMRF<SuperPixel>(*setSuperPixelsToLabel, matchResults, stat);
     cout << "ERRORE: " << imgToLabel.checkResults()*100 << "%\n";
 }

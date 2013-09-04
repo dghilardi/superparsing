@@ -263,6 +263,10 @@ const set<SuperPixel *> *SuperPixel::getAdiacents(){
     return &adiacentsSet;
 }
 
+const vector<Pixel> *SuperPixel::getCoordList(){
+    return &pixelCoordList;
+}
+
 void SuperPixel::computeAdiacents(vector<SuperPixel *> &spList, int height, int width){
     SuperPixel *superPixelsMap[width][height];
     for(int i=0; i<width; ++i) for(int j=0; j<height; ++j) superPixelsMap[i][j] = NULL;

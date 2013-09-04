@@ -36,6 +36,7 @@ SOURCES += main.cpp \
     globlikelihood.cpp \
     neighbourstat.cpp \
     Utils/visualutils.cpp \
+    Utils/printutils.cpp \
     mrf.cpp \
     Utils/threadsafestringset.cpp \
     globalSettings.cpp \
@@ -56,13 +57,16 @@ HEADERS += \
     debugHeader.h \
     neighbourstat.h \
     Utils/visualutils.h \
+    Utils/printutils.h \
     mrf.h \
+    mrf.tcc \
     Utils/threadsafestringset.h \
     globalSettings.h \
     Video/video.h \
     Video/queryvideo.h \
     Video/supervoxel.h \
-    Video/supervoxellikelihood.h
+    Video/supervoxellikelihood.h \
+    mrfnode.h
 
 OTHER_FILES += instances/instance.json \
     instances/whole-training.json

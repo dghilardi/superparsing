@@ -7,6 +7,7 @@
 #include <iomanip>
 
 #include "mrf.h"
+#include "mrfnode.h"
 #include "queryimage.h"
 #include "Video/queryvideo.h"
 #include "Video/supervoxellikelihood.h"
