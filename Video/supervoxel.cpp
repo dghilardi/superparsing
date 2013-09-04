@@ -36,3 +36,16 @@ void SuperVoxel::show(){
         cv::waitKey(100);
     }
 }
+
+void SuperVoxel::computePerFrameNeighbour(vector<SuperVoxel *> superVoxelList, int height, int width){
+    map<int, vector<SuperPixel *> > dividedPerFrame;
+    for(uint i=0; i<superVoxelList.size(); ++i){
+        SuperVoxel *actualVox = superVoxelList[i];
+        for(map<int, SuperPixel *>::iterator it=actualVox->getSuperPixels()->begin();it!=actualVox->getSuperPixels()->end(); ++it){
+            dividedPerFrame[it->first].push_back(it->second);
+        }
+    }
+    for(map<int, vector<SuperPixel *> >::iterator it=dividedPerFrame.begin(); it!=dividedPerFrame.end(); ++it){
+        SuperPixel::computeAdiacents(it->second, height, width);
+    }
+}

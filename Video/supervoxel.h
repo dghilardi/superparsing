@@ -19,6 +19,8 @@ public:
     int getLabel();
     void setLabel(int newLabel);
     void show();
+
+    static void computePerFrameNeighbour(vector<SuperVoxel *> superVoxelList, int height, int width);
 };
 
 #endif // SUPERVOXEL_H
