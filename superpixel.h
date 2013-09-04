@@ -39,6 +39,7 @@ public:
     void printToMat(cv::Mat &result);
     void appendAdiacent(SuperPixel *toAppend);
     const set<SuperPixel *> *getAdiacents();
+    const vector<Pixel> *getCoordList();
     static void computeAdiacents(vector<SuperPixel *> &spList, int height, int width);
     static void computeWeight(vector<SuperPixel *> &spList);
 };

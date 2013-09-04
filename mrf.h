@@ -16,6 +16,7 @@
 #include "geolabel.h"
 #include "globlikelihood.h"
 #include "neighbourstat.h"
+#include "Utils/printutils.h"
 
 #include "debugHeader.h"
 
@@ -26,7 +27,9 @@ class MRF
     static void computeMAP(dai::FactorGraph &graph, vector<size_t> &decmapstate);
 public:
     MRF();
-    static void computeMRF(vector<SuperPixel *> &superPixelList, vector<GlobLikelihood *> &likelihood, NeighbourStat &condprob);
+    template<typename MRFNode, typename Likelihood>
+        static void computeMRF(vector<MRFNode *> superPixelList, vector<Likelihood *> &likelihood, NeighbourStat &condprob);
 };
+#include "mrf.tcc"
 
 #endif // MRF_H

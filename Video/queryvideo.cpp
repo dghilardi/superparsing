@@ -6,11 +6,12 @@ QueryVideo::QueryVideo(string path): video(path){
 
     cout << "Segmenting Super-Voxels:\t";
     cout.flush();
-    video.getImages(frames, 25);
+    video.getImages(frames, 3);
     int h=frames[0].rows;
     int w=frames[0].cols;
     segmentVideo(frames, superPixels);
-    cout << "[OK]\nExtracting Features:\t\t";
+    cout << "[OK]\nFounded " << superPixels.size() << " Super-Voxels"<<endl;
+    cout << "Extracting Features:\t\t";
     cout.flush();
 
     for(uint i=0; i<superPixels.size(); ++i){
@@ -25,7 +26,7 @@ QueryVideo::QueryVideo(string path): video(path){
         //allSuperPixels.insert(allSuperPixels.end(), superVoxelsList[i]->getSuperPixels()->begin(), superVoxelsList[i]->getSuperPixels()->end());
     }
     SuperPixel::computeWeight(allSuperPixels);
-    SuperVoxel::computePerFrameNeighbour(superVoxelsList, h, w);
+    SuperVoxel::computePerFrameNeighbour(superVoxelsList, h, w, frames.size());
 
     cout << "[OK]" << endl;
 }

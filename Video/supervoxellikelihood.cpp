@@ -6,34 +6,28 @@ SuperVoxelLikelihood::SuperVoxelLikelihood()
 }
 
 SuperVoxelLikelihood::~SuperVoxelLikelihood(){
-    for(map<int, WeightLikelihood>::iterator it=globLikPerFrame.begin(); it!=globLikPerFrame.end(); ++it){
-        delete it->second.likelihood;
+    for(map<int, GlobLikelihood *>::iterator it=globLikPerFrame.begin(); it!=globLikPerFrame.end(); ++it){
+        delete it->second;
     }
 }
 
 GlobLikelihood *SuperVoxelLikelihood::getGlobLikelihood(int frameIndex, double relWeight){
     mtx.lock();
     if(!globLikPerFrame.count(frameIndex)){
-        globLikPerFrame[frameIndex].likelihood = new GlobLikelihood;
-        globLikPerFrame[frameIndex].relativeWeight = relWeight;
-    }else{
-        assert(globLikPerFrame[frameIndex].relativeWeight == relWeight);
+        globLikPerFrame[frameIndex] = new GlobLikelihood;
+        globLikPerFrame[frameIndex]->setWeight(relWeight);
     }
     mtx.unlock();
-    return globLikPerFrame[frameIndex].likelihood;
+    return globLikPerFrame[frameIndex];
 }
 
 double SuperVoxelLikelihood::computeEdata(int labelIndex){
     double max=0;
-    for(map<int, WeightLikelihood>::iterator it=globLikPerFrame.begin(); it!=globLikPerFrame.end(); ++it){
-        double tmpVal= it->second.relativeWeight*sigmoid(it->second.likelihood->getLogSum(labelIndex));
+    for(map<int, GlobLikelihood *>::iterator it=globLikPerFrame.begin(); it!=globLikPerFrame.end(); ++it){
+        double tmpVal= it->second->computeEdata(labelIndex);
         if(tmpVal>max){
             max=tmpVal;
         }
     }
-    return -max;
-}
-
-double SuperVoxelLikelihood::sigmoid(double x){
-    return exp(GAMMA*x)/(1+exp(GAMMA*x));
+    return max;
 }
