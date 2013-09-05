@@ -70,6 +70,12 @@ void RetrievalSet::computeNeighbourStatistics(NeighbourStat &result, string imgL
     result.saveToFile();
 }
 
+void RetrievalSet::assignVideoLabels(vector<SuperVoxel *> &toLabel, vector<SuperVoxelLikelihood *> &stat){
+    for(uint i=0; i<toLabel.size(); ++i){
+        toLabel[i]->setLabel(stat[i]->getBestLabel());
+    }
+}
+
 void RetrievalSet::assignLabels(QueryImage &query)
 {
     vector<SuperPixel *> *setSuperPixelsToLabel = query.getSuperPixels();
@@ -97,12 +103,12 @@ void RetrievalSet::computeImage(int nThreads, bool useMRF, ThreadSafeStringSet &
         tmp->setWeight((*setSuperPixelsToLabel)[i]->getWeight());
         matchResults.push_back(tmp);
     }
-    //computeLabels(query, &nameSet, &matchResults);
-    boost::thread threadList[nThreads];
-    for(int i=0; i<nThreads; ++i){
-        threadList[i] = boost::thread(&computeLabels, &query, &nameSet, &matchResults);
-    }
-    for(int i=0; i<nThreads; ++i) threadList[i].join();
+    computeLabels(&query, &nameSet, &matchResults);
+    //boost::thread threadList[nThreads];
+    //for(int i=0; i<nThreads; ++i){
+    //    threadList[i] = boost::thread(&computeLabels, &query, &nameSet, &matchResults);
+    //}
+    //for(int i=0; i<nThreads; ++i) threadList[i].join();
 
 
     //Ad ogni superpixel assegno la label col valore migliore
@@ -128,6 +134,8 @@ void RetrievalSet::computeVideo(int nThreads, bool useMRF, ThreadSafeStringSet &
     if(useMRF){
         vector<SuperVoxel *> *setSuperVoxels = query.getSuperVoxelsList();
         MRF::computeMRF<SuperVoxel, SuperVoxelLikelihood>(*setSuperVoxels, statLikelihood, stat);
+    }else{
+        assignVideoLabels(*setSuperVoxelToLabel, statLikelihood);
     }
 }
 
@@ -207,7 +215,12 @@ void RetrievalSet::computeLabels(QueryImage *imgToLabel, ThreadSafeStringSet *im
             for(uint k=0; k<setSuperPixelsToLabel->size(); ++k){
                 //Per ogni superpixel dell'immagine calcolo i valori riguardanti il numero di match per ogni classe
                 SuperPixel *superPixelToLabel = (*setSuperPixelsToLabel)[k];
-                checkSuperPixel(superPixelToLabel, setSuperPixel, *(matchResults->at(k)));
+                try{
+                    checkSuperPixel(superPixelToLabel, setSuperPixel, *(matchResults->at(k)));
+                }catch(int i){
+                    setImage.show();
+                    cv::waitKey();
+                }
             }
         }
     }
@@ -243,7 +256,12 @@ void RetrievalSet::checkSuperPixel(SuperPixel *toLabel, SuperPixel *inSet, GlobL
     //else cout << "No SIFT" << endl;
 
     double colDistance = toLabel->getColorDistance(*inSet);
-    if(1-colDistance<tk_color) spixelResults.colorHist.foundMatch(actualLabel);
+    if(1-colDistance<tk_color){
+        //inSet->show();
+        //cv::waitKey();
+        if(GeoLabel::getLabel(inSet->getLabel())==string("boat")) throw 1;
+        spixelResults.colorHist.foundMatch(actualLabel);
+    }
     //if(abs(colDistance)<tk_color) cout << "found color: " << inSet->getLabel() << endl;
     //else cout << "No Color" << endl;
 }

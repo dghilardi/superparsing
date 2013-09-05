@@ -241,7 +241,7 @@ void SuperPixel::printToMat(cv::Mat &result){
         cerr << "ERROR! the superPixel hasn't set a label" << endl;
         throw 1;
     }else{
-        cout <<"Label: " <<label << endl;
+        //cout <<"Label: " <<label << endl;
         for(uint i=0; i<pixelCoordList.size(); ++i){
             result.at<uchar>(pixelCoordList[i].y, pixelCoordList[i].x) = (uchar)label;
         }

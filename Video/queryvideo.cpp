@@ -6,7 +6,7 @@ QueryVideo::QueryVideo(string path): video(path){
 
     cout << "Segmenting Super-Voxels:\t";
     cout.flush();
-    video.getImages(frames, 3);
+    video.getImages(frames, 25);
     int h=frames[0].rows;
     int w=frames[0].cols;
     segmentVideo(frames, superPixels);
@@ -27,8 +27,8 @@ QueryVideo::QueryVideo(string path): video(path){
     }
     SuperPixel::computeWeight(allSuperPixels);
     SuperVoxel::computePerFrameNeighbour(superVoxelsList, h, w, frames.size());
-
     cout << "[OK]" << endl;
+    showSegmentation(superPixels, h, w, frames.size());
 }
 
 QueryVideo::~QueryVideo(){
@@ -37,4 +37,19 @@ QueryVideo::~QueryVideo(){
 
 vector<SuperVoxel *> *QueryVideo::getSuperVoxelsList(){
     return &superVoxelsList;
+}
+
+void QueryVideo::showSegmentation(vector<vector<Pixel> > &coordList, int height, int width, int nframes){
+    vector<cv::Mat> matList;
+    for(int i=0; i<nframes; ++i) matList.push_back(cv::Mat(height, width, CV_8UC1, cv::Scalar(0)));
+    double delta=255.0/coordList.size();
+    for(int i=0; i<coordList.size(); ++i){ for(int j=0; j<coordList[i].size(); ++j){
+            Pixel actual = coordList[i][j];
+            matList[actual.f].at<uchar>(actual.y, actual.x) = (uchar)i*delta;
+    }}
+    cvNamedWindow("Video Segmentation", CV_WINDOW_AUTOSIZE);
+    for(int i=0; i<nframes; ++i){
+        cv::imshow("Video Segmentation", matList[i]);
+        cv::waitKey(300);
+    }
 }

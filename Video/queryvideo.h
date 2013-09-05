@@ -12,6 +12,8 @@ class QueryVideo
 {
     Video video;
     vector<SuperVoxel *> superVoxelsList;
+
+    void showSegmentation(vector<vector<Pixel> > &coordList, int height, int width, int nframes);
 public:
     QueryVideo(string path);
     ~QueryVideo();

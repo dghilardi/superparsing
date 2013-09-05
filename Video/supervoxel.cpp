@@ -23,11 +23,19 @@ map<int, SuperPixel *> *SuperVoxel::getSuperPixels(){
 }
 
 int SuperVoxel::getLabel(){
+#ifndef NDEBUG
+    for(map<int, SuperPixel *>::iterator it=superPixelsList.begin(); it!=superPixelsList.end(); ++it){
+        assert(label==it->second->getLabel());
+    }
+#endif
     return label;
 }
 
 void SuperVoxel::setLabel(int newLabel){
     label=newLabel;
+    for(map<int, SuperPixel *>::iterator it=superPixelsList.begin(); it!=superPixelsList.end(); ++it){
+        it->second->setLabel(newLabel);
+    }
 }
 
 void SuperVoxel::show(){
