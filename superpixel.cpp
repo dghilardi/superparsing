@@ -151,7 +151,7 @@ void SuperPixel::computeSiftFeature(cv::Mat &superPixelImg){
     std::vector<cv::KeyPoint> keypoints;
     detector.detect(superPixelImg,keypoints);
 
-    /*Calcolo istogramma quantizzato degli orientamenti dei gradienti.
+    /*Calcolo istogramma degli orientamenti dei gradienti.
      *Considero come istogramma un vettore di 100 posizioni, ognuna delle quali
      *rappresenta un intervallo di 36 gradi e contiene il numero di keypoints
      *aventi orientamento appartenente a tale intervallo
@@ -283,6 +283,10 @@ void SuperPixel::computeAdiacents(vector<SuperPixel *> &spList, int height, int 
     for(int x=0; x<width-1; ++x){
         for(int y=0; y<height-1; ++y){
             if(superPixelsMap[x][y]!=NULL){
+                if(y>0 && superPixelsMap[x+1][y-1]!=NULL && superPixelsMap[x+1][y-1]!=superPixelsMap[x][y]){
+                    superPixelsMap[x+1][y-1]->appendAdiacent(superPixelsMap[x][y]);
+                    superPixelsMap[x][y]->appendAdiacent(superPixelsMap[x+1][y-1]);
+                }
                 for(int dx=0; dx<2; ++dx){ for(int dy=0; dy<2; ++dy){
                     if(dx+dy>0 && superPixelsMap[x+dx][y+dy]!=NULL && superPixelsMap[x+dx][y+dy]!=superPixelsMap[x][y]){
                         superPixelsMap[x+dx][y+dy]->appendAdiacent(superPixelsMap[x][y]);
