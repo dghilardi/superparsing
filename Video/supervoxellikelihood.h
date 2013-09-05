@@ -5,6 +5,8 @@
 #include <cmath>
 #include "../globlikelihood.h"
 #include "../debugHeader.h"
+#include "../geolabel.h"
+#include "../debugHeader.h"
 
 class SuperVoxelLikelihood
 {
@@ -15,6 +17,7 @@ public:
     ~SuperVoxelLikelihood();
     GlobLikelihood *getGlobLikelihood(int frameIndex, double relWeight);
     double computeEdata(int labelIndex);
+    int getBestLabel();
 };
 
 #endif // SUPERVOXELLIKELIHOOD_H

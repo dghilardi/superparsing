@@ -39,6 +39,7 @@ class RetrievalSet
     static void computeLabelsMulti(vector<map<int, SuperPixel *> *> *setSuperPixelsToLabel, ThreadSafeStringSet *imgNames, vector<SuperVoxelLikelihood *> *matchResults);
     void computeImage(int nThreads, bool useMRF, ThreadSafeStringSet &nameSet, NeighbourStat &stat, string queryPath);
     void computeVideo(int nThreads, bool useMRF, ThreadSafeStringSet &nameSet, NeighbourStat &stat, string queryPath);
+    void assignVideoLabels(vector<SuperVoxel *> &toLabel, vector<SuperVoxelLikelihood *> &stat);
 public:
     RetrievalSet();
     ~RetrievalSet();
