@@ -7,6 +7,7 @@
 #include <bitset>
 #include <set>
 #include "OpenCVGraphSegmentation/Segmentation.h"
+#include <cmath>
 
 using namespace std;
 class SuperPixel

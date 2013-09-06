@@ -148,6 +148,7 @@ float SuperPixel::getRelHeightDistance(SuperPixel &otherSP){
 void SuperPixel::computeSiftFeature(cv::Mat &superPixelImg){
     //Individuo i Keypoints del superPixel usando SIFT
     cv::SiftFeatureDetector detector;
+    //cv::Ptr<FeatureDetector> detector = FeatureDetector::create("Dense");
     std::vector<cv::KeyPoint> keypoints;
     detector.detect(superPixelImg,keypoints);
 
@@ -177,7 +178,15 @@ void SuperPixel::computeSiftFeature(cv::Mat &superPixelImg){
 double SuperPixel::getSiftDistance(SuperPixel &otherSP){
     //Calcolo la distanza in base alla correlazione dei due istogrammi
     double distance = cv::compareHist(siftHist,otherSP.siftHist,CV_COMP_CORREL);
+/*
+    double distance=0;
+    for(int i=0; i<siftHist.cols; ++i){
+        distance += pow(abs(siftHist.at<float>(0,i)-otherSP.siftHist.at<float>(0,i)),2);
+    }
+    return sqrt(distance);
+*/
     return distance;
+
 }
 
 /**

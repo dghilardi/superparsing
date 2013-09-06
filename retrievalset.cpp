@@ -103,12 +103,12 @@ void RetrievalSet::computeImage(int nThreads, bool useMRF, ThreadSafeStringSet &
         tmp->setWeight((*setSuperPixelsToLabel)[i]->getWeight());
         matchResults.push_back(tmp);
     }
-    computeLabels(&query, &nameSet, &matchResults);
-    //boost::thread threadList[nThreads];
-    //for(int i=0; i<nThreads; ++i){
-    //    threadList[i] = boost::thread(&computeLabels, &query, &nameSet, &matchResults);
-    //}
-    //for(int i=0; i<nThreads; ++i) threadList[i].join();
+    //computeLabels(&query, &nameSet, &matchResults);
+    boost::thread threadList[nThreads];
+    for(int i=0; i<nThreads; ++i){
+        threadList[i] = boost::thread(&computeLabels, &query, &nameSet, &matchResults);
+    }
+    for(int i=0; i<nThreads; ++i) threadList[i].join();
 
 
     //Ad ogni superpixel assegno la label col valore migliore

@@ -68,5 +68,4 @@ HEADERS += \
     Video/supervoxellikelihood.h \
     mrfnode.h
 
-OTHER_FILES += instances/instance.json \
-    instances/whole-training.json
+OTHER_FILES += instances/*
