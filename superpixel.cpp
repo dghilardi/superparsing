@@ -164,7 +164,7 @@ void SuperPixel::computeSiftFeature(cv::Mat &superPixelImg){
         siftHist.at<int>(0,i)=0;
     }*/
     for(uint i=0; i<keypoints.size(); i++){
-        int bucket = std::floor(keypoints[i].angle/(36));
+        int bucket = std::floor(keypoints[i].angle/(3.6));
         siftHist.at<float>(0,bucket)++;
     }
 }
