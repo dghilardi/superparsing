@@ -146,11 +146,27 @@ float SuperPixel::getRelHeightDistance(SuperPixel &otherSP){
  * @param superPixelImg Matrice contenente il superpixel
  */
 void SuperPixel::computeSiftFeature(cv::Mat &superPixelImg){
+    cv::initModule_nonfree();
     //Individuo i Keypoints del superPixel usando SIFT
-    cv::SiftFeatureDetector detector;
+    cv::Ptr<cv::FeatureDetector> detector = cv::FeatureDetector::create("SIFT");
+    cv::GridAdaptedFeatureDetector gridDetector(detector, 1000, 8, 8);
     //cv::Ptr<FeatureDetector> detector = FeatureDetector::create("Dense");
     std::vector<cv::KeyPoint> keypoints;
-    detector.detect(superPixelImg,keypoints);
+    gridDetector.detect(superPixelImg, keypoints);
+
+
+    cv::DescriptorExtractor *extractor = new cv::SIFT();
+    cv::Mat descriptor;
+    extractor->compute(superPixelImg, keypoints, descriptor);
+    cout << "rows: " << descriptor.rows << " cols: " << descriptor.cols << endl;
+    cout << descriptor << endl;
+    cv::KeyPoint abc = keypoints[0];
+    cout << keypoints.size() << endl;
+    throw;
+    /*
+      vector matches;
+      cv::BruteForceMatcher<cv::L2> matcher;
+    */
 
     /*Calcolo istogramma degli orientamenti dei gradienti.
      *Considero come istogramma un vettore di 100 posizioni, ognuna delle quali
@@ -168,6 +184,7 @@ void SuperPixel::computeSiftFeature(cv::Mat &superPixelImg){
         int bucket = std::floor(keypoints[i].angle/(3.6));
         siftHist.at<float>(0,bucket)++;
     }
+    delete extractor;
 }
 
 /**

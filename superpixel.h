@@ -4,6 +4,10 @@
 #include "debugHeader.h"
 
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/opencv.hpp>
+#include <opencv2/nonfree/nonfree.hpp>
+#include <opencv2/objdetect/objdetect.hpp>
+#include <opencv2/legacy/legacy.hpp>
 #include <bitset>
 #include <set>
 #include "OpenCVGraphSegmentation/Segmentation.h"
