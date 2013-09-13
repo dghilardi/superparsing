@@ -5,6 +5,8 @@
 #include "neighbourstat.h"
 #include <getopt.h>
 #include "Video/queryvideo.h"
+#include "quantizedsift.h"
+#include "dictionarytraining.h"
 
 #include "opencv2/highgui/highgui.hpp"
 
@@ -18,6 +20,7 @@ void help(string progName){
     cout << "  -i <file>    --image-inst <file>   files containing names of image of the retrieval set and query image" << endl;
     cout << "  -v <file>    --video-inst <file>   files containing names of image of the retrieval set and query video" << endl;
     cout << "  -r <file>    --retrain    <file>   Redo the training phase on the specified set" << endl;
+    cout << "  -d <file>    --dictionary <file>   files containing names of image of the dataset (for SIFT dictionary training)" << endl;
     cout << "  -m           --mrf                 Use markov random fields (needs to be trained)" << endl;
     cout << "  -h           --help                Gives this help" << endl;
 }
@@ -26,18 +29,20 @@ int main(int argc, char **argv){
     string imgInstancePath;
     string vidInstancePath;
     string trainingSetPath;
+    string dictionaryTrainingPath;
     bool useMRF = false;
     static struct option long_options[] = {
         {"image-inst", 1, 0, 'i'},
         {"video-inst", 1, 0, 'v'},
         {"retrain", 1, 0, 'r'},
+        {"dictionary", 1, 0, 'd'},
         {"help", 0, 0, 'h'},
         {"mrf", 0, 0,'m'},
         {NULL, 0, NULL, 0}
     };
     if(argc!=1){
         int c, option_index=0;
-        while((c=getopt_long(argc, argv, "i:v:r:hm", long_options, &option_index))!=-1){
+        while((c=getopt_long(argc, argv, "i:v:r:d:hm", long_options, &option_index))!=-1){
             //int this_option_optind = optind ? optind : 1;
             cout << "arg: " << (char)c << endl;
             switch(c){
@@ -49,6 +54,9 @@ int main(int argc, char **argv){
                 break;
             case 'r':
                 trainingSetPath = optarg;
+                break;
+            case 'd':
+                dictionaryTrainingPath = optarg;
                 break;
             case 'm':
                 useMRF = true;
@@ -85,6 +93,10 @@ int main(int argc, char **argv){
     if(!vidInstancePath.empty()){
         imSet.computeInstance(vidInstancePath, neighbourStatistics, useMRF, 4, false);
         cv::waitKey();
+    }
+    if(!dictionaryTrainingPath.empty()){
+        QuantizedSift qSift;
+        DictionaryTraining::train(dictionaryTrainingPath,qSift);
     }
     return 0;
 }

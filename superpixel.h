@@ -25,12 +25,12 @@ class SuperPixel
     vector<Pixel> pixelCoordList;
     set<SuperPixel *> adiacentsSet;
     int label;
-    void computeMaskFeature(vector<Pixel> &pixelList, int minX, int minY, int maxX, int maxY);
-    void computeSiftFeature(cv::Mat &superPixelImg);
+    void computeMaskFeature(vector<Pixel> &pixelList, int minX, int minY, int maxX, int maxY);    
     void computeColorFeature(cv::Mat &superPixelImg);
 public:
     SuperPixel(vector<Pixel> &list, cv::Mat &srcImg);
     ~SuperPixel();
+    void computeSiftFeature(cv::Mat &descriptor);
     int getLabel();
     double getWeight();
     void setLabel(int newLabel);

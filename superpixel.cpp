@@ -145,24 +145,28 @@ float SuperPixel::getRelHeightDistance(SuperPixel &otherSP){
  * @brief SuperPixel::computeSiftFeature Calcola la SIFT feature del superpixel.
  * @param superPixelImg Matrice contenente il superpixel
  */
-void SuperPixel::computeSiftFeature(cv::Mat &superPixelImg){
+void SuperPixel::computeSiftFeature(cv::Mat &descriptor){
     cv::initModule_nonfree();
     //Individuo i Keypoints del superPixel usando SIFT
-    cv::Ptr<cv::FeatureDetector> detector = cv::FeatureDetector::create("SIFT");
-    cv::GridAdaptedFeatureDetector gridDetector(detector, 1000, 8, 8);
+    //cv::Ptr<cv::FeatureDetector> detector = cv::FeatureDetector::create("SIFT");
+    //cv::GridAdaptedFeatureDetector gridDetector(detector, 1000, 8, 8);
     //cv::Ptr<FeatureDetector> detector = FeatureDetector::create("Dense");
+    cv::DenseFeatureDetector *denseDetector = new cv::DenseFeatureDetector(1,1,0.1,10);
     std::vector<cv::KeyPoint> keypoints;
-    gridDetector.detect(superPixelImg, keypoints);
+    denseDetector->detect(superPixelImg, keypoints);
 
 
     cv::DescriptorExtractor *extractor = new cv::SIFT();
-    cv::Mat descriptor;
+    //cv::Mat descriptor;
     extractor->compute(superPixelImg, keypoints, descriptor);
-    cout << "rows: " << descriptor.rows << " cols: " << descriptor.cols << endl;
-    cout << descriptor << endl;
-    cv::KeyPoint abc = keypoints[0];
-    cout << keypoints.size() << endl;
-    throw;
+
+
+
+    //cout << "rows: " << descriptor.rows << " cols: " << descriptor.cols << endl;
+    //cout << descriptor << endl;
+    //cv::KeyPoint abc = keypoints[0];
+    //cout << keypoints.size() << endl;
+    //throw;
     /*
       vector matches;
       cv::BruteForceMatcher<cv::L2> matcher;
@@ -185,6 +189,7 @@ void SuperPixel::computeSiftFeature(cv::Mat &superPixelImg){
         siftHist.at<float>(0,bucket)++;
     }
     delete extractor;
+    delete denseDetector;
 }
 
 /**

@@ -13,7 +13,7 @@ public:
     virtual ~QuantizedSift();
     int getIndex(cv::Mat &descr);
     double distance(int descrA, int descB);
-    void computeKmean(string jsonPath);
+    void computeKmean(cv::Mat &wholeDescriptors);
 };
 
 #endif // QUANTIZEDSIFT_H
