@@ -20,7 +20,7 @@ class SuperPixel
     double relHeightFeature;
     double weight;
     cv::Mat *colorHist[3];
-    cv::Mat siftHist;
+    //cv::Mat siftHist;
     cv::Mat superPixelImg;
     vector<Pixel> pixelCoordList;
     set<SuperPixel *> adiacentsSet;

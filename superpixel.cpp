@@ -5,7 +5,7 @@
 #include <opencv/cv.hpp>
 #include <math.h>
 
-SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg): maskFeature(0), siftHist(1,100,CV_32F,cv::Scalar(0)), pixelCoordList(list), weight(0){
+SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg): maskFeature(0), pixelCoordList(list), weight(0){
     //Compute the bounding box of the superpixel
     label=-1;
     int minX = list[0].x, minY = list[0].y;
@@ -42,8 +42,8 @@ SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg): maskFeature(0), si
     computeMaskFeature(list, minX, minY, maxX, maxY);
     relHeightFeature = (srcImg.rows-minY)/(double)srcImg.rows;
 
-    computeSiftFeature(superPixelImg);
-    computeColorFeature(superPixelImg);;
+    //computeSiftFeature(superPixelImg);
+    computeColorFeature(superPixelImg);
 }
 
 SuperPixel::~SuperPixel(){
@@ -184,10 +184,10 @@ void SuperPixel::computeSiftFeature(cv::Mat &descriptor){
         //siftHist[i,0]=0;
         siftHist.at<int>(0,i)=0;
     }*/
-    for(uint i=0; i<keypoints.size(); i++){
+    /*for(uint i=0; i<keypoints.size(); i++){
         int bucket = std::floor(keypoints[i].angle/(3.6));
         siftHist.at<float>(0,bucket)++;
-    }
+    }*/
     delete extractor;
     delete denseDetector;
 }
@@ -199,7 +199,7 @@ void SuperPixel::computeSiftFeature(cv::Mat &descriptor){
  */
 double SuperPixel::getSiftDistance(SuperPixel &otherSP){
     //Calcolo la distanza in base alla correlazione dei due istogrammi
-    double distance = cv::compareHist(siftHist,otherSP.siftHist,CV_COMP_CORREL);
+    double distance = 1;//cv::compareHist(siftHist,otherSP.siftHist,CV_COMP_CORREL);
 /*
     double distance=0;
     for(int i=0; i<siftHist.cols; ++i){
