@@ -95,8 +95,8 @@ int main(int argc, char **argv){
         cv::waitKey();
     }
     if(!dictionaryTrainingPath.empty()){
-        QuantizedSift qSift;
-        DictionaryTraining::train(dictionaryTrainingPath,qSift);
+        QuantizedSift *qSift = QuantizedSift::getInstance();
+        DictionaryTraining::train(dictionaryTrainingPath,*qSift);
     }
     return 0;
 }

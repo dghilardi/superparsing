@@ -43,6 +43,8 @@ SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg): maskFeature(0), pi
     relHeightFeature = (srcImg.rows-minY)/(double)srcImg.rows;
 
     //computeSiftFeature(superPixelImg);
+    QuantizedSift *quantization = QuantizedSift::getInstance();
+    computeSIFTDescriptor(quantization);
     computeColorFeature(superPixelImg);
 }
 
@@ -145,22 +147,24 @@ float SuperPixel::getRelHeightDistance(SuperPixel &otherSP){
  * @brief SuperPixel::computeSiftFeature Calcola la SIFT feature del superpixel.
  * @param superPixelImg Matrice contenente il superpixel
  */
-void SuperPixel::computeSiftFeature(cv::Mat &descriptor){
+void SuperPixel::computeSiftFeature(cv::Mat &descriptor, bool computeDense){
     cv::initModule_nonfree();
     //Individuo i Keypoints del superPixel usando SIFT
     //cv::Ptr<cv::FeatureDetector> detector = cv::FeatureDetector::create("SIFT");
     //cv::GridAdaptedFeatureDetector gridDetector(detector, 1000, 8, 8);
     //cv::Ptr<FeatureDetector> detector = FeatureDetector::create("Dense");
-    cv::DenseFeatureDetector *denseDetector = new cv::DenseFeatureDetector(1,1,0.1,10);
-    std::vector<cv::KeyPoint> keypoints;
-    denseDetector->detect(superPixelImg, keypoints);
 
+    //cv::DenseFeatureDetector *denseDetector = new cv::DenseFeatureDetector(1,1,0.1,10);
+    //cv::SiftFeatureDetector *siftDetector = new cv::SiftFeatureDetector;
+    cv::FeatureDetector *detector;
+    if(computeDense) detector = new cv::DenseFeatureDetector(1,1,0.1,10);
+    else detector = new cv::SiftFeatureDetector();
+    std::vector<cv::KeyPoint> keypoints;
+    detector->detect(superPixelImg, keypoints);
 
     cv::DescriptorExtractor *extractor = new cv::SIFT();
     //cv::Mat descriptor;
     extractor->compute(superPixelImg, keypoints, descriptor);
-
-
 
     //cout << "rows: " << descriptor.rows << " cols: " << descriptor.cols << endl;
     //cout << descriptor << endl;
@@ -189,7 +193,18 @@ void SuperPixel::computeSiftFeature(cv::Mat &descriptor){
         siftHist.at<float>(0,bucket)++;
     }*/
     delete extractor;
-    delete denseDetector;
+    delete detector;
+}
+
+void SuperPixel::computeSIFTDescriptor(QuantizedSift *quantization){
+    cv::Mat descriptor;
+    computeSiftFeature(descriptor);
+    int keyPointNumber = descriptor.rows;
+    for(int i=0; i<keyPointNumber; ++i){
+        int dicIndex = quantization->getIndex(descriptor.row(i));
+        assert(dicIndex<QUANTIZATION_SIZE);
+        siftDescriptor[dicIndex] += 1/keyPointNumber;
+    }
 }
 
 /**
@@ -199,15 +214,11 @@ void SuperPixel::computeSiftFeature(cv::Mat &descriptor){
  */
 double SuperPixel::getSiftDistance(SuperPixel &otherSP){
     //Calcolo la distanza in base alla correlazione dei due istogrammi
-    double distance = 1;//cv::compareHist(siftHist,otherSP.siftHist,CV_COMP_CORREL);
-/*
-    double distance=0;
-    for(int i=0; i<siftHist.cols; ++i){
-        distance += pow(abs(siftHist.at<float>(0,i)-otherSP.siftHist.at<float>(0,i)),2);
+    double distance = 0;
+    for(int i=0; i<QUANTIZATION_SIZE; ++i){
+        distance+=pow(otherSP.siftDescriptor[i]-siftDescriptor[i],2);
     }
     return sqrt(distance);
-*/
-    return distance;
 
 }
 

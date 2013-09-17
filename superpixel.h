@@ -11,6 +11,7 @@
 #include <bitset>
 #include <set>
 #include "OpenCVGraphSegmentation/Segmentation.h"
+#include "quantizedsift.h"
 #include <cmath>
 
 using namespace std;
@@ -20,17 +21,18 @@ class SuperPixel
     double relHeightFeature;
     double weight;
     cv::Mat *colorHist[3];
-    //cv::Mat siftHist;
+    float siftDescriptor[QUANTIZATION_SIZE];
     cv::Mat superPixelImg;
     vector<Pixel> pixelCoordList;
     set<SuperPixel *> adiacentsSet;
     int label;
     void computeMaskFeature(vector<Pixel> &pixelList, int minX, int minY, int maxX, int maxY);    
     void computeColorFeature(cv::Mat &superPixelImg);
+    void computeSIFTDescriptor(QuantizedSift *quantization);
 public:
     SuperPixel(vector<Pixel> &list, cv::Mat &srcImg);
     ~SuperPixel();
-    void computeSiftFeature(cv::Mat &descriptor);
+    void computeSiftFeature(cv::Mat &descriptor, bool computeDense=true);
     int getLabel();
     double getWeight();
     void setLabel(int newLabel);

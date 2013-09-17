@@ -2,7 +2,6 @@
 #define GLOBALSETTINGS_H
 
 #include <string>
-
 using namespace std;
 class GlobalSettings{
 public:

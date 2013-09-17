@@ -1,5 +1,5 @@
 #include "quantizedsift.h"
-
+QuantizedSift *QuantizedSift::instancePointer = NULL;
 QuantizedSift::QuantizedSift()
 {
 }
@@ -8,24 +8,36 @@ QuantizedSift::~QuantizedSift(){
     //delete dictionary
 }
 
-int QuantizedSift::getIndex(cv::Mat &descr){
+int QuantizedSift::getIndex(cv::Mat descr){
+    assert(descr.cols == 128);
+    assert(descr.rows == 1);
+    assert(descr.type() == CV_32F);
 
-    int minIndex = 0;
-    vector<cv::Mat> matches;
-    //cv::BruteForceMatcher<cv::L2> matcher;
-    //matcher.match(descr, *(dictionary[0]), matches);
-    for(int i=1; i<dictionary.size(); ++i){
+    assert(dictionary.cols == 128);
+    assert(dictionary.rows == QUANTIZATION_SIZE);
+    assert(dictionary.type() == CV_32F);
 
+
+    int minDistanceIndex = -1;
+    float minDistance = FLT_MAX;
+    for(int i=0; i<dictionary.rows; ++i){
+        float euclideanDistance = 0;
+        for(int j=0; j<dictionary.cols; ++j){
+            euclideanDistance += pow(descr.at<float>(0,j)-dictionary.at<float>(i,j),2);
+        }
+        if(euclideanDistance<minDistance){
+            minDistance = euclideanDistance;
+            minDistanceIndex = i;
+        }
     }
-    return minIndex;
+    assert(minDistanceIndex!=-1);
+    return minDistanceIndex;
 }
-
-double QuantizedSift::distance(int descrA, int descB){}
 
 void QuantizedSift::computeKmean(cv::Mat &wholeDescriptors){
     //Construct BOWKMeansTrainer
     //the number of bags
-    int dictionarySize=100;
+    int dictionarySize=QUANTIZATION_SIZE;
     //define Term Criteria
     cv::TermCriteria tc(CV_TERMCRIT_ITER,100,0.001);
     //retries number
@@ -35,7 +47,7 @@ void QuantizedSift::computeKmean(cv::Mat &wholeDescriptors){
     //Create the BoW (or BoF) trainer
     cv::BOWKMeansTrainer bowTrainer(dictionarySize,tc,retries,flags);
     //cluster the feature vectors
-    cv::Mat dictionary=bowTrainer.cluster(wholeDescriptors);
+    dictionary=bowTrainer.cluster(wholeDescriptors);
     //store the vocabulary
     cv::FileStorage fs("dictionary.yml", cv::FileStorage::WRITE);
     fs << "vocabulary" << dictionary;

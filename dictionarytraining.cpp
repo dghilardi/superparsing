@@ -31,7 +31,7 @@ void DictionaryTraining::train(string jsonPath, QuantizedSift &dictionary){
         //get SIFT descriptor for each superpixel
         for(int j=0; j<querySP->size(); j++){
             cv::Mat descriptor;
-            (*querySP)[j]->computeSiftFeature(descriptor); //cout << "compute descriptor" << endl;
+            (*querySP)[j]->computeSiftFeature(descriptor, false); //cout << "compute descriptor" << endl;
             wholeDescriptors.push_back(descriptor); //cout << "push back descriptor" << endl;
         }
         PrintUtils::printPercentage(i,trainingSet.size());

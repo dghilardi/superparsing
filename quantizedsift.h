@@ -4,15 +4,27 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/objdetect/objdetect.hpp>
 #include <opencv2/legacy/legacy.hpp>
+#include <cmath>
+#include <cfloat>
+#include "debugHeader.h"
+
+#define QUANTIZATION_SIZE 100
 using namespace std;
 class QuantizedSift
 {
-    vector<cv::Mat *> dictionary;
-public:
+    static QuantizedSift* instancePointer;
     QuantizedSift();
+    cv::Mat dictionary;
+public:
     virtual ~QuantizedSift();
-    int getIndex(cv::Mat &descr);
-    double distance(int descrA, int descB);
+    static QuantizedSift *getInstance(){
+        if(instancePointer==NULL){
+            instancePointer = new QuantizedSift();
+        }
+        return instancePointer;
+    }
+
+    int getIndex(cv::Mat descr);
     void computeKmean(cv::Mat &wholeDescriptors);
 };
 
