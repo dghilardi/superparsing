@@ -53,3 +53,8 @@ void QuantizedSift::computeKmean(cv::Mat &wholeDescriptors){
     fs << "vocabulary" << dictionary;
     fs.release();
 }
+
+void QuantizedSift::loadDictionary(cv::FileStorage fs){
+    //fs.open(path, cv::FileStorage::READ);
+    fs["vocabulary"] >> dictionary;
+}

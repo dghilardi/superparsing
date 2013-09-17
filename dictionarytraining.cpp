@@ -25,7 +25,7 @@ void DictionaryTraining::train(string jsonPath, QuantizedSift &dictionary){
     cv::Mat wholeDescriptors;
     for(int i=0; i<trainingSet.size(); ++i){
         //get i-image
-        QueryImage queryIm(trainingSet[i].asString()); cout << "get image" << endl;
+        QueryImage queryIm(trainingSet[i].asString(), false); //cout << "get image" << endl;
         //get superpixels
         vector<SuperPixel*>* querySP = queryIm.getSuperPixels(); //cout << "get superpixels" << endl;
         //get SIFT descriptor for each superpixel

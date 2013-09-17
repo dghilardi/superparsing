@@ -12,6 +12,7 @@
 
 #define INST_NAME "../instance.json"
 #define STAT_FILE_NAME "statistics.dat"
+#define DICTIONARY_PATH "dictionary.yml"
 
 using namespace std;
 
@@ -78,6 +79,22 @@ int main(int argc, char **argv){
     }
     NeighbourStat neighbourStatistics(STAT_FILE_NAME);
     RetrievalSet imSet;
+    if(!dictionaryTrainingPath.empty()){
+        QuantizedSift *qSift = QuantizedSift::getInstance();
+        DictionaryTraining::train(dictionaryTrainingPath,*qSift);
+    }
+    else{
+        cv::FileStorage fs;
+        fs.open(DICTIONARY_PATH, cv::FileStorage::READ);
+        if(!fs.isOpened()){
+            cerr << "ERROR! no dictionary founded." << endl;
+            return 1;
+        }
+        else{
+            QuantizedSift *qSift = QuantizedSift::getInstance();
+            qSift->loadDictionary(fs);
+        }
+    }
     if(!trainingSetPath.empty()){
         neighbourStatistics.reset();
         imSet.computeNeighbourStatistics(neighbourStatistics, trainingSetPath, 4);
@@ -94,10 +111,7 @@ int main(int argc, char **argv){
         imSet.computeInstance(vidInstancePath, neighbourStatistics, useMRF, 4, false);
         cv::waitKey();
     }
-    if(!dictionaryTrainingPath.empty()){
-        QuantizedSift *qSift = QuantizedSift::getInstance();
-        DictionaryTraining::train(dictionaryTrainingPath,*qSift);
-    }
+
     return 0;
 }
 

@@ -6,7 +6,7 @@
  * @brief QueryImage::QueryImage Costruttore della classe che si occupa di generare le feature per la query image
  * @param filename Nome della query image
  */
-QueryImage::QueryImage(string filename): image(filename), imgName(filename) {
+QueryImage::QueryImage(string filename, bool computeSIFT): image(filename), imgName(filename) {
     IplImage iplimg = *(image.getImage());
     vector<vector<Pixel> > superPixels;
     segmentImage(&iplimg, superPixels);
@@ -14,7 +14,7 @@ QueryImage::QueryImage(string filename): image(filename), imgName(filename) {
     cv::Mat segmented(image.getImage()->size(), CV_8UC1);
     int nSp = superPixels.size();
     for(int i=0; i<nSp; ++i){
-        superPixelList.push_back(new SuperPixel(superPixels[i], *image.getImage()));
+        superPixelList.push_back(new SuperPixel(superPixels[i], *image.getImage(), computeSIFT));
         for(uint j=0; j<superPixels[i].size(); ++j){
             assert(superPixels[i][j].y<segmented.rows);
             assert(superPixels[i][j].x<segmented.cols);

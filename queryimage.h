@@ -20,7 +20,7 @@ class QueryImage
     vector<SuperPixel *> superPixelList;
     void buildObtainedMat(cv::Mat &result, set<int> *usedLabels=NULL);
 public:
-    QueryImage(string filename);
+    QueryImage(string filename, bool computeSIFT=true);
     ~QueryImage();
 
     vector<SuperPixel *> *getSuperPixels();

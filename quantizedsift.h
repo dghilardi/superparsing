@@ -6,6 +6,7 @@
 #include <opencv2/legacy/legacy.hpp>
 #include <cmath>
 #include <cfloat>
+#include <string>
 #include "debugHeader.h"
 
 #define QUANTIZATION_SIZE 100
@@ -26,6 +27,7 @@ public:
 
     int getIndex(cv::Mat descr);
     void computeKmean(cv::Mat &wholeDescriptors);
+    void loadDictionary(cv::FileStorage fs);
 };
 
 #endif // QUANTIZEDSIFT_H

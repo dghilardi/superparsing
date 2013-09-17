@@ -5,7 +5,7 @@
 #include <opencv/cv.hpp>
 #include <math.h>
 
-SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg): maskFeature(0), pixelCoordList(list), weight(0){
+SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg, bool computeSIFT): maskFeature(0), pixelCoordList(list), weight(0){
     //Compute the bounding box of the superpixel
     label=-1;
     int minX = list[0].x, minY = list[0].y;
@@ -39,13 +39,16 @@ SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg): maskFeature(0), pi
     cv::waitKey();
     */
 
-    computeMaskFeature(list, minX, minY, maxX, maxY);
-    relHeightFeature = (srcImg.rows-minY)/(double)srcImg.rows;
+        computeMaskFeature(list, minX, minY, maxX, maxY);
+        relHeightFeature = (srcImg.rows-minY)/(double)srcImg.rows;
 
-    //computeSiftFeature(superPixelImg);
-    QuantizedSift *quantization = QuantizedSift::getInstance();
-    computeSIFTDescriptor(quantization);
-    computeColorFeature(superPixelImg);
+        //computeSiftFeature(superPixelImg);
+    if(computeSIFT){
+        QuantizedSift *quantization = QuantizedSift::getInstance();
+        computeSIFTDescriptor(quantization);
+    }
+        computeColorFeature(superPixelImg);
+
 }
 
 SuperPixel::~SuperPixel(){
