@@ -23,6 +23,7 @@ class SuperPixel
     cv::Mat *colorHist[3];
     float siftDescriptor[QUANTIZATION_SIZE];
     cv::Mat superPixelImg;
+    cv::Mat mask;
     vector<Pixel> pixelCoordList;
     set<SuperPixel *> adiacentsSet;
     int label;

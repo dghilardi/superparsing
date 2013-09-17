@@ -234,7 +234,7 @@ void RetrievalSet::computeLabels(QueryImage *imgToLabel, ThreadSafeStringSet *im
  *                      of the number of match for each feature, each class and total number of superpixels per class
  */
 void RetrievalSet::checkSuperPixel(SuperPixel *toLabel, SuperPixel *inSet, GlobLikelihood &spixelResults){
-    double tk_mask=15, tk_relH=0.15, tk_sift=0.4, tk_color=0.1; //Valori casuali solo per provare
+    double tk_mask=15, tk_relH=0.15, tk_sift=0.2, tk_color=0.1; //Valori casuali solo per provare
 
     int actualLabel = inSet->getLabel(); //Indice del label del superpixel preso dal dataset
     //cout << actualLabel << endl;
@@ -251,7 +251,7 @@ void RetrievalSet::checkSuperPixel(SuperPixel *toLabel, SuperPixel *inSet, GlobL
     //else cout << "No distance" << endl;
 
     double siftDistance = toLabel->getSiftDistance(*inSet);
-    if(1-siftDistance<tk_sift) spixelResults.quantSIFT.foundMatch(actualLabel);
+    if(siftDistance<tk_sift) spixelResults.quantSIFT.foundMatch(actualLabel);
     //if(abs(siftDistance)<tk_sift) cout << "found sift: "<< inSet->getLabel() << endl;
     //else cout << "No SIFT" << endl;
 
