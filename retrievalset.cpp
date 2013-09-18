@@ -215,12 +215,7 @@ void RetrievalSet::computeLabels(QueryImage *imgToLabel, ThreadSafeStringSet *im
             for(uint k=0; k<setSuperPixelsToLabel->size(); ++k){
                 //Per ogni superpixel dell'immagine calcolo i valori riguardanti il numero di match per ogni classe
                 SuperPixel *superPixelToLabel = (*setSuperPixelsToLabel)[k];
-                try{
-                    checkSuperPixel(superPixelToLabel, setSuperPixel, *(matchResults->at(k)));
-                }catch(int i){
-                    setImage.show();
-                    cv::waitKey();
-                }
+                checkSuperPixel(superPixelToLabel, setSuperPixel, *(matchResults->at(k)));
             }
         }
     }
@@ -257,9 +252,6 @@ void RetrievalSet::checkSuperPixel(SuperPixel *toLabel, SuperPixel *inSet, GlobL
 
     double colDistance = toLabel->getColorDistance(*inSet);
     if(1-colDistance<tk_color){
-        //inSet->show();
-        //cv::waitKey();
-        if(GeoLabel::getLabel(inSet->getLabel())==string("boat")) throw 1;
         spixelResults.colorHist.foundMatch(actualLabel);
     }
     //if(abs(colDistance)<tk_color) cout << "found color: " << inSet->getLabel() << endl;
