@@ -5,7 +5,8 @@
  * @param imgName Il nome dell'immagine del retrieval set
  */
 RetrImage::RetrImage(string imgName): image(imgName), labeledImg(imgName) {
-    buildSuperPixels();
+    //buildSuperPixels();
+    reComputeSuperPixels();
 }
 
 RetrImage::~RetrImage(){
@@ -21,7 +22,45 @@ void RetrImage::show(){
 }
 
 /**
- * @brief RetrImage::buildSuperPixels Metodo che estrapola i superpixel
+ * @brief RetrImage::reComputeSuperPixels Segment the image using
+ */
+void RetrImage::reComputeSuperPixels(){
+    IplImage iplimg = *(image.getImage());
+    vector<vector<Pixel> > superPixels;
+    segmentImage(&iplimg, superPixels);
+
+    //cv::Mat segmented(image.getImage()->size(), CV_8UC1);
+    int nSp = superPixels.size();
+    bool computeSIFT = true;
+    vector<int> labelsFreq(GeoLabel::getLabelsNumber(), 0);
+    cv::Mat *labeledMat = labeledImg.getLabeledImg();
+    for(int i=0; i<nSp; ++i){
+        SuperPixel *toAdd = new SuperPixel(superPixels[i], *image.getImage(), computeSIFT);
+        labelsFreq = vector<int>(GeoLabel::getLabelsNumber(), 0);
+        for(uint j=0; j<superPixels[i].size(); ++j){
+            short currentLabel = labeledMat->at<short>(superPixels[i][j].y, superPixels[i][j].x);
+            labelsFreq[currentLabel]++;
+            //assert(superPixels[i][j].y<segmented.rows);
+            //assert(superPixels[i][j].x<segmented.cols);
+            //segmented.at<uchar>(superPixels[i][j].y, superPixels[i][j].x) = (uchar)255*i/nSp;
+        }
+        vector<int>::iterator iter = std::max_element(labelsFreq.begin(), labelsFreq.end());
+        int toAssignLabel = iter-labelsFreq.begin();
+        int freq = *iter;
+        if(freq>(superPixels[i].size()/1.5) || true){
+            superPixelList.push_back(toAdd);
+            toAdd->setLabel(toAssignLabel);
+        }else{
+            delete toAdd;
+        }
+    }
+    //SuperPixel::computeAdiacents(superPixelList, image.getImage()->rows, image.getImage()->cols);
+    //SuperPixel::computeWeight(superPixelList);
+
+}
+
+/**
+ * @brief RetrImage::buildSuperPixels Metodo che estrapola i superpixel nel formato del dataset
  */
 void RetrImage::buildSuperPixels()
 {

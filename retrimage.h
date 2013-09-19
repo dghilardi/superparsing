@@ -18,6 +18,7 @@ class RetrImage
     GeoLabel labeledImg;
     vector<SuperPixel *> superPixelList;
     void buildSuperPixels();
+    void reComputeSuperPixels();
 public:
     RetrImage(string imgName);
     ~RetrImage();
