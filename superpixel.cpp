@@ -21,20 +21,23 @@ SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg, bool computeSIFT): 
     int dimX = maxX-minX+1;
     int dimY = maxY-minY+1;
     //cv::Mat superPixelImg(dimY, dimX, CV_8UC3, cv::Scalar::all(0));
-    superPixelImg.create(dimY, dimX, CV_8UC3);
-    superPixelImg.setTo(cv::Scalar::all(0));
+    superPixelImg = srcImg(cv::Rect(minX, minY, dimX, dimY));
+
+    //superPixelImg.create(dimY, dimX, CV_8UC3);
+    //superPixelImg.setTo(cv::Scalar::all(0));
     mask.create(dimY, dimX, CV_8UC1);
     mask.setTo(cv::Scalar::all(0));
     for(uint i=0; i<list.size(); ++i){
         int x = list[i].x;
         int y = list[i].y;
-        cv::Point3_<uchar>* src = srcImg.ptr<cv::Point3_<uchar> >(y,x);
-        cv::Point3_<uchar>* dst = superPixelImg.ptr<cv::Point3_<uchar> >(y-minY,x-minX);        
-        dst->x=(uchar)src->x; //blue
-        dst->y=(uchar)src->y; //green
-        dst->z=(uchar)src->z; //red
+        //cv::Point3_<uchar>* src = srcImg.ptr<cv::Point3_<uchar> >(y,x);
+        //cv::Point3_<uchar>* dst = superPixelImg.ptr<cv::Point3_<uchar> >(y-minY,x-minX);
+        //dst->x=(uchar)src->x; //blue
+        //dst->y=(uchar)src->y; //green
+        //dst->z=(uchar)src->z; //red
         mask.at<uchar>(y-minY,x-minX) = 255;
     }
+
 
     /*
     cvNamedWindow("SUPERPIXEL",2);
@@ -252,9 +255,9 @@ void SuperPixel::computeColorFeature(cv::Mat &superPixelImg){
     g_hist = new cv::Mat;
     b_hist = new cv::Mat;
     //Calcolo i 3 istogrammi
-    calcHist( &rgb_planes[0], 1, 0, cv::Mat(), *b_hist, 1, &histSize, &histRange, uniform, accumulate );
-    calcHist( &rgb_planes[1], 1, 0, cv::Mat(), *g_hist, 1, &histSize, &histRange, uniform, accumulate );
-    calcHist( &rgb_planes[2], 1, 0, cv::Mat(), *r_hist, 1, &histSize, &histRange, uniform, accumulate );
+    calcHist( &rgb_planes[0], 1, 0, mask, *b_hist, 1, &histSize, &histRange, uniform, accumulate );
+    calcHist( &rgb_planes[1], 1, 0, mask, *g_hist, 1, &histSize, &histRange, uniform, accumulate );
+    calcHist( &rgb_planes[2], 1, 0, mask, *r_hist, 1, &histSize, &histRange, uniform, accumulate );
     //Creo un array di array contenente i tre istogrammi e lo ritorno
     //cv::Mat* hists;
     //hists = (cv::Mat*) calloc(3, sizeof(cv::Mat));
