@@ -1,0 +1,8 @@
+{
+	"imgPath": "../SiftFlowDataset/Images/spatial_envelope_256x256_static_8outdoorcategories/",
+	"labelsPath": "../SiftFlowDataset/SemanticLabels/spatial_envelope_256x256_static_8outdoorcategories/",
+	"query": "street_boston21",
+	"dataset": [
+ 		"street_boston21"
+	]
+}
