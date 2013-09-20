@@ -2,6 +2,7 @@
 #define GLOBLIKELIHOOD_H
 
 #include <vector>
+#include <limits>
 
 #include "classlikelihood.h"
 

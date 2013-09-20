@@ -65,6 +65,20 @@ void QueryImage::showLabeling(){
     VisualUtils::colorLabels(labeledImage, toVisualize, usedLabels);
     cvNamedWindow("LABELED IMAGE",CV_WINDOW_AUTOSIZE);
     imshow("LABELED IMAGE",toVisualize);
+    showOriginalLabeling();
+}
+
+void QueryImage::showOriginalLabeling(){
+    cv::Mat toVisualize;
+    set<int> usedLabels;
+    for(int i=-1; i<34; ++i)
+        usedLabels.insert(i);
+    GeoLabel correctLabeling(imgName);
+    cv::Mat lbl;
+    correctLabeling.getLabeledImg()->convertTo(lbl,CV_8UC1);
+    VisualUtils::colorLabels(lbl, toVisualize, usedLabels);
+    cvNamedWindow("ORIGINAL LABELS",CV_WINDOW_AUTOSIZE);
+    imshow("ORIGINAL LABELS",toVisualize);
 }
 
 void QueryImage::showSrc(){

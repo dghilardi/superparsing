@@ -3,7 +3,6 @@
 	"labelsPath": "../SiftFlowDataset/SemanticLabels/spatial_envelope_256x256_static_8outdoorcategories/",
 	"query": "coast_cdmc123",
 	"dataset": [
- 		"coast_cdmc123",
 		"coast_nat1052",
 		"coast_nat1065",
 		"coast_nat1091",

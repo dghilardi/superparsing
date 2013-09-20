@@ -45,7 +45,8 @@ SOURCES += main.cpp \
     Video/supervoxel.cpp \
     Video/supervoxellikelihood.cpp \
     quantizedsift.cpp \
-    dictionarytraining.cpp
+    dictionarytraining.cpp\
+    GCO/*.cpp
 
 HEADERS += \
     geolabel.h \
@@ -70,6 +71,7 @@ HEADERS += \
     Video/supervoxellikelihood.h \
     mrfnode.h \
     quantizedsift.h \
-    dictionarytraining.h
+    dictionarytraining.h\
+    GCO/*.h
 
 OTHER_FILES += instances/*

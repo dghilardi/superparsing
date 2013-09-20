@@ -81,8 +81,7 @@ void RetrievalSet::assignLabels(QueryImage &query)
     vector<SuperPixel *> *setSuperPixelsToLabel = query.getSuperPixels();
     for(uint k=0; k<setSuperPixelsToLabel->size(); ++k){
         SuperPixel *superPixelToLabel = (*setSuperPixelsToLabel)[k];
-        superPixelToLabel->setLabel(matchResults[k]->getBestLabel());
-
+        superPixelToLabel->setLabel(matchResults[k]->getBestLabel());        
         //Necessarie solo per stampare
         //cout << "Assign: " << tmp.matchLabel(matchResults[k]->getBestLabel()) << endl;
         //superPixelToLabel->show();
@@ -229,11 +228,11 @@ void RetrievalSet::computeLabels(QueryImage *imgToLabel, ThreadSafeStringSet *im
  *                      of the number of match for each feature, each class and total number of superpixels per class
  */
 void RetrievalSet::checkSuperPixel(SuperPixel *toLabel, SuperPixel *inSet, GlobLikelihood &spixelResults){
-    double tk_mask=15, tk_relH=0.15, tk_sift=0.2, tk_color=0.1; //Valori casuali solo per provare
+    double tk_mask=15, tk_relH=0.15, tk_sift=0.3, tk_color=0.1; //Valori casuali solo per provare
 
     int actualLabel = inSet->getLabel(); //Indice del label del superpixel preso dal dataset
     //cout << actualLabel << endl;
-    if(actualLabel==9) throw;
+    //if(actualLabel==9) throw;
 
     double maskDistance = toLabel->getMaskDistance(*inSet);
     if(maskDistance<tk_mask) spixelResults.mask.foundMatch(actualLabel);

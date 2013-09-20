@@ -25,6 +25,7 @@ public:
 
     vector<SuperPixel *> *getSuperPixels();
     void showLabeling();
+    void showOriginalLabeling();
     void showSrc();
     double checkResults();
 };

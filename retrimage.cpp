@@ -5,8 +5,8 @@
  * @param imgName Il nome dell'immagine del retrieval set
  */
 RetrImage::RetrImage(string imgName): image(imgName), labeledImg(imgName) {
-    //buildSuperPixels();
-    reComputeSuperPixels();
+    buildSuperPixels();
+    //reComputeSuperPixels();
 }
 
 RetrImage::~RetrImage(){
@@ -47,7 +47,7 @@ void RetrImage::reComputeSuperPixels(){
         vector<int>::iterator iter = std::max_element(labelsFreq.begin(), labelsFreq.end());
         int toAssignLabel = iter-labelsFreq.begin();
         int freq = *iter;
-        if(freq>(superPixels[i].size()/1.5) || true){
+        if(freq>(superPixels[i].size()/2)){
             superPixelList.push_back(toAdd);
             toAdd->setLabel(toAssignLabel);
         }else{

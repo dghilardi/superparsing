@@ -49,7 +49,7 @@ double ClassLikelihood::getLogLikelihood(int classID){
     }
     double frac1, frac2;
     if(!existstotnum) frac1 = 1; //?
-    else frac1 = totNotC/totNum[classID];
+    else frac1 = totNotC/(double)totNum[classID];
 
     if(!existsnummatch) frac2 = (EPSILON)/(double)(matchNotC+EPSILON);
     else frac2 = (numMatches[classID]+EPSILON)/(double)(matchNotC+EPSILON);

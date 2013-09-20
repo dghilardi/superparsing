@@ -70,7 +70,7 @@ IplImage* convertNativeToIplImage(image<rgb>* input){
 
 void segmentImage(IplImage* input, vector<vector<Pixel> > & resultBuffer){
     image<rgb> * converted= convertIplToNativeImage(input);
-    segment_image(converted, SIGMA, 500, MIN_SEGMENTATION_BLOB_SIZE, NULL,resultBuffer); 
+    segment_image(converted, SIGMA, 500, MIN_SEGMENTATION_BLOB_SIZE, NULL,resultBuffer);
     delete converted;
 }
 

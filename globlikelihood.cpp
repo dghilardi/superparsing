@@ -9,7 +9,7 @@
 int GlobLikelihood::getBestLabel(){
     vector<int> keys;
     mask.getKeys(keys);
-    double maxSum=0;
+    double maxSum=std::numeric_limits<double>::min();
     int bestLabel=0;
     for(int i=0; i<keys.size(); ++i){
         double logSum = getLogSum(keys[i]);
@@ -17,7 +17,7 @@ int GlobLikelihood::getBestLabel(){
             maxSum = logSum;
             bestLabel = keys[i];
         }
-    }
+    }   
     return bestLabel;
 }
 
