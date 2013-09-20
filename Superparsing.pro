@@ -45,8 +45,11 @@ SOURCES += main.cpp \
     Video/supervoxel.cpp \
     Video/supervoxellikelihood.cpp \
     quantizedsift.cpp \
-    dictionarytraining.cpp\
-    GCO/*.cpp
+    dictionarytraining.cpp \
+    GCO/maxflow.cpp \
+    GCO/LinkedBlockList.cpp \
+    GCO/graph.cpp \
+    GCO/GCoptimization.cpp
 
 HEADERS += \
     geolabel.h \
@@ -71,7 +74,12 @@ HEADERS += \
     Video/supervoxellikelihood.h \
     mrfnode.h \
     quantizedsift.h \
-    dictionarytraining.h\
-    GCO/*.h
+    dictionarytraining.h \
+    GCO/LinkedBlockList.h \
+    GCO/graph.h \
+    GCO/GCoptimization.h \
+    GCO/energy.h \
+    GCO/block.h
 
 OTHER_FILES += instances/*
+
