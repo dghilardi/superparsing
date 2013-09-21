@@ -17,6 +17,7 @@
 #include "globlikelihood.h"
 #include "neighbourstat.h"
 #include "Utils/printutils.h"
+#include "GCO/GCoptimization.h"
 
 #include "debugHeader.h"
 
@@ -29,6 +30,8 @@ public:
     MRF();
     template<typename MRFNode, typename Likelihood>
         static void computeMRF(vector<MRFNode *> superPixelList, vector<Likelihood *> &likelihood, NeighbourStat &condprob);
+    template<typename MRFNode, typename Likelihood>
+        static void computeMRFGCO(vector<MRFNode *> superPixelList, vector<Likelihood *> &likelihood, NeighbourStat &condprob);
 };
 #include "mrf.tcc"
 

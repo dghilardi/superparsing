@@ -1,3 +1,5 @@
+#include "mrf.h"
+
 template<typename MRFNode, typename Likelihood>
 void MRF::computeMRF(vector<MRFNode *> superPixelList, vector<Likelihood *> &likelihood, NeighbourStat &condprob){
     vector<dai::Var> variables;
@@ -81,4 +83,67 @@ void MRF::computeMRF(vector<MRFNode *> superPixelList, vector<Likelihood *> &lik
     }
     cout << "Valore J(c) [prima]="<<funcValuePrev<<endl;
     cout << "Valore J(c)  [dopo]="<<funcValue<<endl;
+}
+
+template<typename MRFNode, typename Likelihood>
+void MRF::computeMRFGCO(vector<MRFNode *> superPixelList, vector<Likelihood *> &likelihood, NeighbourStat &condprob){
+    uint numSuperPixels = superPixelList.size();
+    int numLabels = GeoLabel::getLabelsNumber();
+
+    int *result = new int[numSuperPixels];
+
+    //Create data costs
+    int *data = new int[numSuperPixels*numLabels];
+    for(uint i=0; i<numSuperPixels; ++i){
+        for(int state=0; state<numLabels; ++state){
+            data[i*numLabels+state] = 10000*likelihood[i]->computeEdata(state+1);
+            cout << "Data " << i*numLabels+state << ":\t" << data[i*numLabels+state] << endl;
+        }
+    }
+
+    //Create array for smooth costs
+    int *smooth = new int[numLabels*numLabels];
+    for(int l2=0; l2<numLabels; ++l2){
+        for(int l1=0; l1<numLabels; ++l1){
+            double prob = (condprob.conditionalNeigProb(l1+1, l2+1)+condprob.conditionalNeigProb(l2+1, l1+1))/2.0;
+            prob= (prob==0) ? 1e-6 : prob;
+            smooth[l1+l2*numLabels] = -log(prob);
+            cout << "Smooth " << l1+l2*numLabels << ":\t" << smooth[l1+l2*numLabels] << endl;
+        }
+    }
+
+    try{
+        GCoptimizationGeneralGraph *gc = new GCoptimizationGeneralGraph(numSuperPixels, numLabels);
+        gc->setDataCost(data);
+        gc->setSmoothCost(smooth);
+
+        //Set up neighborhood system
+        for(uint i=0; i<numSuperPixels; ++i){
+            MRFNode *actual = superPixelList[i];
+
+            const set<MRFNode *> *adiacents = actual->getAdiacents();
+            for(typename set<MRFNode *>::iterator it=adiacents->begin(); it!=adiacents->end(); ++it){
+                typename vector<MRFNode *>::iterator itFound = std::find(superPixelList.begin(), superPixelList.end(), *it);
+                uint position = std::distance(superPixelList.begin(), itFound);
+                assert(position<numSuperPixels);
+
+                gc->setNeighbors(i,position);
+            }
+
+        }
+        gc->expansion(2);
+        for(int i=0; i<numSuperPixels; ++i)
+            result[i] = gc->whatLabel(i);
+        delete gc;
+    }catch(GCException e){
+        e.Report();
+    }
+
+    for(int i=0; i<numSuperPixels; ++i){
+        superPixelList[i]->setLabel(result[i]+1);
+    }
+
+    delete [] result;
+    delete [] smooth;
+    delete [] data;
 }
