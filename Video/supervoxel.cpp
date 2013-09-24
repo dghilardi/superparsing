@@ -10,6 +10,12 @@ SuperVoxel::SuperVoxel(vector<Pixel> &pixelList, vector<cv::Mat> &frames) : labe
     for(map<int, vector<Pixel> >::iterator it=dividedPerFrame.begin(); it!=dividedPerFrame.end(); ++it){
         superPixelsList.insert(map<int, SuperPixel *>::value_type(it->first, new SuperPixel(it->second, frames[it->first])));
     }
+
+    vector<SuperPixel *> spvec;
+    for(map<int, SuperPixel *>::iterator it=superPixelsList.begin(); it!=superPixelsList.end(); ++it){
+        spvec.push_back(it->second);
+    }
+    TridimensionalVoxel svoxel(spvec);
 }
 
 SuperVoxel::~SuperVoxel(){

@@ -5,6 +5,7 @@
 #include <map>
 #include "../OpenCVGraphSegmentation/Segmentation.h"
 #include "../superpixel.h"
+#include "../Utils3d/tridimensionalvoxel.h"
 
 using namespace std;
 class SuperVoxel

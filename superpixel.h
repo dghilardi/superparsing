@@ -17,6 +17,7 @@
 using namespace std;
 class SuperPixel
 {
+    cv::Point topLeftCorner;
     uint64 maskFeature;
     double relHeightFeature;
     double weight;
@@ -43,6 +44,8 @@ public:
     float getRelHeightDistance(SuperPixel &otherSP);
     double getSiftDistance(SuperPixel &otherSP);
     double getColorDistance(SuperPixel &otherSP);
+    cv::Mat *getMask();
+    cv::Point getTopLeftCorner();
     void show();
     void printToMat(cv::Mat &result);
     void appendAdiacent(SuperPixel *toAppend);

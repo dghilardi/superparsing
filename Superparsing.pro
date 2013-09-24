@@ -49,7 +49,8 @@ SOURCES += main.cpp \
     GCO/maxflow.cpp \
     GCO/LinkedBlockList.cpp \
     GCO/graph.cpp \
-    GCO/GCoptimization.cpp
+    GCO/GCoptimization.cpp \
+    Utils3d/tridimensionalvoxel.cpp
 
 HEADERS += \
     geolabel.h \
@@ -79,7 +80,8 @@ HEADERS += \
     GCO/graph.h \
     GCO/GCoptimization.h \
     GCO/energy.h \
-    GCO/block.h
+    GCO/block.h \
+    Utils3d/tridimensionalvoxel.h
 
 OTHER_FILES += instances/*
 

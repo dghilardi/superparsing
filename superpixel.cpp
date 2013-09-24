@@ -16,6 +16,8 @@ SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg, bool computeSIFT): 
         if(list[i].y>maxY) maxY = list[i].y;
         if(list[i].y<minY) minY = list[i].y;
     }
+    topLeftCorner.x = minX;
+    topLeftCorner.y = minY;
 
     //Ritaglio il superpixel dall'immagine originale
     int dimX = maxX-minX+1;
@@ -71,6 +73,13 @@ SuperPixel::~SuperPixel(){
 
 int SuperPixel::getLabel(){
     return label;
+}
+cv::Mat *SuperPixel::getMask(){
+    return &mask;
+}
+
+cv::Point SuperPixel::getTopLeftCorner(){
+    return topLeftCorner;
 }
 
 void SuperPixel::setLabel(int newLabel){
