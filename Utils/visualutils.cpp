@@ -61,7 +61,7 @@ void VisualUtils::hslToRgb(cv::Vec3f hsl, cv::Vec3b &rgb){
             break;
         }
     }
-    cout << r << g  << b << endl;
+    //cout << r << g  << b << endl;
     rgb[0] = (uchar)(r*255);
     rgb[1] = (uchar)(g*255);
     rgb[2] = (uchar)(b*255);

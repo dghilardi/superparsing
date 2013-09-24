@@ -24,7 +24,7 @@ public:
     ~QueryImage();
 
     vector<SuperPixel *> *getSuperPixels();
-    void showLabeling();
+    void showLabeling(string title="LABELED IMAGE");
     void showOriginalLabeling();
     void showSrc();
     double checkResults();

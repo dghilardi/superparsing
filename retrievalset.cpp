@@ -260,5 +260,6 @@ void RetrievalSet::checkSuperPixel(SuperPixel *toLabel, SuperPixel *inSet, GlobL
 void RetrievalSet::applyMRF(QueryImage &imgToLabel, NeighbourStat &stat){
     vector<SuperPixel *> *setSuperPixelsToLabel = imgToLabel.getSuperPixels();
     MRF::computeMRFGCO<SuperPixel, GlobLikelihood>(*setSuperPixelsToLabel, matchResults, stat);
-    cout << "ERRORE: " << imgToLabel.checkResults()*100 << "%\n";
+    imgToLabel.showLabeling("MRF LABELS");
+    cout << "ERRORE MRF: " << imgToLabel.checkResults()*100 << "%\n";
 }

@@ -88,7 +88,7 @@ void MRF::computeMRF(vector<MRFNode *> superPixelList, vector<Likelihood *> &lik
 #define SCALE_FACTOR 10000
 template<typename MRFNode, typename Likelihood>
 void MRF::computeMRFGCO(vector<MRFNode *> superPixelList, vector<Likelihood *> &likelihood, NeighbourStat &condprob){
-    uint numSuperPixels = superPixelList.size();
+    int numSuperPixels = superPixelList.size();
     int numLabels = GeoLabel::getLabelsNumber();
 
     int *result = new int[numSuperPixels];
@@ -98,7 +98,7 @@ void MRF::computeMRFGCO(vector<MRFNode *> superPixelList, vector<Likelihood *> &
     for(uint i=0; i<numSuperPixels; ++i){
         for(int state=0; state<numLabels; ++state){
             data[i*numLabels+state] = -likelihood[i]->computeEdata(state+1)*SCALE_FACTOR;
-            cout << "Data " << i*numLabels+state << ":\t" << data[i*numLabels+state] << endl;
+            //cout << "Data " << i*numLabels+state << ":\t" << data[i*numLabels+state] << endl;
         }
     }
 
@@ -108,8 +108,8 @@ void MRF::computeMRFGCO(vector<MRFNode *> superPixelList, vector<Likelihood *> &
         for(int l1=0; l1<numLabels; ++l1){
             double prob = (condprob.conditionalNeigProb(l1+1, l2+1)+condprob.conditionalNeigProb(l2+1, l1+1))/2.0;
             prob= (prob==0) ? 1e-6 : prob;
-            smooth[l1+l2*numLabels] = log(prob)*SCALE_FACTOR;
-            cout << "Smooth " << l1+l2*numLabels << ":\t" << smooth[l1+l2*numLabels] << endl;
+            smooth[l1+l2*numLabels] = log(prob)*SCALE_FACTOR/100;
+            //cout << "Smooth " << l1+l2*numLabels << ":\t" << smooth[l1+l2*numLabels] << endl;
         }
     }
 
@@ -117,6 +117,7 @@ void MRF::computeMRFGCO(vector<MRFNode *> superPixelList, vector<Likelihood *> &
         GCoptimizationGeneralGraph *gc = new GCoptimizationGeneralGraph(numSuperPixels, numLabels);
         gc->setDataCost(data);
         gc->setSmoothCost(smooth);
+        set<std::pair<int,int> > adiacentSet;
 
         //Set up neighborhood system
         for(uint i=0; i<numSuperPixels; ++i){
@@ -127,12 +128,16 @@ void MRF::computeMRFGCO(vector<MRFNode *> superPixelList, vector<Likelihood *> &
                 typename vector<MRFNode *>::iterator itFound = std::find(superPixelList.begin(), superPixelList.end(), *it);
                 uint position = std::distance(superPixelList.begin(), itFound);
                 assert(position<numSuperPixels);
-
-                gc->setNeighbors(i,position);
+                pair<int, int> adjPair(max(i,position),min(i,position));
+                adiacentSet.insert(adjPair);
             }
 
         }
-        gc->expansion(2);
+        for(set<std::pair<int,int> >::iterator it=adiacentSet.begin(); it!=adiacentSet.end(); ++it ){
+            gc->setNeighbors(it->first, it->second);
+        }        
+        //gc->expansion(2);
+        gc->swap();
         for(int i=0; i<numSuperPixels; ++i)
             result[i] = gc->whatLabel(i);
         delete gc;
@@ -143,6 +148,7 @@ void MRF::computeMRFGCO(vector<MRFNode *> superPixelList, vector<Likelihood *> &
     for(int i=0; i<numSuperPixels; ++i){
         superPixelList[i]->setLabel(result[i]+1);
     }
+
 
     delete [] result;
     delete [] smooth;

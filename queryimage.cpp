@@ -58,13 +58,13 @@ void QueryImage::buildObtainedMat(cv::Mat &result, set<int> *usedLabels){
 /**
  * @brief QueryImage::showLabeling Show the labeling made to the current image
  */
-void QueryImage::showLabeling(){
+void QueryImage::showLabeling(string title){
     cv::Mat labeledImage, toVisualize;
     set<int> usedLabels;
     buildObtainedMat(labeledImage, &usedLabels);
     VisualUtils::colorLabels(labeledImage, toVisualize, usedLabels);
-    cvNamedWindow("LABELED IMAGE",CV_WINDOW_AUTOSIZE);
-    imshow("LABELED IMAGE",toVisualize);
+    cvNamedWindow(title.c_str(),CV_WINDOW_AUTOSIZE);
+    imshow(title.c_str(),toVisualize);
     showOriginalLabeling();
 }
 
