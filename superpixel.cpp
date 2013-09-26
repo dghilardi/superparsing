@@ -59,6 +59,21 @@ SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg, bool computeSIFT): 
 
 }
 
+SuperPixel::SuperPixel(cv::Mat &img, cv::Mat &spMask, bool computeSIFT):label(-1){
+    superPixelImg = img;
+    mask = spMask;
+
+    maskFeature = 0;
+    relHeightFeature = -1;
+
+        //computeSiftFeature(superPixelImg);
+    if(computeSIFT){
+        QuantizedSift *quantization = QuantizedSift::getInstance();
+        computeSIFTDescriptor(quantization);
+    }
+        computeColorFeature(superPixelImg);
+}
+
 SuperPixel::~SuperPixel(){
     /*
     assert(*(colorHist[0]->refcount)==1);

@@ -33,6 +33,7 @@ class SuperPixel
     void computeSIFTDescriptor(QuantizedSift *quantization);
 public:
     SuperPixel(vector<Pixel> &list, cv::Mat &srcImg, bool computeSIFT=true);
+    SuperPixel(cv::Mat &img, cv::Mat &spMask, bool computeSIFT);
     ~SuperPixel();
     void computeSiftFeature(cv::Mat &descriptor, bool computeDense=true);
     int getLabel();

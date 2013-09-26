@@ -29,6 +29,15 @@ void DictionaryTraining::train(string jsonPath, QuantizedSift &dictionary){
         //get superpixels
         vector<SuperPixel*>* querySP = queryIm.getSuperPixels(); //cout << "get superpixels" << endl;
         //get SIFT descriptor for each superpixel
+        /*
+        Image img(trainingSet[i].asString());
+        cv::Mat mask(img.getImage()->size(),CV_8UC1,cv::Scalar(255));
+        SuperPixel *SP = new SuperPixel(*(img.getImage()), mask , false);
+            cv::Mat descriptor;
+            SP->computeSiftFeature(descriptor, false); cout << descriptor.size() << endl;
+            wholeDescriptors.push_back(descriptor); //cout << "push back descriptor" << endl;
+        PrintUtils::printPercentage(i,trainingSet.size());
+        */
         for(int j=0; j<querySP->size(); j++){
             cv::Mat descriptor;
             (*querySP)[j]->computeSiftFeature(descriptor, false); //cout << "compute descriptor" << endl;
