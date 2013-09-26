@@ -22,7 +22,8 @@ int GlobLikelihood::getBestLabel(){
 }
 
 double GlobLikelihood::getLogSum(int i){
-    return mask.getLogLikelihood(i) + relH.getLogLikelihood(i) + quantSIFT.getLogLikelihood(i) + colorHist.getLogLikelihood(i);
+    float w[] = {2, 2, 1, 1};
+    return  w[0]*mask.getLogLikelihood(i) + w[1]*relH.getLogLikelihood(i) + w[2]*quantSIFT.getLogLikelihood(i) + w[3]*colorHist.getLogLikelihood(i);
 }
 
 void GlobLikelihood::setWeight(double newWeight){

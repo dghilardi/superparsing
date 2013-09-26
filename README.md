@@ -16,6 +16,8 @@ The libraries required by this project are:
 ---------
 The files in the directory `OpenCVGraphSegmentation` are based on the project `OpenCVGraphSegmentation` released under the GPL v2
 
+The files in the directory `Utils3d/poly2tri` are based on the project `Poly2tri` 
+
 It also require the library GC_Optimization which you can take from here `http://vision.csd.uwo.ca/code/` (gco-v3.0.zip) and put the cpp and h files in a subfolder named GCO.
 
 Usage

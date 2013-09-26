@@ -6,6 +6,8 @@
 #include <vector>
 #include <iostream>
 
+#include "poly2tri/geometry.h"
+
 #include "../superpixel.h"
 #include "../debugHeader.h"
 using namespace std;
@@ -17,7 +19,7 @@ private:
 
     void xorMatrices(cv::Mat *mat1, cv::Mat *mat2, cv::Point mat1Offset, cv::Point mat2Offset, cv::Mat *result);
     void cleanTriangles(vector<cv::Vec6f> &allTriangles, vector<cv::Vec6f> &result, cv::Mat &mask);
-    void triangles(vector<cv::Vec6f> &triangles, cv::Mat *mask);
+    void drawTriangles(vector<cv::Vec6f> &triangles, cv::Mat *mask);
 public:
     TridimensionalVoxel(vector<SuperPixel *> &spList);
 };

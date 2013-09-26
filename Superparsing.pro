@@ -50,7 +50,9 @@ SOURCES += main.cpp \
     GCO/LinkedBlockList.cpp \
     GCO/graph.cpp \
     GCO/GCoptimization.cpp \
-    Utils3d/tridimensionalvoxel.cpp
+    Utils3d/tridimensionalvoxel.cpp \
+    Utils3d/poly2tri/predicates.cc \
+    Utils3d/poly2tri/geometry.cc
 
 HEADERS += \
     geolabel.h \
@@ -81,7 +83,11 @@ HEADERS += \
     GCO/GCoptimization.h \
     GCO/energy.h \
     GCO/block.h \
-    Utils3d/tridimensionalvoxel.h
+    Utils3d/tridimensionalvoxel.h \
+    Utils3d/poly2tri/splay.h \
+    Utils3d/poly2tri/parse.h \
+    Utils3d/poly2tri/geometry.h \
+    Utils3d/poly2tri/defs.h
 
 OTHER_FILES += instances/*
 

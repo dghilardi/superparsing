@@ -26,6 +26,11 @@ void TridimensionalVoxel::getTrianglesList(SuperPixel *prevSP, SuperPixel *nextS
     cv::Mat *xorMatrix=new cv::Mat();
     xorMatrices(prevMask, nextMask, prevOffset, nextOffset, xorMatrix);
 
+    vector<vector<cv::Point> > resultingContours;
+    cv::findContours(xorMatrix->clone(), resultingContours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
+    for(int i=0; i<resultingContours.size(); ++i) for(int j=0; j<resultingContours[i].size(); ++j) cout << (j==0?"\n->":"") << resultingContours[i][j];
+    cout << endl;
+
     int maxHeight, maxWidth;
     if(prevMask!=NULL){
         maxWidth = max(prevOffset.x+prevMask->cols, nextOffset.x+nextMask->cols);
@@ -52,7 +57,7 @@ void TridimensionalVoxel::getTrianglesList(SuperPixel *prevSP, SuperPixel *nextS
     //cout << "Triangles: ";
     //for(int i=0; i<result.size(); ++i) cout << result[i] << " ";
     //cout << endl << endl;
-
+/*
     if(prevMask!=NULL){
         cvNamedWindow("MAT1", CV_WINDOW_AUTOSIZE);
         cv::imshow("MAT1", *prevMask);
@@ -60,6 +65,10 @@ void TridimensionalVoxel::getTrianglesList(SuperPixel *prevSP, SuperPixel *nextS
         cv::imshow("MAT2", *nextMask);
         cvNamedWindow("XOR", CV_WINDOW_AUTOSIZE);
         cv::imshow("XOR", *xorMatrix);
+        cv::waitKey();
+    }*/
+    if(result.size()>100){
+        drawTriangles(result, xorMatrix);
         cv::waitKey();
     }
 
@@ -86,9 +95,12 @@ bool TridimensionalVoxel::isVertex(int x, int y, cv::Mat *mask){
             else nSet++;
         }
     }
+    assert(nSet+nNotSet==4);
     if(nSet>2 && nNotSet>0) return true;
     if(nNotSet>2 && nSet>0) return true;
+    if(nSet==2 && mask->at<uchar>(y-1,x)==mask->at<uchar>(y,x-1)) return true;
     return false;
+
 }
 
 /**
@@ -136,8 +148,30 @@ void TridimensionalVoxel::xorMatrices(cv::Mat *mat1, cv::Mat *mat2, cv::Point ma
 
 }
 
-void TridimensionalVoxel::triangles(vector<cv::Vec6f> &triangles, cv::Mat *mask){
+void TridimensionalVoxel::drawTriangles(vector<cv::Vec6f> &triangles, cv::Mat *mask){
+    const int scalef = 12;
     cv::Mat toDraw;
     mask->copyTo(toDraw);
-    cv::resize(*mask, toDraw, cv::Size(), 2, 2);
+    cv::resize(*mask, toDraw, cv::Size(), scalef, scalef, cv::INTER_NEAREST);
+    int minX = toDraw.cols;
+    int minY = toDraw.rows;
+    for(uint i=0; i<triangles.size(); ++i){
+        for(int j=0; j<3; ++j){
+            int nextPoint = (j+1)%3;
+            if(minX>scalef*triangles[i][j*2] && triangles[i][j*2]>=0) minX=scalef*triangles[i][j*2];
+            if(minY>scalef*triangles[i][j*2+1] && triangles[i][j*2+1]>=0) minY=scalef*triangles[i][j*2+1];
+            //minX = min(minX, scalef*triangles[i][j*2]);
+            //minY = min(minY, scalef*triangles[i][j*2+1]);
+            cv::Point pointA(scalef*triangles[i][j*2], scalef*triangles[i][j*2+1]);
+            cv::Point pointB(scalef*triangles[i][nextPoint*2], scalef*triangles[i][nextPoint*2+1]);
+            cv::circle(toDraw, pointA, scalef/4, cv::Scalar(70), -1);
+            cv::circle(toDraw, pointB, scalef/4, cv::Scalar(70), -1);
+            cv::line(toDraw, pointA, pointB, cv::Scalar(128));
+        }
+    }
+    cv::Rect roi(minX, minY, toDraw.cols-minX, toDraw.rows-minY);
+    cout << roi << endl;
+    cv::Mat toShow = toDraw(roi);
+    cvNamedWindow("TRIANGLES", CV_WINDOW_AUTOSIZE);
+    cv::imshow("TRIANGLES", toShow);
 }

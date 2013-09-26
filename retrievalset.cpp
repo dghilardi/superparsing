@@ -214,7 +214,11 @@ void RetrievalSet::computeLabels(QueryImage *imgToLabel, ThreadSafeStringSet *im
             for(uint k=0; k<setSuperPixelsToLabel->size(); ++k){
                 //Per ogni superpixel dell'immagine calcolo i valori riguardanti il numero di match per ogni classe
                 SuperPixel *superPixelToLabel = (*setSuperPixelsToLabel)[k];
+                try{
                 checkSuperPixel(superPixelToLabel, setSuperPixel, *(matchResults->at(k)));
+                }catch(int a){
+                    cout <<"found in: "<< setImagePath << endl;
+                }
             }
         }
     }
@@ -228,11 +232,11 @@ void RetrievalSet::computeLabels(QueryImage *imgToLabel, ThreadSafeStringSet *im
  *                      of the number of match for each feature, each class and total number of superpixels per class
  */
 void RetrievalSet::checkSuperPixel(SuperPixel *toLabel, SuperPixel *inSet, GlobLikelihood &spixelResults){
-    double tk_mask=15, tk_relH=0.15, tk_sift=0.3, tk_color=0.1; //Valori casuali solo per provare
+    double tk_mask=15, tk_relH=0.15, tk_sift=0.1, tk_color=0.1; //Valori casuali solo per provare
 
     int actualLabel = inSet->getLabel(); //Indice del label del superpixel preso dal dataset
     //cout << actualLabel << endl;
-    //if(actualLabel==9) throw;
+    if(GeoLabel::getLabel(actualLabel)=="awning" || GeoLabel::getLabel(actualLabel)=="fence") throw 1;
 
     double maskDistance = toLabel->getMaskDistance(*inSet);
     if(maskDistance<tk_mask) spixelResults.mask.foundMatch(actualLabel);
@@ -260,6 +264,6 @@ void RetrievalSet::checkSuperPixel(SuperPixel *toLabel, SuperPixel *inSet, GlobL
 void RetrievalSet::applyMRF(QueryImage &imgToLabel, NeighbourStat &stat){
     vector<SuperPixel *> *setSuperPixelsToLabel = imgToLabel.getSuperPixels();
     MRF::computeMRFGCO<SuperPixel, GlobLikelihood>(*setSuperPixelsToLabel, matchResults, stat);
-    imgToLabel.showLabeling("MRF LABELS");
     cout << "ERRORE MRF: " << imgToLabel.checkResults()*100 << "%\n";
+    imgToLabel.showLabeling("MRF LABELS");
 }
