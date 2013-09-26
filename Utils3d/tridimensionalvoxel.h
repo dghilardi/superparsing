@@ -7,6 +7,8 @@
 #include <iostream>
 
 #include "poly2tri/geometry.h"
+#include "poly2tri/defs.h"
+#define POLY2TRI
 
 #include "../superpixel.h"
 #include "../debugHeader.h"

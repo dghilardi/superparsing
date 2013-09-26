@@ -236,7 +236,7 @@ void RetrievalSet::checkSuperPixel(SuperPixel *toLabel, SuperPixel *inSet, GlobL
 
     int actualLabel = inSet->getLabel(); //Indice del label del superpixel preso dal dataset
     //cout << actualLabel << endl;
-    if(GeoLabel::getLabel(actualLabel)=="awning" || GeoLabel::getLabel(actualLabel)=="fence") throw 1;
+    if(GeoLabel::getLabel(actualLabel)=="bus" || GeoLabel::getLabel(actualLabel)=="grass") throw 1;
 
     double maskDistance = toLabel->getMaskDistance(*inSet);
     if(maskDistance<tk_mask) spixelResults.mask.foundMatch(actualLabel);

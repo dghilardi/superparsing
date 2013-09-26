@@ -13,6 +13,13 @@ TridimensionalVoxel::TridimensionalVoxel(vector<SuperPixel *> &spList){
     }
 }
 
+#ifdef POLY2TRI
+void TridimensionalVoxel::getTrianglesList(SuperPixel *prevSP, SuperPixel *nextSP, vector<cv::Vec6f> &result){
+    vector<Triangle*> triangles;
+    //vector< vector<Point*> > polylines;
+    //vector<Point*> polyline;
+}
+#else
 void TridimensionalVoxel::getTrianglesList(SuperPixel *prevSP, SuperPixel *nextSP, vector<cv::Vec6f> &result){
     result.clear();
     cv::Mat *prevMask=NULL;
@@ -74,6 +81,7 @@ void TridimensionalVoxel::getTrianglesList(SuperPixel *prevSP, SuperPixel *nextS
 
     delete xorMatrix;
 }
+#endif
 
 /**
  * @brief isVertex The position indicated by coordinates x and y represent a vertex iff one of the four adiacent pixels is set (unset) and all the others unset (set)
