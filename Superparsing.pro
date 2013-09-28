@@ -51,9 +51,11 @@ SOURCES += main.cpp \
     GCO/graph.cpp \
     GCO/GCoptimization.cpp \
     Utils3d/tridimensionalvoxel.cpp \
-    Utils3d/poly2tri/predicates.cc \
-    Utils3d/poly2tri/geometry.cc
-
+    Utils3d/poly2tri/common/shapes.cc \
+    Utils3d/poly2tri/sweep/advancing_front.cc \
+    Utils3d/poly2tri/sweep/cdt.cc \
+    Utils3d/poly2tri/sweep/sweep_context.cc \
+    Utils3d/poly2tri/sweep/sweep.cc
 HEADERS += \
     geolabel.h \
     image.h \
@@ -84,10 +86,13 @@ HEADERS += \
     GCO/energy.h \
     GCO/block.h \
     Utils3d/tridimensionalvoxel.h \
-    Utils3d/poly2tri/splay.h \
-    Utils3d/poly2tri/parse.h \
-    Utils3d/poly2tri/geometry.h \
-    Utils3d/poly2tri/defs.h
+    Utils3d/poly2tri/poly2tri.h \
+    Utils3d/poly2tri/common/shapes.h \
+    Utils3d/poly2tri/common/utils.h \
+    Utils3d/poly2tri/sweep/advancing_front.h \
+    Utils3d/poly2tri/sweep/cdt.h \
+    Utils3d/poly2tri/sweep/sweep_context.h \
+    Utils3d/poly2tri/sweep/sweep.h
 
 OTHER_FILES += instances/*
 

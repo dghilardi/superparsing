@@ -1,23 +1,86 @@
 #include "tridimensionalvoxel.h"
 
 TridimensionalVoxel::TridimensionalVoxel(vector<SuperPixel *> &spList){
-    vector<cv::Vec6f> triangles;
-    getTrianglesList(NULL, spList[0], triangles);
+    vector<Tri> triangles;
+    getTrianglesList(NULL, spList[0], triangles, 0);
     for(uint i=1; i<spList.size(); ++i){
         for(int j=0; j<triangles.size(); ++j){
             for(int k=0; k<3; ++k){
-                cout << triangles[j][k*2] << ".0f, " << triangles[j][k*2+1] << ".0f, " << i-1 << ".0f, " << endl;
+                cout << triangles[j][k*3] << ".0f, " << triangles[j][k*3+1] << ".0f, " << triangles[j][k*3+2] << ".0f, " << endl;
             }
         }
-        getTrianglesList(spList[i-1], spList[i], triangles);
+        getTrianglesList(spList[i-1], spList[i], triangles, i);
     }
 }
 
 #ifdef POLY2TRI
-void TridimensionalVoxel::getTrianglesList(SuperPixel *prevSP, SuperPixel *nextSP, vector<cv::Vec6f> &result){
-    vector<Triangle*> triangles;
-    //vector< vector<Point*> > polylines;
-    //vector<Point*> polyline;
+void TridimensionalVoxel::getTrianglesList(SuperPixel *prevSP, SuperPixel *nextSP, vector<Tri> &result, int frameNumber){
+    //initialize values
+    result.clear();
+    cv::Mat *prevMask=NULL;
+    cv::Point prevOffset;
+    if(prevSP!=NULL){
+        prevMask = prevSP->getMask();
+        prevOffset = prevSP->getTopLeftCorner();
+    }
+    cv::Mat *nextMask = nextSP->getMask();
+    cv::Point nextOffset = nextSP->getTopLeftCorner();
+    cv::Mat *xorMatrix = new cv::Mat();
+    cv::Mat resized, hierarchy;
+    float scaleborder = 15.0;
+    vector<vector<cv::Point> > resultingContours;
+
+    //Prepare mat
+    xorMatrices(prevMask, nextMask, prevOffset, nextOffset, xorMatrix);
+    cv::resize(*xorMatrix, resized, cv::Size(), scaleborder, scaleborder, cv::INTER_NEAREST);
+    cv::erode(resized, resized, cv::Mat());
+
+    //Find contours
+    cv::findContours(resized, resultingContours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
+
+    //convert contours for p2t
+    vector<vector<p2t::Point *> > polylines;
+    for(uint i=0; i<resultingContours.size(); ++i){
+        polylines.push_back(vector<p2t::Point*>());
+        for(int j=0; j<resultingContours[i].size(); ++j){
+            p2t::Point *pt = new p2t::Point(resultingContours[i][j].x/scaleborder, resultingContours[i][j].y/scaleborder);
+            polylines[i].push_back(pt);
+        }
+    }
+
+    //compute triangles and convert p2t to cv
+    vector<p2t::Triangle*> triangles;
+    for(int i=0; i<resultingContours.size(); ++i){
+        if(hierarchy.at<int>(0,4*i+3)==-1){
+            p2t::CDT* cdt = new p2t::CDT(polylines[i]);
+
+            for(int j=0; j<resultingContours.size(); ++j){
+                if(hierarchy.at<int>(0,4*j+3)==i) cdt->AddHole(polylines[j]);
+            }
+            cdt->Triangulate();
+
+            triangles = cdt->GetTriangles();
+
+            for (int k = 0; k < triangles.size(); k++) {
+
+                p2t::Triangle& t = *triangles[k];
+                Tri triangle;
+                for(int idx=0; idx<3; ++idx){
+                    p2t::Point& point = *t.GetPoint(idx);
+                    triangle[3*idx] = round(point.x);
+                    triangle[3*idx+1] = round(point.y);
+                    triangle[3*idx+2] = frameNumber;
+                }
+                result.push_back(triangle);
+            }
+
+            delete cdt;
+        }
+    }
+
+    //clean memory
+    delete xorMatrix;
+    for(int i=0; i<polylines.size(); ++i) for(int j=0; j<polylines[i].size(); ++j) delete polylines[i][j];
 }
 #else
 void TridimensionalVoxel::getTrianglesList(SuperPixel *prevSP, SuperPixel *nextSP, vector<cv::Vec6f> &result){
@@ -138,11 +201,11 @@ void TridimensionalVoxel::cleanTriangles(vector<cv::Vec6f> &allTriangles, vector
 
 void TridimensionalVoxel::xorMatrices(cv::Mat *mat1, cv::Mat *mat2, cv::Point mat1Offset, cv::Point mat2Offset, cv::Mat *result){
     if(mat1==NULL)
-        cv::copyMakeBorder(*mat2, *result, mat2Offset.y, 0, mat2Offset.x, 0, cv::BORDER_CONSTANT, cv::Scalar(0));
+        cv::copyMakeBorder(*mat2, *result, mat2Offset.y, 1, mat2Offset.x, 1, cv::BORDER_CONSTANT, cv::Scalar(0));
     else{
         int maxWidth = max(mat1Offset.x+mat1->cols, mat2Offset.x+mat2->cols);
         int maxHeight = max(mat1Offset.y+mat1->rows, mat2Offset.y+mat2->rows);
-        result->create(maxHeight, maxWidth, CV_8UC1);
+        result->create(maxHeight+1, maxWidth+1, CV_8UC1);
         result->setTo(cv::Scalar(0));
         for(int x=0; x<maxWidth; ++x){
             for(int y=0; y<maxHeight; ++y){
@@ -156,8 +219,8 @@ void TridimensionalVoxel::xorMatrices(cv::Mat *mat1, cv::Mat *mat2, cv::Point ma
 
 }
 
-void TridimensionalVoxel::drawTriangles(vector<cv::Vec6f> &triangles, cv::Mat *mask){
-    const int scalef = 12;
+void TridimensionalVoxel::drawTriangles(vector<Tri> &triangles, cv::Mat *mask){
+    const int scalef = 5;
     cv::Mat toDraw;
     mask->copyTo(toDraw);
     cv::resize(*mask, toDraw, cv::Size(), scalef, scalef, cv::INTER_NEAREST);
@@ -166,12 +229,12 @@ void TridimensionalVoxel::drawTriangles(vector<cv::Vec6f> &triangles, cv::Mat *m
     for(uint i=0; i<triangles.size(); ++i){
         for(int j=0; j<3; ++j){
             int nextPoint = (j+1)%3;
-            if(minX>scalef*triangles[i][j*2] && triangles[i][j*2]>=0) minX=scalef*triangles[i][j*2];
-            if(minY>scalef*triangles[i][j*2+1] && triangles[i][j*2+1]>=0) minY=scalef*triangles[i][j*2+1];
+            if(minX>scalef*triangles[i][j*3] && triangles[i][j*3]>=0) minX=scalef*triangles[i][j*3];
+            if(minY>scalef*triangles[i][j*3+1] && triangles[i][j*3+1]>=0) minY=scalef*triangles[i][j*3+1];
             //minX = min(minX, scalef*triangles[i][j*2]);
             //minY = min(minY, scalef*triangles[i][j*2+1]);
-            cv::Point pointA(scalef*triangles[i][j*2], scalef*triangles[i][j*2+1]);
-            cv::Point pointB(scalef*triangles[i][nextPoint*2], scalef*triangles[i][nextPoint*2+1]);
+            cv::Point pointA(scalef*triangles[i][j*3], scalef*triangles[i][j*3+1]);
+            cv::Point pointB(scalef*triangles[i][nextPoint*3], scalef*triangles[i][nextPoint*3+1]);
             cv::circle(toDraw, pointA, scalef/4, cv::Scalar(70), -1);
             cv::circle(toDraw, pointB, scalef/4, cv::Scalar(70), -1);
             cv::line(toDraw, pointA, pointB, cv::Scalar(128));
@@ -183,3 +246,27 @@ void TridimensionalVoxel::drawTriangles(vector<cv::Vec6f> &triangles, cv::Mat *m
     cvNamedWindow("TRIANGLES", CV_WINDOW_AUTOSIZE);
     cv::imshow("TRIANGLES", toShow);
 }
+
+string TridimensionalVoxel::type2str(int type) {
+  string r;
+
+  uchar depth = type & CV_MAT_DEPTH_MASK;
+  uchar chans = 1 + (type >> CV_CN_SHIFT);
+
+  switch ( depth ) {
+    case CV_8U:  r = "8U"; break;
+    case CV_8S:  r = "8S"; break;
+    case CV_16U: r = "16U"; break;
+    case CV_16S: r = "16S"; break;
+    case CV_32S: r = "32S"; break;
+    case CV_32F: r = "32F"; break;
+    case CV_64F: r = "64F"; break;
+    default:     r = "User"; break;
+  }
+
+  r += "C";
+  r += (chans+'0');
+
+  return r;
+}
+
