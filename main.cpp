@@ -1,3 +1,6 @@
+#ifdef QT_AND_OPENGL
+    #include <QApplication>
+#endif
 #include "mrf.h"
 #include "retrimage.h"
 #include "queryimage.h"
@@ -27,6 +30,9 @@ void help(string progName){
 }
 
 int main(int argc, char **argv){
+#ifdef QT_AND_OPENGL
+    QApplication app(argc, argv);
+#endif
     string imgInstancePath;
     string vidInstancePath;
     string trainingSetPath;
@@ -111,7 +117,9 @@ int main(int argc, char **argv){
         imSet.computeInstance(vidInstancePath, neighbourStatistics, useMRF, 4, false);
         cv::waitKey();
     }
-
+#ifdef QT_AND_OPENGL
+    return app.exec();
+#else
     return 0;
+#endif
 }
-

@@ -14,6 +14,7 @@
 #include "poly2tri/poly2tri.h"
 #define POLY2TRI
 
+#include "tridimensionalobject.h"
 #include "../superpixel.h"
 #include "../debugHeader.h"
 using namespace std;
@@ -22,7 +23,8 @@ class TridimensionalVoxel
 private:
     typedef cv::Vec<float, 9> Tri;
 
-    void getTrianglesList(SuperPixel *prevSP, SuperPixel *nextSP, vector<Tri> &result, int frameNumber);
+    void getTrianglesList(SuperPixel *prevSP, SuperPixel *nextSP, TridimensionalObject &result, int frameNumber);
+    void extrudeOnePxl(vector<vector<p2t::Point *> > *contours, TridimensionalObject &triangles, int frameNumber);
     bool isVertex(int x, int y, cv::Mat *mask);
 
     void xorMatrices(cv::Mat *mat1, cv::Mat *mat2, cv::Point mat1Offset, cv::Point mat2Offset, cv::Mat *result);

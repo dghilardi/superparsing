@@ -1,22 +1,26 @@
 #include "tridimensionalvoxel.h"
 
 TridimensionalVoxel::TridimensionalVoxel(vector<SuperPixel *> &spList){
-    vector<Tri> triangles;
+    TridimensionalObject triangles;
     getTrianglesList(NULL, spList[0], triangles, 0);
     for(uint i=1; i<spList.size(); ++i){
-        for(int j=0; j<triangles.size(); ++j){
-            for(int k=0; k<3; ++k){
-                cout << triangles[j][k*3] << ".0f, " << triangles[j][k*3+1] << ".0f, " << triangles[j][k*3+2] << ".0f, " << endl;
-            }
-        }
         getTrianglesList(spList[i-1], spList[i], triangles, i);
     }
+
+/*    if(spList.size()>1 && triangles.size()>0){
+    for(int j=0; j<triangles.size(); ++j){
+        for(int k=0; k<3; ++k){
+            cout << triangles[j][k*3] << ".0f, " << triangles[j][k*3+1] << ".0f, " << triangles[j][k*3+2] << ".0f, " << endl;
+        }
+    }
+    throw;
+    }*/
 }
 
 #ifdef POLY2TRI
-void TridimensionalVoxel::getTrianglesList(SuperPixel *prevSP, SuperPixel *nextSP, vector<Tri> &result, int frameNumber){
+void TridimensionalVoxel::getTrianglesList(SuperPixel *prevSP, SuperPixel *nextSP, TridimensionalObject &result, int frameNumber){
     //initialize values
-    result.clear();
+    //result.clear();
     cv::Mat *prevMask=NULL;
     cv::Point prevOffset;
     if(prevSP!=NULL){
@@ -64,24 +68,51 @@ void TridimensionalVoxel::getTrianglesList(SuperPixel *prevSP, SuperPixel *nextS
             for (int k = 0; k < triangles.size(); k++) {
 
                 p2t::Triangle& t = *triangles[k];
-                Tri triangle;
+                Tri tri;
                 for(int idx=0; idx<3; ++idx){
                     p2t::Point& point = *t.GetPoint(idx);
-                    triangle[3*idx] = round(point.x);
-                    triangle[3*idx+1] = round(point.y);
-                    triangle[3*idx+2] = frameNumber;
+                    tri[3*idx] = round(point.x);
+                    tri[3*idx+1] = round(point.y);
+                    tri[3*idx+2] = frameNumber;
                 }
-                result.push_back(triangle);
+                result.addTriangle(tri[0], tri[1], tri[2], tri[3], tri[4], tri[5], tri[6], tri[7], tri[8]);
             }
 
             delete cdt;
         }
     }
 
+    //extrude
+    extrudeOnePxl(&polylines, result, frameNumber);
+
     //clean memory
     delete xorMatrix;
     for(int i=0; i<polylines.size(); ++i) for(int j=0; j<polylines[i].size(); ++j) delete polylines[i][j];
 }
+
+void TridimensionalVoxel::extrudeOnePxl(vector<vector<p2t::Point *> > *contours, TridimensionalObject &triangles, int frameNumber){
+    for(int i=0; i<contours->size(); ++i){
+        int elemNum = (*contours)[i].size();
+        for(int j=0; j<elemNum; ++j){
+            p2t::Point *actual = (*contours)[i][j];
+            p2t::Point *next = (*contours)[i][(j+1)%elemNum];
+
+            Tri triA;
+            triA[0] = round(actual->x); triA[1] = round(actual->y); triA[2] = frameNumber;
+            triA[3] = round(next->x);   triA[4] = round(next->y);   triA[5] = frameNumber;
+            triA[6] = triA[3];     triA[7] = triA[4];     triA[8] = frameNumber+1;
+
+            Tri triB;
+            triB[0] = round(next->x);   triB[1] = round(next->y);   triB[2] = frameNumber+1;
+            triB[3] = round(actual->x); triB[4] = round(actual->y); triB[5] = frameNumber+1;
+            triB[6] = triB[3];     triB[7] = triB[4];     triB[8] = frameNumber;
+
+            triangles.addTriangle(triA[0], triA[1], triA[2], triA[3], triA[4], triA[5], triA[6], triA[7], triA[8]);
+            triangles.addTriangle(triB[0], triB[1], triB[2], triB[3], triB[4], triB[5], triB[6], triB[7], triB[8]);
+        }
+    }
+}
+
 #else
 void TridimensionalVoxel::getTrianglesList(SuperPixel *prevSP, SuperPixel *nextSP, vector<cv::Vec6f> &result){
     result.clear();
@@ -144,7 +175,7 @@ void TridimensionalVoxel::getTrianglesList(SuperPixel *prevSP, SuperPixel *nextS
 
     delete xorMatrix;
 }
-#endif
+
 
 /**
  * @brief isVertex The position indicated by coordinates x and y represent a vertex iff one of the four adiacent pixels is set (unset) and all the others unset (set)
@@ -198,6 +229,7 @@ void TridimensionalVoxel::cleanTriangles(vector<cv::Vec6f> &allTriangles, vector
             result.push_back(allTriangles[i]);
     }
 }
+#endif
 
 void TridimensionalVoxel::xorMatrices(cv::Mat *mat1, cv::Mat *mat2, cv::Point mat1Offset, cv::Point mat2Offset, cv::Mat *result){
     if(mat1==NULL)
