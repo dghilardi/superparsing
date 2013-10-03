@@ -119,7 +119,7 @@ void RetrievalSet::computeImage(int nThreads, bool useMRF, ThreadSafeStringSet &
 void RetrievalSet::computeVideo(int nThreads, bool useMRF, ThreadSafeStringSet &nameSet, NeighbourStat &stat, string queryPath){
     QueryVideo query(queryPath);
     vector<SuperVoxel *> *setSuperVoxelToLabel = query.getSuperVoxelsList();
-    vector<map<int, SuperPixel *> *> setSuperPixelsToLabel;
+    vector<vector<SuperPixel *> *> setSuperPixelsToLabel;
     vector<SuperVoxelLikelihood *> statLikelihood;
     for(uint i=0; i<setSuperVoxelToLabel->size(); ++i){
         setSuperPixelsToLabel.push_back((*setSuperVoxelToLabel)[i]->getSuperPixels());
@@ -169,7 +169,7 @@ void RetrievalSet::computeInstance(string instancePath, NeighbourStat &stat, boo
     else computeVideo(nThreads, useMRF, nameSet, stat, queryPath);
 }
 
-void RetrievalSet::computeLabelsMulti(vector<map<int, SuperPixel *> *> *setSuperPixelsToLabel, ThreadSafeStringSet *imgNames, vector<SuperVoxelLikelihood *> *matchResults){
+void RetrievalSet::computeLabelsMulti(vector<vector<SuperPixel *> *> *setSuperPixelsToLabel, ThreadSafeStringSet *imgNames, vector<SuperVoxelLikelihood *> *matchResults){
     while(true){
         string setImagePath = imgNames->getNext();
         if(setImagePath.empty()) break;
@@ -180,9 +180,9 @@ void RetrievalSet::computeLabelsMulti(vector<map<int, SuperPixel *> *> *setSuper
             SuperPixel *setSuperPixel = (*setImgSuperPixels)[j];
             ClassLikelihood::incTotClass(setSuperPixel->getLabel());
             for(int i=0; i<setSuperPixelsToLabel->size(); ++i){
-                for(map<int, SuperPixel *>::iterator it=(*setSuperPixelsToLabel)[i]->begin(); it!=(*setSuperPixelsToLabel)[i]->end(); ++it){
-                    SuperPixel *spToLabel = it->second;
-                    checkSuperPixel(spToLabel, setSuperPixel, *((*matchResults)[i]->getGlobLikelihood(it->first, spToLabel->getWeight())));
+                for(int it=0; it<(*setSuperPixelsToLabel)[i]->size(); ++it){
+                    SuperPixel *spToLabel = (*setSuperPixelsToLabel)[i]->at(it);
+                    checkSuperPixel(spToLabel, setSuperPixel, *((*matchResults)[i]->getGlobLikelihood(it, spToLabel->getWeight())));
                 }
             }
         }

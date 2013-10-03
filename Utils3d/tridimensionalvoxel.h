@@ -21,6 +21,7 @@ using namespace std;
 class TridimensionalVoxel
 {
 private:
+    TridimensionalObject *triangles;
     typedef cv::Vec<float, 9> Tri;
 
     void getTrianglesList(SuperPixel *prevSP, SuperPixel *nextSP, TridimensionalObject &result, int frameNumber);
@@ -32,7 +33,9 @@ private:
     void drawTriangles(vector<Tri> &triangles, cv::Mat *mask);
     string type2str(int type);
 public:
-    TridimensionalVoxel(vector<SuperPixel *> &spList);
+    TridimensionalVoxel(vector<SuperPixel *> *spList, int firstFrameIdx, cv::Size imgDim);
+    ~TridimensionalVoxel();
+    TridimensionalObject *getObject();
 };
 
 #endif // TRIDIMENSIONALVOXEL_H

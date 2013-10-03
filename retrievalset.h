@@ -36,7 +36,7 @@ class RetrievalSet
     string getNextTrainingPath();
     static void training(NeighbourStat *result, RetrievalSet *setInstance);
     static void computeLabels(QueryImage *imgToLabel, ThreadSafeStringSet *imgNames, vector<GlobLikelihood *> *matchResults);
-    static void computeLabelsMulti(vector<map<int, SuperPixel *> *> *setSuperPixelsToLabel, ThreadSafeStringSet *imgNames, vector<SuperVoxelLikelihood *> *matchResults);
+    static void computeLabelsMulti(vector<vector<SuperPixel *> *> *setSuperPixelsToLabel, ThreadSafeStringSet *imgNames, vector<SuperVoxelLikelihood *> *matchResults);
     void computeImage(int nThreads, bool useMRF, ThreadSafeStringSet &nameSet, NeighbourStat &stat, string queryPath);
     void computeVideo(int nThreads, bool useMRF, ThreadSafeStringSet &nameSet, NeighbourStat &stat, string queryPath);
     void assignVideoLabels(vector<SuperVoxel *> &toLabel, vector<SuperVoxelLikelihood *> &stat);

@@ -49,8 +49,9 @@ struct VertexData
     QVector2D texCoord;
 };
 
-GeometryEngine::GeometryEngine()
+GeometryEngine::GeometryEngine(TridimensionalObject *vxl)
 {
+    data = vxl;
 }
 
 GeometryEngine::~GeometryEngine()
@@ -69,7 +70,6 @@ void GeometryEngine::init()
 //! [0]
 
     // Initializes cube geometry and transfers it to VBOs
-    data = new TridimensionalObject();
 
     glBindBuffer(GL_ARRAY_BUFFER, vboIds[0]);
     glBufferData(GL_ARRAY_BUFFER, data->vertexNumber() * sizeof(QVector3D), data->getPtr(), GL_STATIC_DRAW);

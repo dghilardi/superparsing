@@ -10,8 +10,9 @@ class TridimensionalObject
 {
     vector<QVector3D> vertexList;
     QVector4D color;
+    int normFactor;
 public:
-    TridimensionalObject();
+    TridimensionalObject(int normalizationFactor);
     ~TridimensionalObject();
 
     QVector3D *getPtr();

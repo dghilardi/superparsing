@@ -44,6 +44,7 @@
 
 #include <math.h>
 #include <locale.h>
+#include <QDebug>
 
 OpenGLWidget::OpenGLWidget(QWidget *parent) :
     QGLWidget(parent),
@@ -101,6 +102,7 @@ void OpenGLWidget::timerEvent(QTimerEvent *)
 
 void OpenGLWidget::initializeGL()
 {
+    qDebug() << "Init";
     initializeGLFunctions();
     qglClearColor(Qt::black);
     initShaders();
@@ -111,11 +113,11 @@ void OpenGLWidget::initializeGL()
     // Enable back face culling
     glEnable(GL_CULL_FACE);
 
-    geometries.init();
-    geo2.init();
+    for(int i=0; i<geometries.size(); ++i) geometries.at(i)->init();
 
     // Use QBasicTimer because its faster than QTimer
     timer.start(12, this);
+    qDebug() << "End init";
 }
 
 void OpenGLWidget::initShaders()
@@ -163,6 +165,7 @@ void OpenGLWidget::resizeGL(int w, int h)
 
 void OpenGLWidget::paintGL()
 {
+    qDebug() << "Painting...";
     // Clear color and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -177,10 +180,10 @@ void OpenGLWidget::paintGL()
     // Use texture unit 0 which contains cube.png
     program.setUniformValue("texture", 0);
 
-    // Draw cube geometry
-    geometries.drawCubeGeometry(&program);
+    for(int i=0; i<geometries.size(); ++i){
+        // Draw cube geometry
+        geometries.at(i)->drawCubeGeometry(&program);
+    }
+    qDebug() << "End painting";
 
-    matrix.rotate(180, 0.0, 1.0, 0.0);
-    program.setUniformValue("mvp_matrix", projection * matrix);
-    geo2.drawCubeGeometry(&program);
 }

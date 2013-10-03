@@ -2,7 +2,8 @@
 #define OPENGLWINDOW_H
 
 #include <QMainWindow>
-
+#include "openglwidget.h"
+#include "tridimensionalobject.h"
 namespace Ui {
 class OpenGLWindow;
 }
@@ -12,7 +13,7 @@ class OpenGLWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit OpenGLWindow(QWidget *parent = 0);
+    explicit OpenGLWindow(vector<GeometryEngine *> *obj, QWidget *parent = 0);
     ~OpenGLWindow();
 
 private:

@@ -115,7 +115,6 @@ int main(int argc, char **argv){
     }
     if(!vidInstancePath.empty()){
         imSet.computeInstance(vidInstancePath, neighbourStatistics, useMRF, 4, false);
-        cv::waitKey();
     }
 #ifdef QT_AND_OPENGL
     return app.exec();

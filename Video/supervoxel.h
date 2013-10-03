@@ -10,15 +10,17 @@
 using namespace std;
 class SuperVoxel
 {
-    map<int, SuperPixel *> superPixelsList;
+    vector<SuperPixel *> superPixelsList;
     set<SuperVoxel *> adiacentsSet;
     int label;
+    int firstFrame;
 public:
     SuperVoxel(vector<Pixel> &pixelList, vector<cv::Mat> &frames);
     ~SuperVoxel();
 
-    map<int, SuperPixel *> *getSuperPixels();
+    vector<SuperPixel *> *getSuperPixels();
     int getLabel();
+    int getFirstFrameIdx();
     void setLabel(int newLabel);
     void show();
 

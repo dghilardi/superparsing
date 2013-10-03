@@ -1,10 +1,10 @@
 #include "tridimensionalvoxel.h"
 
-TridimensionalVoxel::TridimensionalVoxel(vector<SuperPixel *> &spList){
-    TridimensionalObject triangles;
-    getTrianglesList(NULL, spList[0], triangles, 0);
-    for(uint i=1; i<spList.size(); ++i){
-        getTrianglesList(spList[i-1], spList[i], triangles, i);
+TridimensionalVoxel::TridimensionalVoxel(vector<SuperPixel *> *spList, int firstFrameIdx, cv::Size imgDim){
+    triangles=(imgDim.height>imgDim.width)?new TridimensionalObject(imgDim.height):new TridimensionalObject(imgDim.width);
+    getTrianglesList(NULL, spList->at(0), *triangles, firstFrameIdx);
+    for(uint i=1; i<spList->size(); ++i){
+        getTrianglesList(spList->at(i-1), spList->at(i), *triangles, i+firstFrameIdx);
     }
 
 /*    if(spList.size()>1 && triangles.size()>0){
@@ -15,6 +15,10 @@ TridimensionalVoxel::TridimensionalVoxel(vector<SuperPixel *> &spList){
     }
     throw;
     }*/
+}
+
+TridimensionalVoxel::~TridimensionalVoxel(){
+    delete triangles;
 }
 
 #ifdef POLY2TRI
@@ -46,7 +50,7 @@ void TridimensionalVoxel::getTrianglesList(SuperPixel *prevSP, SuperPixel *nextS
     vector<vector<p2t::Point *> > polylines;
     for(uint i=0; i<resultingContours.size(); ++i){
         polylines.push_back(vector<p2t::Point*>());
-        for(int j=0; j<resultingContours[i].size(); ++j){
+        for(uint j=0; j<resultingContours[i].size(); ++j){
             p2t::Point *pt = new p2t::Point(resultingContours[i][j].x/scaleborder, resultingContours[i][j].y/scaleborder);
             polylines[i].push_back(pt);
         }
@@ -54,18 +58,18 @@ void TridimensionalVoxel::getTrianglesList(SuperPixel *prevSP, SuperPixel *nextS
 
     //compute triangles and convert p2t to cv
     vector<p2t::Triangle*> triangles;
-    for(int i=0; i<resultingContours.size(); ++i){
+    for(uint i=0; i<resultingContours.size(); ++i){
         if(hierarchy.at<int>(0,4*i+3)==-1){
             p2t::CDT* cdt = new p2t::CDT(polylines[i]);
 
-            for(int j=0; j<resultingContours.size(); ++j){
+            for(uint j=0; j<resultingContours.size(); ++j){
                 if(hierarchy.at<int>(0,4*j+3)==i) cdt->AddHole(polylines[j]);
             }
             cdt->Triangulate();
 
             triangles = cdt->GetTriangles();
 
-            for (int k = 0; k < triangles.size(); k++) {
+            for (uint k = 0; k < triangles.size(); k++) {
 
                 p2t::Triangle& t = *triangles[k];
                 Tri tri;
@@ -87,11 +91,11 @@ void TridimensionalVoxel::getTrianglesList(SuperPixel *prevSP, SuperPixel *nextS
 
     //clean memory
     delete xorMatrix;
-    for(int i=0; i<polylines.size(); ++i) for(int j=0; j<polylines[i].size(); ++j) delete polylines[i][j];
+    for(uint i=0; i<polylines.size(); ++i) for(uint j=0; j<polylines[i].size(); ++j) delete polylines[i][j];
 }
 
 void TridimensionalVoxel::extrudeOnePxl(vector<vector<p2t::Point *> > *contours, TridimensionalObject &triangles, int frameNumber){
-    for(int i=0; i<contours->size(); ++i){
+    for(uint i=0; i<contours->size(); ++i){
         int elemNum = (*contours)[i].size();
         for(int j=0; j<elemNum; ++j){
             p2t::Point *actual = (*contours)[i][j];
@@ -249,6 +253,10 @@ void TridimensionalVoxel::xorMatrices(cv::Mat *mat1, cv::Mat *mat2, cv::Point ma
         }
     }
 
+}
+
+TridimensionalObject *TridimensionalVoxel::getObject(){
+    return triangles;
 }
 
 void TridimensionalVoxel::drawTriangles(vector<Tri> &triangles, cv::Mat *mask){

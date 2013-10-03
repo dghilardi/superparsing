@@ -76,8 +76,7 @@ protected:
 private:
     QBasicTimer timer;
     QGLShaderProgram program;
-    GeometryEngine geometries;
-    GeometryEngine geo2;
+    vector<GeometryEngine *> geometries;
 
     GLuint texture;
 

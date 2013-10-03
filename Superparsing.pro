@@ -1,10 +1,23 @@
 qtAndOpenGL {
-#    CONFIG += qt
-#    CONFIG += app_bundle
     QT += core gui opengl
     CONFIG += console
     TARGET = superparsing
     DEFINES += QT_AND_OPENGL
+
+    SOURCES += Utils3d/geometryengine.cpp \
+        Utils3d/openglwidget.cpp \
+        Utils3d/openglwindow.cpp \
+        Utils3d/tridimensionalobject.cpp
+
+    HEADERS += Utils3d/geometryengine.h \
+        Utils3d/openglwidget.h \
+        Utils3d/openglwindow.h \
+        Utils3d/tridimensionalobject.h
+
+    RESOURCES += Utils3d/shaders.qrc
+
+    FORMS += Utils3d/openglwindow.ui
+
 }else{
     CONFIG += console
     CONFIG -= app_bundle
@@ -66,11 +79,7 @@ SOURCES += main.cpp \
     Utils3d/poly2tri/sweep/advancing_front.cc \
     Utils3d/poly2tri/sweep/cdt.cc \
     Utils3d/poly2tri/sweep/sweep_context.cc \
-    Utils3d/poly2tri/sweep/sweep.cc \
-    Utils3d/geometryengine.cpp \
-    Utils3d/openglwidget.cpp \
-    Utils3d/openglwindow.cpp \
-    Utils3d/tridimensionalobject.cpp
+    Utils3d/poly2tri/sweep/sweep.cc
 
 HEADERS += \
     geolabel.h \
@@ -108,16 +117,7 @@ HEADERS += \
     Utils3d/poly2tri/sweep/advancing_front.h \
     Utils3d/poly2tri/sweep/cdt.h \
     Utils3d/poly2tri/sweep/sweep_context.h \
-    Utils3d/poly2tri/sweep/sweep.h \
-    Utils3d/geometryengine.h \
-    Utils3d/openglwidget.h \
-    Utils3d/openglwindow.h \
-    Utils3d/tridimensionalobject.h
-
-RESOURCES += Utils3d/shaders.qrc \
+    Utils3d/poly2tri/sweep/sweep.h
 
 OTHER_FILES += instances/*
-
-FORMS += \
-    Utils3d/openglwindow.ui
 

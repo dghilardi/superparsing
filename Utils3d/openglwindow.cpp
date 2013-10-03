@@ -1,7 +1,7 @@
 #include "openglwindow.h"
 #include "ui_openglwindow.h"
 
-OpenGLWindow::OpenGLWindow(QWidget *parent) :
+OpenGLWindow::OpenGLWindow(vector<GeometryEngine *> *obj, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::OpenGLWindow)
 {

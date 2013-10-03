@@ -7,6 +7,7 @@ QueryVideo::QueryVideo(string path): video(path){
     cout << "Segmenting Super-Voxels:\t";
     cout.flush();
     video.getImages(frames, 4);
+    vidSize = frames[0].size();
     int h=frames[0].rows;
     int w=frames[0].cols;
     segmentVideo(frames, superPixels);
@@ -20,19 +21,20 @@ QueryVideo::QueryVideo(string path): video(path){
     }
     vector<SuperPixel *> allSuperPixels;
     for(uint i=0; i<superVoxelsList.size(); ++i){
-        for(map<int, SuperPixel*>::iterator it=superVoxelsList[i]->getSuperPixels()->begin(); it!=superVoxelsList[i]->getSuperPixels()->end(); ++it){
-            allSuperPixels.push_back(it->second);
+        for(int it=0; it<superVoxelsList[i]->getSuperPixels()->size(); ++it){
+            allSuperPixels.push_back(superVoxelsList[i]->getSuperPixels()->at(it));
         }
         //allSuperPixels.insert(allSuperPixels.end(), superVoxelsList[i]->getSuperPixels()->begin(), superVoxelsList[i]->getSuperPixels()->end());
     }
     SuperPixel::computeWeight(allSuperPixels);
     SuperVoxel::computePerFrameNeighbour(superVoxelsList, h, w, frames.size());
     cout << "[OK]" << endl;
-    showSegmentation(superPixels, h, w, frames.size());
+    showTridimensionalVoxels();
 }
 
 QueryVideo::~QueryVideo(){
     for(uint i=0; i<superVoxelsList.size(); ++i) delete superVoxelsList[i];
+    for(uint i=0; i<glVoxelsList.size(); ++i) delete glVoxelsList[i];
 }
 
 vector<SuperVoxel *> *QueryVideo::getSuperVoxelsList(){
@@ -52,4 +54,22 @@ void QueryVideo::showSegmentation(vector<vector<Pixel> > &coordList, int height,
         cv::imshow("Video Segmentation", matList[i]);
         cv::waitKey(300);
     }
+}
+
+void QueryVideo::showTridimensionalVoxels(){
+#ifdef QT_AND_OPENGL
+    int n=1; char *a = "abc";
+    QApplication app(n, &a);
+
+    for(int i=0; i<superVoxelsList.size(); ++i){
+        glVoxelsList.push_back(new TridimensionalVoxel(superVoxelsList[i]->getSuperPixels(), superVoxelsList[i]->getFirstFrameIdx(), vidSize));
+    }
+    vector<GeometryEngine *> geoEngines;
+    for(int i=0; i<glVoxelsList.size(); ++i){
+        geoEngines.push_back(new GeometryEngine(glVoxelsList[i]->getObject()));
+    }
+    OpenGLWindow window(&geoEngines);
+    window.show();
+    app.exec();
+#endif
 }

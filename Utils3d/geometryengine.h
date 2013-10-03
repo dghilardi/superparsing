@@ -49,7 +49,7 @@
 class GeometryEngine : protected QGLFunctions
 {
 public:
-    GeometryEngine();
+    GeometryEngine(TridimensionalObject *vxl);
     virtual ~GeometryEngine();
 
     void init();

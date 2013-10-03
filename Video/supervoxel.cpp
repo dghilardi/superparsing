@@ -7,46 +7,46 @@ SuperVoxel::SuperVoxel(vector<Pixel> &pixelList, vector<cv::Mat> &frames) : labe
         dividedPerFrame[pixelList[i].f].push_back(pixelList[i]);
     }
 
+    firstFrame = dividedPerFrame.begin()->first;
     for(map<int, vector<Pixel> >::iterator it=dividedPerFrame.begin(); it!=dividedPerFrame.end(); ++it){
-        superPixelsList.insert(map<int, SuperPixel *>::value_type(it->first, new SuperPixel(it->second, frames[it->first])));
+        superPixelsList.push_back(new SuperPixel(it->second, frames[it->first]));
+        if(firstFrame>it->first) firstFrame = it->first;
     }
-
-    vector<SuperPixel *> spvec;
-    for(map<int, SuperPixel *>::iterator it=superPixelsList.begin(); it!=superPixelsList.end(); ++it){
-        spvec.push_back(it->second);
-    }
-    TridimensionalVoxel svoxel(spvec);
 }
 
 SuperVoxel::~SuperVoxel(){
-    for(map<int, SuperPixel *>::iterator it=superPixelsList.begin(); it!=superPixelsList.end(); ++it){
-        delete it->second;
+    for(int i=0; i<superPixelsList.size(); ++i){
+        delete superPixelsList[i];
     }
 }
 
-map<int, SuperPixel *> *SuperVoxel::getSuperPixels(){
+vector<SuperPixel *> *SuperVoxel::getSuperPixels(){
     return &superPixelsList;
 }
 
 int SuperVoxel::getLabel(){
 #ifndef NDEBUG
-    for(map<int, SuperPixel *>::iterator it=superPixelsList.begin(); it!=superPixelsList.end(); ++it){
-        assert(label==it->second->getLabel());
+    for(int i=0; i<superPixelsList.size(); ++i){
+        assert(label==superPixelsList[i]->getLabel());
     }
 #endif
     return label;
 }
 
+int SuperVoxel::getFirstFrameIdx(){
+    return firstFrame;
+}
+
 void SuperVoxel::setLabel(int newLabel){
     label=newLabel;
-    for(map<int, SuperPixel *>::iterator it=superPixelsList.begin(); it!=superPixelsList.end(); ++it){
-        it->second->setLabel(newLabel);
+    for(int i=0; i<superPixelsList.size(); ++i){
+        superPixelsList[i]->setLabel(newLabel);
     }
 }
 
 void SuperVoxel::show(){
-    for(map<int, SuperPixel *>::iterator it=superPixelsList.begin(); it!=superPixelsList.end(); ++it){
-        it->second->show();
+    for(int i=0; i<superPixelsList.size(); ++i){
+        superPixelsList[i]->show();
         cv::waitKey(100);
     }
 }
@@ -88,8 +88,8 @@ void SuperVoxel::computePerFrameNeighbour(vector<SuperVoxel *> superVoxelList, i
     }
     for(uint i=0; i<superVoxelList.size(); ++i){
         SuperVoxel *actualVox = superVoxelList[i];
-        for(map<int, SuperPixel *>::iterator it=actualVox->getSuperPixels()->begin();it!=actualVox->getSuperPixels()->end(); ++it){
-            SuperPixel *actualSP = it->second;
+        for(int it=0; it<actualVox->getSuperPixels()->size(); ++it){
+            SuperPixel *actualSP = actualVox->getSuperPixels()->at(it);
             for(uint j=0; j<actualSP->getCoordList()->size(); ++j){
                 Pixel toAdd = (*(actualSP->getCoordList()))[j];
                 superVoxelMap[toAdd.f][toAdd.x][toAdd.y] = actualVox;
