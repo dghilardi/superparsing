@@ -97,7 +97,7 @@ void MRF::computeMRFGCO(vector<MRFNode *> superPixelList, vector<Likelihood *> &
     int *data = new int[numSuperPixels*numLabels]();
     for(uint i=0; i<numSuperPixels; ++i){
         for(int state=0; state<numLabels; ++state){
-            data[i*numLabels+state] = -likelihood[i]->computeEdata(state+1)*SCALE_FACTOR/3;
+            data[i*numLabels+state] = -likelihood[i]->computeEdata(state+1)*SCALE_FACTOR;
             //cout << "Data " << i*numLabels+state << ":\t" << data[i*numLabels+state] << endl;
         }
     }
@@ -107,11 +107,14 @@ void MRF::computeMRFGCO(vector<MRFNode *> superPixelList, vector<Likelihood *> &
     for(int l2=0; l2<numLabels; ++l2){
         for(int l1=0; l1<numLabels; ++l1){            
             double prob = (condprob.conditionalNeigProb(l1+1, l2+1)+condprob.conditionalNeigProb(l2+1, l1+1))/2.0;
-            prob= (prob==0) ? 1e-6 : prob;
-            smooth[l1+l2*numLabels] = (int)log(prob)*SCALE_FACTOR/100; //coeff piccolo -> soglia alta/compressione
+            prob = (1.0-prob);
+            if(l1==l2)
+                prob=0;
+            prob= (prob==0) ? 1e-3 : prob;
+            smooth[l1+l2*numLabels] = (int)(log(prob)*SCALE_FACTOR/500); //coeff piccolo -> soglia alta/compressione
             //cout << "Smooth " << l1+l2*numLabels << ":\t" << smooth[l1+l2*numLabels] << endl;
             //if(l1==l2)
-                //smooth[l1+l2*numLabels] = -1;
+                //smooth[l1+l2*numLabels] = -1400;
             /*
             if(l1==l2)
                 smooth[l1+l2*numLabels] = -100;
@@ -147,7 +150,7 @@ void MRF::computeMRFGCO(vector<MRFNode *> superPixelList, vector<Likelihood *> &
 
         }
         for(set<std::pair<int,int> >::iterator it=adiacentSet.begin(); it!=adiacentSet.end(); ++it ){
-            gc->setNeighbors(it->first, it->second, 0.5);
+            gc->setNeighbors(it->first, it->second);
         }        
         //gc->expansion(2);
         printf("\nBefore optimization energy is %d",gc->compute_energy());

@@ -232,7 +232,7 @@ void RetrievalSet::computeLabels(QueryImage *imgToLabel, ThreadSafeStringSet *im
  *                      of the number of match for each feature, each class and total number of superpixels per class
  */
 void RetrievalSet::checkSuperPixel(SuperPixel *toLabel, SuperPixel *inSet, GlobLikelihood &spixelResults){
-    double tk_mask=15, tk_relH=0.15, tk_sift=0.1, tk_color=0.1; //Valori casuali solo per provare
+    double tk_mask=15, tk_relH=0.15, tk_sift=0.3, tk_color=0.1; //Valori casuali solo per provare
 
     int actualLabel = inSet->getLabel(); //Indice del label del superpixel preso dal dataset
     //cout << actualLabel << endl;
