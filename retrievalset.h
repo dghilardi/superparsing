@@ -27,6 +27,8 @@
 using namespace std;
 class RetrievalSet
 {
+    QueryVideo *queryVideo;
+
     boost::mutex neigTraining;
     Json::Value trainingSet;
     int trainingPos;
@@ -46,6 +48,7 @@ public:
     void computeInstance(string instancePath, NeighbourStat &stat, bool useMRF, int nThreads, bool isQueryImage);
     void computeNeighbourStatistics(NeighbourStat &result, string imgListPath, int threadNum);
     void assignLabels(QueryImage &query);
+    QueryVideo *getQVid();
 };
 
 #endif // RETRIEVALSET_H

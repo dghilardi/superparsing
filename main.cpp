@@ -11,6 +11,10 @@
 #include "quantizedsift.h"
 #include "dictionarytraining.h"
 
+#include "Utils3d/openglwindow.h"
+#include "Utils3d/tridimensionalvoxel.h"
+#include "Utils3d/geometryengine.h"
+
 #include "opencv2/highgui/highgui.hpp"
 
 #define INST_NAME "../instance.json"
@@ -80,8 +84,6 @@ int main(int argc, char **argv){
                 break;
             }
         }
-    }else{
-        imgInstancePath = INST_NAME;
     }
     NeighbourStat neighbourStatistics(STAT_FILE_NAME);
     RetrievalSet imSet;
@@ -116,6 +118,8 @@ int main(int argc, char **argv){
     if(!vidInstancePath.empty()){
         imSet.computeInstance(vidInstancePath, neighbourStatistics, useMRF, 4, false);
     }
+    OpenGLWindow win(imSet.getQVid()->showTridimensionalVoxels());
+    win.show();
 #ifdef QT_AND_OPENGL
     return app.exec();
 #else

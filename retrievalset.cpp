@@ -117,8 +117,8 @@ void RetrievalSet::computeImage(int nThreads, bool useMRF, ThreadSafeStringSet &
 }
 
 void RetrievalSet::computeVideo(int nThreads, bool useMRF, ThreadSafeStringSet &nameSet, NeighbourStat &stat, string queryPath){
-    QueryVideo query(queryPath);
-    vector<SuperVoxel *> *setSuperVoxelToLabel = query.getSuperVoxelsList();
+    queryVideo=new QueryVideo(queryPath);
+    vector<SuperVoxel *> *setSuperVoxelToLabel = queryVideo->getSuperVoxelsList();
     vector<vector<SuperPixel *> *> setSuperPixelsToLabel;
     vector<SuperVoxelLikelihood *> statLikelihood;
     for(uint i=0; i<setSuperVoxelToLabel->size(); ++i){
@@ -131,7 +131,7 @@ void RetrievalSet::computeVideo(int nThreads, bool useMRF, ThreadSafeStringSet &
     }
     for(int i=0; i<nThreads; ++i) threadList[i].join();
     if(useMRF){
-        vector<SuperVoxel *> *setSuperVoxels = query.getSuperVoxelsList();
+        vector<SuperVoxel *> *setSuperVoxels = queryVideo->getSuperVoxelsList();
         MRF::computeMRFGCO<SuperVoxel, SuperVoxelLikelihood>(*setSuperVoxels, statLikelihood, stat);
     }else{
         assignVideoLabels(*setSuperVoxelToLabel, statLikelihood);
@@ -266,4 +266,8 @@ void RetrievalSet::applyMRF(QueryImage &imgToLabel, NeighbourStat &stat){
     MRF::computeMRFGCO<SuperPixel, GlobLikelihood>(*setSuperPixelsToLabel, matchResults, stat);
     cout << "ERRORE MRF: " << imgToLabel.checkResults()*100 << "%\n";
     imgToLabel.showLabeling("MRF LABELS");
+}
+
+QueryVideo *RetrievalSet::getQVid(){
+    return queryVideo;
 }

@@ -9,9 +9,9 @@ TridimensionalObject::TridimensionalObject(int normalizationFactor) : normFactor
 }
 
 void TridimensionalObject::addTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
-    vertexList.push_back(QVector3D(x1/normFactor, y1/normFactor, z1/normFactor));
-    vertexList.push_back(QVector3D(x2/normFactor, y2/normFactor, z2/normFactor));
-    vertexList.push_back(QVector3D(x3/normFactor, y3/normFactor, z3/normFactor));
+    vertexList.push_back(QVector3D(2*x1/normFactor-1, -2*y1/normFactor-1, -2*z1/normFactor-1));
+    vertexList.push_back(QVector3D(2*x2/normFactor-1, -2*y2/normFactor-1, -2*z2/normFactor-1));
+    vertexList.push_back(QVector3D(2*x3/normFactor-1, -2*y3/normFactor-1, -2*z3/normFactor-1));
 }
 
 void TridimensionalObject::setColor(float r, float g, float b){

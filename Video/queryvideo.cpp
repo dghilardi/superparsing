@@ -6,7 +6,7 @@ QueryVideo::QueryVideo(string path): video(path){
 
     cout << "Segmenting Super-Voxels:\t";
     cout.flush();
-    video.getImages(frames, 4);
+    video.getImages(frames, 25);
     vidSize = frames[0].size();
     int h=frames[0].rows;
     int w=frames[0].cols;
@@ -29,12 +29,13 @@ QueryVideo::QueryVideo(string path): video(path){
     SuperPixel::computeWeight(allSuperPixels);
     SuperVoxel::computePerFrameNeighbour(superVoxelsList, h, w, frames.size());
     cout << "[OK]" << endl;
-    showTridimensionalVoxels();
+    //showTridimensionalVoxels();
 }
 
 QueryVideo::~QueryVideo(){
     for(uint i=0; i<superVoxelsList.size(); ++i) delete superVoxelsList[i];
     for(uint i=0; i<glVoxelsList.size(); ++i) delete glVoxelsList[i];
+    for(uint i=0; i<geoEngines.size(); ++i) delete geoEngines[i];
 }
 
 vector<SuperVoxel *> *QueryVideo::getSuperVoxelsList(){
@@ -56,20 +57,13 @@ void QueryVideo::showSegmentation(vector<vector<Pixel> > &coordList, int height,
     }
 }
 
-void QueryVideo::showTridimensionalVoxels(){
-#ifdef QT_AND_OPENGL
-    int n=1; char *a = "abc";
-    QApplication app(n, &a);
-
+vector<GeometryEngine *> *QueryVideo::showTridimensionalVoxels(){
     for(int i=0; i<superVoxelsList.size(); ++i){
         glVoxelsList.push_back(new TridimensionalVoxel(superVoxelsList[i]->getSuperPixels(), superVoxelsList[i]->getFirstFrameIdx(), vidSize));
+        PrintUtils::printPercentage(i, superVoxelsList.size());
     }
-    vector<GeometryEngine *> geoEngines;
     for(int i=0; i<glVoxelsList.size(); ++i){
         geoEngines.push_back(new GeometryEngine(glVoxelsList[i]->getObject()));
     }
-    OpenGLWindow window(&geoEngines);
-    window.show();
-    app.exec();
-#endif
+    return &geoEngines;
 }

@@ -7,6 +7,7 @@
 #include "../OpenCVGraphSegmentation/Segmentation.h"
 #include "video.h"
 #include "supervoxel.h"
+#include "Utils/printutils.h"
 #include "Utils3d/tridimensionalvoxel.h"
 #include "Utils3d/geometryengine.h"
 #include "Utils3d/openglwindow.h"
@@ -16,6 +17,7 @@ class QueryVideo
     Video video;
     vector<SuperVoxel *> superVoxelsList;
     vector<TridimensionalVoxel *> glVoxelsList;
+    vector<GeometryEngine *> geoEngines;
     cv::Size vidSize;
 
     void showSegmentation(vector<vector<Pixel> > &coordList, int height, int width, int nframes);
@@ -24,7 +26,7 @@ public:
     ~QueryVideo();
 
     vector<SuperVoxel *> *getSuperVoxelsList();
-    void showTridimensionalVoxels();
+    vector<GeometryEngine *> *showTridimensionalVoxels();
 };
 
 #endif // QUERYVIDEO_H

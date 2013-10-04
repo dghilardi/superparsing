@@ -111,7 +111,7 @@ void OpenGLWidget::initializeGL()
     glEnable(GL_DEPTH_TEST);
 
     // Enable back face culling
-    glEnable(GL_CULL_FACE);
+    //glEnable(GL_CULL_FACE);
 
     for(int i=0; i<geometries.size(); ++i) geometries.at(i)->init();
 
@@ -186,4 +186,8 @@ void OpenGLWidget::paintGL()
     }
     qDebug() << "End painting";
 
+}
+
+void OpenGLWidget::addObj(GeometryEngine *obj){
+    geometries.push_back(obj);
 }

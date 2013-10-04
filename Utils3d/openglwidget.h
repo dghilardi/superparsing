@@ -61,6 +61,7 @@ class OpenGLWidget : public QGLWidget, protected QGLFunctions
 public:
     explicit OpenGLWidget(QWidget *parent = 0);
     ~OpenGLWidget();
+    void addObj(GeometryEngine *obj);
 
 protected:
     void mousePressEvent(QMouseEvent *e);
