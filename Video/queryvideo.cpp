@@ -6,7 +6,7 @@ QueryVideo::QueryVideo(string path): video(path){
 
     cout << "Segmenting Super-Voxels:\t";
     cout.flush();
-    video.getImages(frames, 25);
+    video.getImages(frames, 75);
     vidSize = frames[0].size();
     int h=frames[0].rows;
     int w=frames[0].cols;

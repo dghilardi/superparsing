@@ -13,9 +13,9 @@ using namespace std;
 class VisualUtils
 {
     static void hslToRgb(cv::Vec3f hsl, cv::Vec3b &rgb);
-    static void findDistinctColor(int index, int total, cv::Vec3b &result);
 public:
     VisualUtils();
+    static void findDistinctColor(int index, int total, cv::Vec3b &result);
     static void colorLabels(cv::Mat &labeled, cv::Mat &result, set<int> &labels);
 };
 

@@ -6,6 +6,16 @@ TridimensionalVoxel::TridimensionalVoxel(vector<SuperPixel *> *spList, int first
     for(uint i=1; i<spList->size(); ++i){
         getTrianglesList(spList->at(i-1), spList->at(i), *triangles, i+firstFrameIdx);
     }
+    cv::Mat *mask = spList->back()->getMask();
+    cv::Point offset = spList->back()->getTopLeftCorner();
+    cv::Mat back;
+    cv::copyMakeBorder(*mask, back, offset.y, 1, offset.x, 1, cv::BORDER_CONSTANT, cv::Scalar(0));
+    vector<vector<p2t::Point *> > polylines;
+    triangulateFace(*triangles, &back, spList->size()+firstFrameIdx, polylines);
+
+    cv::Vec3b color;
+    VisualUtils::findDistinctColor(spList->at(0)->getLabel(), 33, color);
+    triangles->setColor(color[0]/255.0, color[1]/255.0, color[2]/255.0);
 
 /*    if(spList.size()>1 && triangles.size()>0){
     for(int j=0; j<triangles.size(); ++j){
@@ -22,24 +32,11 @@ TridimensionalVoxel::~TridimensionalVoxel(){
 }
 
 #ifdef POLY2TRI
-void TridimensionalVoxel::getTrianglesList(SuperPixel *prevSP, SuperPixel *nextSP, TridimensionalObject &result, int frameNumber){
-    //initialize values
-    //result.clear();
-    cv::Mat *prevMask=NULL;
-    cv::Point prevOffset;
-    if(prevSP!=NULL){
-        prevMask = prevSP->getMask();
-        prevOffset = prevSP->getTopLeftCorner();
-    }
-    cv::Mat *nextMask = nextSP->getMask();
-    cv::Point nextOffset = nextSP->getTopLeftCorner();
-    cv::Mat *xorMatrix = new cv::Mat();
+void TridimensionalVoxel::triangulateFace(TridimensionalObject &result, cv::Mat *xorMatrix, int frameNumber, vector<vector<p2t::Point *> > &polylines)
+{
     cv::Mat resized, hierarchy;
     float scaleborder = 15.0;
     vector<vector<cv::Point> > resultingContours;
-
-    //Prepare mat
-    xorMatrices(prevMask, nextMask, prevOffset, nextOffset, xorMatrix);
     cv::resize(*xorMatrix, resized, cv::Size(), scaleborder, scaleborder, cv::INTER_NEAREST);
     cv::erode(resized, resized, cv::Mat());
 
@@ -47,7 +44,6 @@ void TridimensionalVoxel::getTrianglesList(SuperPixel *prevSP, SuperPixel *nextS
     cv::findContours(resized, resultingContours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
 
     //convert contours for p2t
-    vector<vector<p2t::Point *> > polylines;
     for(uint i=0; i<resultingContours.size(); ++i){
         polylines.push_back(vector<p2t::Point*>());
         for(uint j=0; j<resultingContours[i].size(); ++j){
@@ -85,6 +81,25 @@ void TridimensionalVoxel::getTrianglesList(SuperPixel *prevSP, SuperPixel *nextS
             delete cdt;
         }
     }
+}
+
+void TridimensionalVoxel::getTrianglesList(SuperPixel *prevSP, SuperPixel *nextSP, TridimensionalObject &result, int frameNumber){
+    //initialize values
+    //result.clear();
+    cv::Mat *prevMask=NULL;
+    cv::Point prevOffset;
+    if(prevSP!=NULL){
+        prevMask = prevSP->getMask();
+        prevOffset = prevSP->getTopLeftCorner();
+    }
+    cv::Mat *nextMask = nextSP->getMask();
+    cv::Point nextOffset = nextSP->getTopLeftCorner();
+    cv::Mat *xorMatrix = new cv::Mat();
+
+    //Prepare mat
+    xorMatrices(prevMask, nextMask, prevOffset, nextOffset, xorMatrix);
+    vector<vector<p2t::Point *> > polylines;
+    triangulateFace(result, xorMatrix, frameNumber, polylines);
 
     //extrude
     extrudeOnePxl(&polylines, result, frameNumber);
