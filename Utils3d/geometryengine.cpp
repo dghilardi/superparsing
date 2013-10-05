@@ -91,5 +91,10 @@ void GeometryEngine::drawCubeGeometry(QGLShaderProgram *program)
     glVertexAttribPointer(vertexLocation, 3, GL_FLOAT, GL_FALSE, sizeof(QVector3D), (const void *)offset);
 
     glDrawArrays(GL_TRIANGLES, 0, data->vertexNumber());
+    qDebug() <<"vertexes: "<< data->vertexNumber();
 }
 //! [2]
+
+int GeometryEngine::getDimension(){
+    return data->vertexNumber();
+}

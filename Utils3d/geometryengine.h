@@ -54,6 +54,7 @@ public:
 
     void init();
     void drawCubeGeometry(QGLShaderProgram *program);
+    int getDimension();
 
 private:
     TridimensionalObject *data;

@@ -9,7 +9,8 @@ OpenGLWindow::OpenGLWindow(vector<GeometryEngine *> *obj, QWidget *parent) :
 {
     ui->setupUi(this);
     for(uint i=0; i<obj->size(); ++i)
-            ui->widget->addObj(obj->at(i));
+        /*if(obj->at(i)->getDimension()>1000000)*/ui->widget->addObj(obj->at(i));
+    //int GeometryEngine::getDimension()
 }
 
 OpenGLWindow::~OpenGLWindow()

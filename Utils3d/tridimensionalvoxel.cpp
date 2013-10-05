@@ -2,10 +2,13 @@
 
 TridimensionalVoxel::TridimensionalVoxel(vector<SuperPixel *> *spList, int firstFrameIdx, cv::Size imgDim){
     triangles=(imgDim.height>imgDim.width)?new TridimensionalObject(imgDim.height):new TridimensionalObject(imgDim.width);
-    getTrianglesList(NULL, spList->at(0), *triangles, firstFrameIdx);
+    map<string, Segment*> contour;
+    getTrianglesList(NULL, spList->at(0), *triangles, firstFrameIdx, contour);
+
     for(uint i=1; i<spList->size(); ++i){
-        getTrianglesList(spList->at(i-1), spList->at(i), *triangles, i+firstFrameIdx);
+        getTrianglesList(spList->at(i-1), spList->at(i), *triangles, i+firstFrameIdx, contour);
     }
+
     cv::Mat *mask = spList->back()->getMask();
     cv::Point offset = spList->back()->getTopLeftCorner();
     cv::Mat back;
@@ -35,7 +38,7 @@ TridimensionalVoxel::~TridimensionalVoxel(){
 void TridimensionalVoxel::triangulateFace(TridimensionalObject &result, cv::Mat *xorMatrix, int frameNumber, vector<vector<p2t::Point *> > &polylines)
 {
     cv::Mat resized, hierarchy;
-    float scaleborder = 15.0;
+    float scaleborder = 5.0;
     vector<vector<cv::Point> > resultingContours;
     cv::resize(*xorMatrix, resized, cv::Size(), scaleborder, scaleborder, cv::INTER_NEAREST);
     cv::erode(resized, resized, cv::Mat());
@@ -83,7 +86,7 @@ void TridimensionalVoxel::triangulateFace(TridimensionalObject &result, cv::Mat 
     }
 }
 
-void TridimensionalVoxel::getTrianglesList(SuperPixel *prevSP, SuperPixel *nextSP, TridimensionalObject &result, int frameNumber){
+void TridimensionalVoxel::getTrianglesList(SuperPixel *prevSP, SuperPixel *nextSP, TridimensionalObject &result, int frameNumber, map<string, Segment*> &prevContour){
     //initialize values
     //result.clear();
     cv::Mat *prevMask=NULL;
@@ -102,33 +105,45 @@ void TridimensionalVoxel::getTrianglesList(SuperPixel *prevSP, SuperPixel *nextS
     triangulateFace(result, xorMatrix, frameNumber, polylines);
 
     //extrude
-    extrudeOnePxl(&polylines, result, frameNumber);
+    extrudeOnePxl(&polylines, result, frameNumber, prevContour);
 
     //clean memory
     delete xorMatrix;
     for(uint i=0; i<polylines.size(); ++i) for(uint j=0; j<polylines[i].size(); ++j) delete polylines[i][j];
 }
 
-void TridimensionalVoxel::extrudeOnePxl(vector<vector<p2t::Point *> > *contours, TridimensionalObject &triangles, int frameNumber){
+void TridimensionalVoxel::extrudeOnePxl(vector<vector<p2t::Point *> > *contours, TridimensionalObject &triangles, int frameNumber, map<string, Segment*> &prevContour){
     for(uint i=0; i<contours->size(); ++i){
         int elemNum = (*contours)[i].size();
         for(int j=0; j<elemNum; ++j){
             p2t::Point *actual = (*contours)[i][j];
             p2t::Point *next = (*contours)[i][(j+1)%elemNum];
-
-            Tri triA;
-            triA[0] = round(actual->x); triA[1] = round(actual->y); triA[2] = frameNumber;
-            triA[3] = round(next->x);   triA[4] = round(next->y);   triA[5] = frameNumber;
-            triA[6] = triA[3];     triA[7] = triA[4];     triA[8] = frameNumber+1;
-
-            Tri triB;
-            triB[0] = round(next->x);   triB[1] = round(next->y);   triB[2] = frameNumber+1;
-            triB[3] = round(actual->x); triB[4] = round(actual->y); triB[5] = frameNumber+1;
-            triB[6] = triB[3];     triB[7] = triB[4];     triB[8] = frameNumber;
-
-            triangles.addTriangle(triA[0], triA[1], triA[2], triA[3], triA[4], triA[5], triA[6], triA[7], triA[8]);
-            triangles.addTriangle(triB[0], triB[1], triB[2], triB[3], triB[4], triB[5], triB[6], triB[7], triB[8]);
+            Segment *actualSegment = new Segment(actual, next);
+            map<string, Segment*>::iterator pos = prevContour.find(actualSegment->str());
+            if(pos!=prevContour.end()){
+                delete pos->second;
+                prevContour.erase(pos);
+            }else{
+                prevContour[actualSegment->str()] = actualSegment;
+            }
         }
+    }
+    for(map<string, Segment*>::iterator it=prevContour.begin(); it!=prevContour.end(); ++it){
+        p2t::Point *actual = it->second->getSrc();
+        p2t::Point *next =it->second->getDst();
+
+        Tri triA;
+        triA[0] = round(actual->x); triA[1] = round(actual->y); triA[2] = frameNumber;
+        triA[3] = round(next->x);   triA[4] = round(next->y);   triA[5] = frameNumber;
+        triA[6] = triA[3];     triA[7] = triA[4];     triA[8] = frameNumber+1;
+
+        Tri triB;
+        triB[0] = round(next->x);   triB[1] = round(next->y);   triB[2] = frameNumber+1;
+        triB[3] = round(actual->x); triB[4] = round(actual->y); triB[5] = frameNumber+1;
+        triB[6] = triB[3];     triB[7] = triB[4];     triB[8] = frameNumber;
+
+        triangles.addTriangle(triA[0], triA[1], triA[2], triA[3], triA[4], triA[5], triA[6], triA[7], triA[8]);
+        triangles.addTriangle(triB[0], triB[1], triB[2], triB[3], triB[4], triB[5], triB[6], triB[7], triB[8]);
     }
 }
 
