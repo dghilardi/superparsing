@@ -12,7 +12,7 @@ void MRF::computeMRF(vector<MRFNode *> superPixelList, vector<Likelihood *> &lik
         variables.push_back(var);
     }
 
-    cout << "Labeling states:" << endl;
+    //cout << "Labeling states:" << endl;
     for(uint i=0; i<superPixelList.size(); ++i){
         PrintUtils::printPercentage(i, superPixelList.size());
         MRFNode *actual = superPixelList[i];
@@ -47,7 +47,7 @@ void MRF::computeMRF(vector<MRFNode *> superPixelList, vector<Likelihood *> &lik
             factors.push_back(eSmooth);
         }
     }
-    cout << "OK" << endl;
+    //cout << "OK" << endl;
 
     dai::FactorGraph graph(factors);
     vector<size_t> result;
@@ -58,7 +58,7 @@ void MRF::computeMRF(vector<MRFNode *> superPixelList, vector<Likelihood *> &lik
     double funcValuePrev = 0;
     for(int i=0;i<result.size(); ++i){
         MRFNode *actual = superPixelList[i];
-        cout << i << ":\t" << actual->getLabel() <<" -> "<< result[i]+1 << endl;
+        //cout << i << ":\t" << actual->getLabel() <<" -> "<< result[i]+1 << endl;
         superPixelList[i]->setLabel(result[i]+1);
         //funcValue += -actual->getWeight()*sigmoid(likelihood[i]->getLogSum(result[i]+1));
         //funcValuePrev += -actual->getWeight()*sigmoid(likelihood[i]->getLogSum(actual->getLabel()));
@@ -81,8 +81,8 @@ void MRF::computeMRF(vector<MRFNode *> superPixelList, vector<Likelihood *> &lik
             }
         }
     }
-    cout << "Valore J(c) [prima]="<<funcValuePrev<<endl;
-    cout << "Valore J(c)  [dopo]="<<funcValue<<endl;
+    //cout << "Valore J(c) [prima]="<<funcValuePrev<<endl;
+    //cout << "Valore J(c)  [dopo]="<<funcValue<<endl;
 }
 
 #define SCALE_FACTOR 10000
@@ -122,13 +122,13 @@ void MRF::computeMRFGCO(vector<MRFNode *> superPixelList, vector<Likelihood *> &
                 smooth[l1+l2*numLabels] = 0;
             */
         }
-    }
+    }/*
     for(int i=0; i<numSuperPixels*numLabels; ++i){
         cout<<"data: "<<data[i]<<endl;
     }
     for(int i=0; i<numLabels*numLabels; ++i){
         cout<<"smooth: "<<smooth[i]<<endl;
-    }
+    }*/
     try{
         GCoptimizationGeneralGraph *gc = new GCoptimizationGeneralGraph(numSuperPixels, numLabels);
         gc->setDataCost(data);
