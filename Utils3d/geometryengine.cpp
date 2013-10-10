@@ -49,7 +49,7 @@ struct VertexData
     QVector2D texCoord;
 };
 
-GeometryEngine::GeometryEngine(TridimensionalObject *vxl)
+GeometryEngine::GeometryEngine(TridimensionalObject *vxl): draw(true)
 {
     data = vxl;
 }
@@ -78,23 +78,32 @@ void GeometryEngine::init()
 //! [2]
 void GeometryEngine::drawCubeGeometry(QGLShaderProgram *program)
 {
-    program->setUniformValue("my_color", *(data->getColorPtr()));
-    // Tell OpenGL which VBOs to use
-    glBindBuffer(GL_ARRAY_BUFFER, vboIds[0]);
+    if(draw){
+        program->setUniformValue("my_color", *(data->getColorPtr()));
+        // Tell OpenGL which VBOs to use
+        glBindBuffer(GL_ARRAY_BUFFER, vboIds[0]);
 
-    // Offset for position
-    quintptr offset = 0;
+        // Offset for position
+        quintptr offset = 0;
 
-    // Tell OpenGL programmable pipeline how to locate vertex position data
-    int vertexLocation = program->attributeLocation("a_position");
-    program->enableAttributeArray(vertexLocation);
-    glVertexAttribPointer(vertexLocation, 3, GL_FLOAT, GL_FALSE, sizeof(QVector3D), (const void *)offset);
+        // Tell OpenGL programmable pipeline how to locate vertex position data
+        int vertexLocation = program->attributeLocation("a_position");
+        program->enableAttributeArray(vertexLocation);
+        glVertexAttribPointer(vertexLocation, 3, GL_FLOAT, GL_FALSE, sizeof(QVector3D), (const void *)offset);
 
-    glDrawArrays(GL_TRIANGLES, 0, data->vertexNumber());
-    qDebug() <<"vertexes: "<< data->vertexNumber();
+        glDrawArrays(GL_TRIANGLES, 0, data->vertexNumber());
+    }
 }
 //! [2]
 
 int GeometryEngine::getDimension(){
     return data->vertexNumber();
+}
+
+TridimensionalObject *GeometryEngine::getObject(){
+    return data;
+}
+
+void GeometryEngine::setDraw(bool val){
+    draw = val;
 }

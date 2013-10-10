@@ -48,7 +48,9 @@
 
 OpenGLWidget::OpenGLWidget(QWidget *parent) :
     QGLWidget(parent),
-    angularSpeed(0)
+    angularSpeed(0),
+    zoom(0.0),
+    speed(0.0)
 {
 }
 
@@ -91,18 +93,17 @@ void OpenGLWidget::timerEvent(QTimerEvent *)
     // Stop rotation when speed goes below threshold
     if (angularSpeed < 0.01) {
         angularSpeed = 0.0;
-    } else {
+    } //else {
         // Update rotation
-        rotation = QQuaternion::fromAxisAndAngle(rotationAxis, angularSpeed) * rotation;
+        rotation = (QQuaternion::fromAxisAndAngle(QVector3D(0.0,1.0,0.0).normalized(), speed)+QQuaternion::fromAxisAndAngle(rotationAxis, angularSpeed)).normalized() * rotation;
 
         // Update scene
         updateGL();
-    }
+    //}
 }
 
 void OpenGLWidget::initializeGL()
 {
-    qDebug() << "Init";
     initializeGLFunctions();
     qglClearColor(Qt::black);
     initShaders();
@@ -117,7 +118,6 @@ void OpenGLWidget::initializeGL()
 
     // Use QBasicTimer because its faster than QTimer
     timer.start(12, this);
-    qDebug() << "End init";
 }
 
 void OpenGLWidget::initShaders()
@@ -154,7 +154,7 @@ void OpenGLWidget::resizeGL(int w, int h)
     qreal aspect = qreal(w) / qreal(h ? h : 1);
 
     // Set near plane to 3.0, far plane to 7.0, field of view 45 degrees
-    const qreal zNear = 3.0, zFar = 7.0, fov = 45.0;
+    const qreal zNear = 2.0, zFar = 15.0, fov = 45.0;
 
     // Reset projection
     projection.setToIdentity();
@@ -165,13 +165,12 @@ void OpenGLWidget::resizeGL(int w, int h)
 
 void OpenGLWidget::paintGL()
 {
-    qDebug() << "Painting...";
     // Clear color and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Calculate model view transformation
     QMatrix4x4 matrix;
-    matrix.translate(0.0, 0.0, -5.0);
+    matrix.translate(0.0, 0.0, -5.0-zoom);
     matrix.rotate(rotation);
 
     // Set modelview-projection matrix
@@ -184,10 +183,17 @@ void OpenGLWidget::paintGL()
         // Draw cube geometry
         geometries.at(i)->drawCubeGeometry(&program);
     }
-    qDebug() << "End painting";
 
 }
 
 void OpenGLWidget::addObj(GeometryEngine *obj){
     geometries.push_back(obj);
+}
+
+void OpenGLWidget::setZoom(float value){
+    zoom = value;
+}
+
+void OpenGLWidget::setSpeed(float value){
+    speed = value;
 }

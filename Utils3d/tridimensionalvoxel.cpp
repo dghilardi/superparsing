@@ -1,7 +1,8 @@
 #include "tridimensionalvoxel.h"
 
 TridimensionalVoxel::TridimensionalVoxel(vector<SuperPixel *> *spList, int firstFrameIdx, cv::Size imgDim){
-    triangles=(imgDim.height>imgDim.width)?new TridimensionalObject(imgDim.height):new TridimensionalObject(imgDim.width);
+    int label = spList->at(0)->getLabel();
+    triangles=(imgDim.height>imgDim.width)?new TridimensionalObject(imgDim.height, label):new TridimensionalObject(imgDim.width, label);
     map<string, Segment*> contour;
     getTrianglesList(NULL, spList->at(0), *triangles, firstFrameIdx, contour);
 
@@ -38,7 +39,7 @@ TridimensionalVoxel::~TridimensionalVoxel(){
 void TridimensionalVoxel::triangulateFace(TridimensionalObject &result, cv::Mat *xorMatrix, int frameNumber, vector<vector<p2t::Point *> > &polylines)
 {
     cv::Mat resized, hierarchy;
-    float scaleborder = 5.0;
+    const float scaleborder = 4.0;
     vector<vector<cv::Point> > resultingContours;
     cv::resize(*xorMatrix, resized, cv::Size(), scaleborder, scaleborder, cv::INTER_NEAREST);
     cv::erode(resized, resized, cv::Mat());

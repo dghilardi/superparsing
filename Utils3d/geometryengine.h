@@ -55,8 +55,10 @@ public:
     void init();
     void drawCubeGeometry(QGLShaderProgram *program);
     int getDimension();
-
+    TridimensionalObject *getObject();
+    void setDraw(bool val);
 private:
+    bool draw;
     TridimensionalObject *data;
 
     GLuint vboIds[2];

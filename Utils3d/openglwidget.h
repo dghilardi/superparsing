@@ -62,7 +62,8 @@ public:
     explicit OpenGLWidget(QWidget *parent = 0);
     ~OpenGLWidget();
     void addObj(GeometryEngine *obj);
-
+    void setZoom(float value);
+    void setSpeed(float value);
 protected:
     void mousePressEvent(QMouseEvent *e);
     void mouseReleaseEvent(QMouseEvent *e);
@@ -87,6 +88,8 @@ private:
     QVector3D rotationAxis;
     qreal angularSpeed;
     QQuaternion rotation;
+    float zoom;
+    float speed;
 };
 
 #endif // MAINWIDGET_H
