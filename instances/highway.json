@@ -1,0 +1,21 @@
+{
+	"imgPath": "../SiftFlowDataset/Images/spatial_envelope_256x256_static_8outdoorcategories/",
+	"labelsPath": "../SiftFlowDataset/SemanticLabels/spatial_envelope_256x256_static_8outdoorcategories/",
+	"query": "highway_a866048",
+	"dataset": [ 		
+		"highway_a866041",
+		"highway_a866047",
+		"highway_a836030",
+		"highway_art254",
+		"highway_art255",
+		"highway_art489",
+		"highway_bost174",
+		"highway_bost393",
+		"highway_bost395",
+		"highway_bost403",
+		"highway_n480023",
+		"highway_n480036",
+		"highway_n480045",
+		"highway_a866042"
+	]
+}
