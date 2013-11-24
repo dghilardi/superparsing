@@ -73,6 +73,11 @@ void GeometryEngine::init()
 
     glBindBuffer(GL_ARRAY_BUFFER, vboIds[0]);
     glBufferData(GL_ARRAY_BUFFER, data->vertexNumber() * sizeof(QVector3D), data->getPtr(), GL_STATIC_DRAW);
+    cout << "vertex number: " << data->vertexNumber() <<"\tindices: "<<data->indicesNumber()<< endl;
+
+    glGenBuffers(1, &elementbuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, data->indicesNumber() * sizeof(unsigned int), data->getIdxPtr(), GL_STATIC_DRAW);
 }
 
 //! [2]
@@ -83,6 +88,8 @@ void GeometryEngine::drawCubeGeometry(QGLShaderProgram *program)
         // Tell OpenGL which VBOs to use
         glBindBuffer(GL_ARRAY_BUFFER, vboIds[0]);
 
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
+
         // Offset for position
         quintptr offset = 0;
 
@@ -91,7 +98,15 @@ void GeometryEngine::drawCubeGeometry(QGLShaderProgram *program)
         program->enableAttributeArray(vertexLocation);
         glVertexAttribPointer(vertexLocation, 3, GL_FLOAT, GL_FALSE, sizeof(QVector3D), (const void *)offset);
 
-        glDrawArrays(GL_TRIANGLES, 0, data->vertexNumber());
+//        glDrawArrays(GL_TRIANGLES, 0, data->vertexNumber());
+
+        glDrawElements(
+             GL_TRIANGLES,      // mode
+             data->indicesNumber(),    // count
+             GL_UNSIGNED_INT,   // type
+             (void*)0           // element array buffer offset
+         );
+
     }
 }
 //! [2]

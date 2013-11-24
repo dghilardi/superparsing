@@ -62,6 +62,7 @@ private:
     TridimensionalObject *data;
 
     GLuint vboIds[2];
+    GLuint elementbuffer;
 };
 
 #endif // GEOMETRYENGINE_H
