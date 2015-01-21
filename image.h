@@ -2,7 +2,7 @@
 #define IMAGE_H
 
 #include "globalSettings.h"
-#include "debugHeader.h"
+
 
 #include <string>
 #include <opencv2/highgui/highgui.hpp>

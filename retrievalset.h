@@ -19,7 +19,6 @@
 #include "Utils/threadsafestringset.h"
 
 #include "globalSettings.h"
-#include "debugHeader.h"
 
 #define ERROR_PARSE_JSON 1
 #define MSG_ERROR_PARSE_JSON "ERROR! The file doesn't exists or is malformed "

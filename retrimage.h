@@ -4,7 +4,7 @@
 #include <list>
 #include <set>
 
-#include "debugHeader.h"
+
 
 #include "image.h"
 #include "geolabel.h"

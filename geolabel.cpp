@@ -1,7 +1,7 @@
 #include "geolabel.h"
 #include "math.h"
 #include <stdio.h>
-
+#include "debugHeader.h"
 vector<string *> GeoLabel::labels;
 
 GeoLabel::GeoLabel(string filename){

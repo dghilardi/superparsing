@@ -1,5 +1,5 @@
 #include "classlikelihood.h"
-
+#include "debugHeader.h"
 #define EPSILON 0.01
 
 ClassLikelihood::ClassLikelihood(string feature){

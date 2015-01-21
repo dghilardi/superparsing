@@ -8,7 +8,6 @@
 
 #include "opencv2/highgui/highgui.hpp"
 
-#include "debugHeader.h"
 #include "globalSettings.h"
 
 #define ERROR_LOADING_MAT 1

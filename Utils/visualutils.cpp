@@ -1,5 +1,7 @@
 #include "visualutils.h"
 
+#include "debugHeader.h"
+
 #define SQUARE_SIZE 10
 #define LEG_COL_WIDTH 100
 #define LEG_PADDING 5

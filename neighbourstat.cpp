@@ -1,5 +1,5 @@
 #include "neighbourstat.h"
-
+#include "debugHeader.h"
 NeighbourStat::NeighbourStat(string path): filename(path)
 {
     ifstream ifs(filename.c_str());

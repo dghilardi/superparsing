@@ -17,7 +17,7 @@
 #include "Utils/visualutils.h"
 #include "tridimensionalobject.h"
 #include "../superpixel.h"
-#include "../debugHeader.h"
+
 using namespace std;
 
 class Segment{

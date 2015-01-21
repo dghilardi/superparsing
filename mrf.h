@@ -14,12 +14,11 @@
 
 #include "superpixel.h"
 #include "geolabel.h"
-#include "globlikelihood.h"
 #include "neighbourstat.h"
 #include "Utils/printutils.h"
 #include "GCO/GCoptimization.h"
 
-#include "debugHeader.h"
+
 
 using namespace std;
 class MRF

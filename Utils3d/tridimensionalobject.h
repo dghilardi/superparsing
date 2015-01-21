@@ -1,8 +1,9 @@
 #ifndef TRIDIMENSIONALOBJECT_H
 #define TRIDIMENSIONALOBJECT_H
-
-#include <QVector3D>
-#include <QVector4D>
+#include <qt4/Qt/qvector3d.h>
+#include <qt4/Qt/qvector4d.h>
+//#include <QVector3D>
+//#include <QVector4D>
 #include <vector>
 #include <map>
 #include <cassert>

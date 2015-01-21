@@ -1,10 +1,8 @@
 #ifndef NEIGHBOURSTAT_H
 #define NEIGHBOURSTAT_H
 
-#include "debugHeader.h"
-
-#include <jsoncpp/json/json.h>
 #include <boost/thread.hpp>
+#include <json/json.h>
 #include <fstream>
 #include <string>
 

@@ -1,5 +1,5 @@
 #include "supervoxellikelihood.h"
-
+#include "../debugHeader.h"
 #define GAMMA 1.0
 SuperVoxelLikelihood::SuperVoxelLikelihood()
 {

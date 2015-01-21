@@ -1,5 +1,5 @@
 #include "tridimensionalvoxel.h"
-
+#include "../debugHeader.h"
 TridimensionalVoxel::TridimensionalVoxel(vector<SuperPixel *> *spList, int firstFrameIdx, cv::Size imgDim){
     int label = spList->at(0)->getLabel();
     triangles=(imgDim.height>imgDim.width)?new TridimensionalObject(imgDim.height, label):new TridimensionalObject(imgDim.width, label);

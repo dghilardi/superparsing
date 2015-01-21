@@ -1,5 +1,6 @@
+#define QT_AND_OPENGL
 #ifdef QT_AND_OPENGL
-    #include <QApplication>
+#include <QtGui/QApplication>
 #endif
 #include "mrf.h"
 #include "retrimage.h"
@@ -95,7 +96,7 @@ int main(int argc, char **argv){
         cv::FileStorage fs;
         fs.open(DICTIONARY_PATH, cv::FileStorage::READ);
         if(!fs.isOpened()){
-            cerr << "ERROR! no dictionary founded." << endl;
+            cerr << "ERROR! no dictionary found." << endl;
             return 1;
         }
         else{
@@ -108,7 +109,7 @@ int main(int argc, char **argv){
         imSet.computeNeighbourStatistics(neighbourStatistics, trainingSetPath, 4);
     }
     if(neighbourStatistics.isEmpty() && useMRF){
-        cerr << "ERROR! no statistics about neighbour founded." << endl;
+        cerr << "ERROR! no statistics about neighbour found." << endl;
         return 1;
     }
     if(!imgInstancePath.empty()){

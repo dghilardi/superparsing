@@ -4,7 +4,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv/cv.hpp>
 #include <math.h>
-
+#include "debugHeader.h"
 SuperPixel::SuperPixel(vector<Pixel> &list, cv::Mat &srcImg, bool computeSIFT): maskFeature(0), pixelCoordList(list), weight(0){
     //Compute the bounding box of the superpixel
     label=-1;

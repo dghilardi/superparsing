@@ -1,5 +1,5 @@
 #include "retrimage.h"
-
+#include "debugHeader.h"
 /**
  * @brief RetrImage::RetrImage Costruttore della classe che si occupa di elaborare un'immagine del retrieval set
  * @param imgName Il nome dell'immagine del retrieval set

@@ -7,7 +7,7 @@
 #include <cmath>
 #include <cfloat>
 #include <string>
-#include "debugHeader.h"
+
 
 #define QUANTIZATION_SIZE 100
 using namespace std;

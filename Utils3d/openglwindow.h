@@ -1,10 +1,15 @@
 #ifndef OPENGLWINDOW_H
 #define OPENGLWINDOW_H
 
-#include <QMainWindow>
-#include <QCheckBox>
-#include <QMap>
-#include <QSet>
+#include <QtGui/QMainWindow>
+#include <QtGui/QCheckBox>
+#include <QtCore/QMap>
+#include <QtCore/QSet>
+
+//#include <QMainWindow>
+//#include <QCheckBox>
+//#include <QMap>
+//#include <QSet>
 #include <set>
 #include "../geolabel.h"
 #include "openglwidget.h"

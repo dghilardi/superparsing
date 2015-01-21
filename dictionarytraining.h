@@ -2,7 +2,7 @@
 #define DICTIONARYTRAINING_H
 
 #include "quantizedsift.h"
-#include <jsoncpp/json/json.h>
+#include <json/json.h>
 #include <string>
 #include <fstream>
 #include "globalSettings.h"

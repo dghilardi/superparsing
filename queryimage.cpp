@@ -1,5 +1,5 @@
 #include "queryimage.h"
-
+#include "debugHeader.h"
 #include <iostream>
 
 /**

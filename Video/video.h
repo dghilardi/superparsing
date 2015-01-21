@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <opencv2/highgui/highgui.hpp>
-#include "../debugHeader.h"
+
 
 using namespace std;
 class Video

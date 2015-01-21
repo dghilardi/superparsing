@@ -41,8 +41,10 @@
 #ifndef GEOMETRYENGINE_H
 #define GEOMETRYENGINE_H
 
-#include <QGLFunctions>
-#include <QGLShaderProgram>
+#include <QtOpenGL/QGLFunctions>
+#include <QtOpenGL/QGLShaderProgram>
+//#include <QGLFunctions>
+//#include <QGLShaderProgram>
 
 #include "tridimensionalobject.h"
 

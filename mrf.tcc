@@ -1,5 +1,5 @@
 #include "mrf.h"
-
+#include "debugHeader.h"
 template<typename MRFNode, typename Likelihood>
 void MRF::computeMRF(vector<MRFNode *> superPixelList, vector<Likelihood *> &likelihood, NeighbourStat &condprob){
     vector<dai::Var> variables;

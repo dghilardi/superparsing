@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "debugHeader.h"
+
 
 #include "image.h"
 #include "superpixel.h"

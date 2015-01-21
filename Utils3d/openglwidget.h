@@ -43,14 +43,13 @@
 
 #include "geometryengine.h"
 
-#include <QGLWidget>
-#include <QGLFunctions>
-#include <QMatrix4x4>
-#include <QQuaternion>
-#include <QVector2D>
-#include <QBasicTimer>
-#include <QGLShaderProgram>
-
+#include <QtOpenGL/QGLWidget>
+#include <QtOpenGL/QGLFunctions>
+#include <QtGui/QMatrix4x4>
+#include <QtGui/QQuaternion>
+#include <QtGui/QVector2D>
+#include <QtCore/QBasicTimer>
+#include <QtOpenGL/qglshaderprogram.h>
 
 class GeometryEngine;
 

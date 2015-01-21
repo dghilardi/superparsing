@@ -5,8 +5,6 @@
 #include <set>
 #include <iostream>
 
-#include "debugHeader.h"
-
 #include "geolabel.h"
 
 using namespace std;

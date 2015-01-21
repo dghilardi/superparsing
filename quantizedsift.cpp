@@ -1,4 +1,5 @@
 #include "quantizedsift.h"
+#include "debugHeader.h"
 QuantizedSift *QuantizedSift::instancePointer = NULL;
 QuantizedSift::QuantizedSift()
 {

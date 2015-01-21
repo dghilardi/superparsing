@@ -1,3 +1,5 @@
+INCLUDEPATH += "/usr/include/qt4"
+CONFIG+=qtAndOpenGL
 qtAndOpenGL {
     QT += core gui opengl
     CONFIG += console

@@ -1,5 +1,5 @@
 #include "video.h"
-
+#include "../debugHeader.h"
 Video::Video(string path) : vid(path){
 }
 

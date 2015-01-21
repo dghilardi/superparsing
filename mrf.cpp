@@ -1,4 +1,5 @@
 #include "mrf.h"
+#include "globlikelihood.h"
 #define THETA 1
 MRF::MRF()
 {

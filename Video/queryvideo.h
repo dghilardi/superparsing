@@ -11,7 +11,7 @@
 #include "Utils3d/tridimensionalvoxel.h"
 #include "Utils3d/geometryengine.h"
 #include "Utils3d/openglwindow.h"
-#include <QApplication>
+#include <QtGui/QApplication>
 class QueryVideo
 {
     Video video;

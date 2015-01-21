@@ -4,9 +4,8 @@
 #include <map>
 #include <cmath>
 #include "../globlikelihood.h"
-#include "../debugHeader.h"
 #include "../geolabel.h"
-#include "../debugHeader.h"
+
 
 class SuperVoxelLikelihood
 {

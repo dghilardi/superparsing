@@ -1,13 +1,13 @@
 #ifndef CLASSLIKELIHOOD_H
 #define CLASSLIKELIHOOD_H
 
+#include <boost/thread.hpp>
 #include <map>
 #include <cmath>
 #include <string>
 #include <vector>
-#include <boost/thread.hpp>
 
-#include "debugHeader.h"
+
 
 using namespace std;
 class ClassLikelihood
